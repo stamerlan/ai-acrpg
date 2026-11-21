@@ -1,0 +1,46 @@
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.sln
+*.slnx
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.vcxproj*
+*.xcodeproj
+*.xcworkspace
+
+# Unreal generated directories
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+Plugins/**/Binaries/
+Plugins/**/Intermediate/
+
+# Compiled output
+*.pdb
+*.dll
+*.exe
+*.lib
+*.o
+*.so
+*.dylib
+*.app
+*.ipa
+*.apk
+
+# Packaging
+*.pak
+*.ucas
+*.utoc
+
+# Misc
+*.tmp
+*.log
+Thumbs.db
+.DS_Store
