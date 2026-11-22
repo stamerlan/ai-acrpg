@@ -40,7 +40,15 @@ The sequel follows "Ambitions Chicken" (game 1), a short 2D DOS-style
 platformer. Things carried over from its ending:
 
 * The protagonist, her motto ("To co-co-cosmos I will fly - shawarma? Not
-  this chick!") and catchphrases ("I'll be kudakh!").
+  this chick!") and catchphrases: "I'll be kudakh!" (her line as she
+  drives off at the end of game 1) and "Now we talk, Shawarmen." (when
+  she finds the shotgun).
+* Her naive misreading of danger, as in the first line of game 1: "I
+  bet the cooks really like me..."
+* "Out of the frying pan, into the oven" (game 1, the Thanksgiving
+  diner), now the first design pillar.
+* The death screen: a food picture and a pun line (see
+  [Death](#death)).
 * The black Honda Civic and sunglasses (a lawyer's fee from R. Fuchs).
 * The farmer's shotgun.
 * R. Fuchs, attorney at law, who escaped and promised to appeal.
@@ -73,8 +81,9 @@ platformer. Things carried over from its ending:
 
 * Name: to be decided (still "the Ambitious Chicken" for now).
 * Solo protagonist, no companions or party.
-* No stats, levels or character build. She gets stronger only through
-  items she finds (weapons, consumables) and story progress.
+* No stats, levels or character build. Her whole arsenal is her beak,
+  the farmer's shotgun and whatever she can throw. Progress comes from
+  the story, not from power growth.
 
 ## Core loop
 
@@ -104,12 +113,15 @@ style). The bindings below are a first draft.
 |---|---|---|
 | Move | WASD | Left stick |
 | Aim | Mouse cursor | Right stick |
-| Attack / fire | Left mouse button | Right trigger |
-| Interact / talk | F | A / Cross |
-| Reload (if used) | R | X / Square |
-| Rotate camera | Q / E or middle mouse drag | Bumpers or D-pad |
+| Fire / throw | Left mouse button | Right trigger |
+| Peck (melee) | Right mouse button | Left trigger |
+| Flutter (dodge) | Space | B / Circle |
+| Interact / talk / pick up | F | A / Cross |
+| Reload | R | X / Square |
+| Eat corn (heal) | C | Y / Triangle |
+| Rotate camera | Q / E or middle mouse drag | Bumpers |
 | Zoom | Mouse wheel | D-pad up / down |
-| Inventory | I or Tab | View / Select |
+| Backpack (inventory) | I or Tab | View / Select |
 | Map / journal | M / J | Menu sub-pages |
 | Pause / menu | Esc | Menu / Start |
 
@@ -125,18 +137,134 @@ Notes:
 
 ## Combat
 
-* Real-time, Diablo 2 style, but with direct WASD + aim control.
-* The protagonist has HP. Enemies have HP.
-* Healing: (proposal) food the protagonist can eat safely, like corn
-  (collected for points in game 1). Food that is healing for a chicken
-  but awkward to explain is joke material.
-* Enemies: the Shawarman is the common recurring enemy; each location
-  adds its own enemies themed around who wants to eat her there.
-* Weapons: to be decided. The shotgun from game 1 is the natural
-  starting weapon.
-* Death: a comic food death screen that depends on who or what killed
-  her (kebab, nuggets, roast, etc.) with a pun line, like game 1
-  ("Well done. Too well done."). Then reload the last checkpoint.
+Real-time, Diablo 2 style, but with direct WASD + aim control. The
+protagonist's tools are her beak, a dodge, things she can throw and the
+shotgun. All numbers below are starting values for tuning;
+the first stop ([stop 0](level0-border-town.md)) is the test
+bed for all of them.
+
+### Health and healing
+
+* The protagonist has 100 HP and no regeneration.
+* Healing is corn: a corn cob heals 35 HP instantly. She carries up to
+  5 and eats one with a button (1 s cooldown). Corn was the score item
+  of game 1; here it is only healing.
+* Corn comes from NPCs, crates and level placement, so the healing
+  budget of every level is designed by hand.
+
+### Peck
+
+* Always available melee: a short frontal arc (1.5 m, 90 degrees),
+  10 damage, one peck per 0.4 s, small knockback.
+* **Surprise peck:** the first hit on an enemy that hasn't noticed her
+  does triple damage. That kills a basic Shawarman in one peck and is
+  the reward for sneaking.
+* Before she has the shotgun, Fire also pecks.
+
+### Flutter
+
+* The dodge: a short flapping hop, the closest she gets to flying.
+* 4 m in 0.25 s in the movement direction (aim direction when standing
+  still). Invulnerable during the hop. 0.8 s cooldown.
+* It does not cross gaps or obstacles. It drops a carried object.
+
+### Throwables
+
+* Some world objects can be picked up with Interact and thrown with
+  Fire. Garden gnomes in stop 0; later stops can reuse the system
+  (paper stacks, logs, cabbages).
+* One at a time, carried above her head: 30% slower movement, no peck
+  while carrying.
+* Thrown in an arc toward the aim point, up to 10 m. 25 damage, knocks
+  the target down for 1.5 s, the object shatters.
+
+### Shotgun
+
+The farmer's pump-action shotgun from game 1, and the only weapon in
+the game. She gets it back from the Civic's trunk in stop 0 and keeps
+it to the end. There are no other weapons and no upgrades; variety
+comes from enemies, throwables and level design.
+
+* Holds 8 shells. One shot fires 8 pellets of 6 damage in a cone. Full
+  damage up to 4 m, half at 8 m, nothing past 12 m. A pump between
+  shots: 0.7 s per shot.
+* Reload only on a button press (R / X), never automatic. The reload
+  rule from game 1 stays: she reloads only while standing still, one
+  shell per 0.5 s, until the tube is full. Moving, firing, pecking or
+  fluttering interrupts the reload but keeps the shells already loaded.
+* Ammo is limited (32 shells in reserve max) and placed by hand: crates
+  and some enemy drops. The peck is always the fallback.
+* **The Civic's trunk** is a refill that never runs out, so the player
+  can never get stuck without ammo. Every level where she has the car
+  has it parked in a fixed, reachable spot (usually the level entry).
+  Interacting with the trunk refills the reserve to 32. It takes 1.5 s
+  standing still, and taking damage interrupts it, so using it in a
+  fight is a risk. When the reserve is empty, a hint reminds her of it
+  ("The trunk has more").
+* A shot is loud (see noise below).
+
+### Enemies
+
+The Shawarman is the common recurring enemy; each stop adds enemies
+themed around who wants to eat her there. Shared rules for all of them:
+
+* No stats or levels. A stronger enemy is a separate enemy type.
+* **States:** unaware (idle, patrol, busy, sleeping), suspicious and
+  alerted. In the first pass an alerted enemy fights until it dies; no
+  searching or returning to patrol.
+* **Sight:** a 70 degree cone in front of the enemy. Range 10 m when
+  the protagonist is lit, 5 m when she is in the dark (dark exists only in
+  night levels).
+* **Busy** enemies (eating, working) see only 3 m, still only in their
+  front cone, so she can sneak up from behind or the side and peck.
+  **Sleeping** enemies react only to noise.
+* **Spotting is not instant.** While she is in sight, the enemy's
+  awareness fills up; a meter above its head goes from "?" to "!".
+  Full awareness takes 1.5 s at the edge of sight range and 0.5 s
+  close up, and the enemy turns toward her and becomes suspicious
+  while it fills. When it is full, the enemy is alerted. Out of sight,
+  awareness drains at the same speed, so the player has time to back
+  off after a mistake. Suspicious enemies stop and look but don't
+  move toward her in the first pass.
+* **Noise** alerts every enemy in range at once: peck hit 6 m,
+  shattered throwable 10 m, shotgun 25 m.
+* **Shout:** an enemy that becomes alerted alerts others within 12 m.
+* **Telegraphs:** every attack has a readable windup (pose, glint,
+  sound), at least 0.5 s for melee. Ranged projectiles are slow enough
+  to dodge.
+* Enemies have comic food deaths too. Defeated enemies stay defeated;
+  reloading a checkpoint restores the state saved in it.
+
+### Lights and sneaking
+
+Not a stealth system, just the detection rules above used in dark
+places. Lit areas are marked in the level (lamp light volumes, moving
+light cones like flashlights and searchlights). Being spotted is never
+a fail; it only starts a fight, and awareness gives time to retreat
+before that.
+
+### Death
+
+A comic food death screen: a full screen food picture and a pun line,
+then reload the last checkpoint.
+
+* In game 1 every death showed a random picture and a random line from
+  one pool. Here every damage source carries a "killed by" tag that
+  picks the picture (wrap, kebab, grill, doner, etc.) and a small pool
+  of lines for that killer. Each level document lists them.
+* The generic lines from game 1 are mixed into every killer's pool:
+  * "Well done. Too well done."
+  * "Back on the menu."
+  * "Ambitions: 0. Kebab: 1."
+  * "That's not the cosmos..."
+  * "Table for one. You're the special."
+* Game 1 lines tied to food that fits a specific killer go to that
+  killer: "One chicken wrap, to go.", "You ARE the doner.", "Extra
+  garlic sauce, hold the cosmos.", "Rotating slowly on the spit of
+  fate." (all used in stop 0).
+* Game 1 lines tied to its own enemies wait for a stop where they fit:
+  "Today's special: chicken nuggets.", "Delivered in under ten
+  minutes. Five stars!", "Served with cranberry sauce."
 
 ## Items, loot and inventory
 
@@ -144,11 +272,33 @@ Loot and inventory exist but are secondary to story and action.
 
 * No random stats, affixes or rarity tiers. Every item is handcrafted
   and has a clear purpose.
-* Item types: weapons, ammo, consumables (healing), quest and key
-  items, and possibly joke items with funny descriptions.
+* Item types: the shotgun, shells, corn cobs, key and quest items, and
+  joke items with funny descriptions (for example the Gnomonaut).
+* Throwables are world objects, not inventory items.
 * Items come from quests, dialogs, containers and some enemies.
-* (proposal) A simple list or small grid inventory, no weight or
-  tetris-style packing.
+  Picking up is automatic on walking over ammo and corn; key items are
+  picked up with Interact.
+* No currency and no shops. Trades are barter, favours and dialog
+  choices. She is officially cargo, and cargo has no wallet.
+* The checklist is a special key item: one stamp slot per stop, shown
+  as a document page in the backpack.
+
+### Backpack
+
+Very simple and direct, in the style of The Last of Us: no grid, no
+slots to manage, no weight, no sorting, no dropping, no crafting.
+
+* Opening the backpack does not pause the game. The protagonist kneels and
+  the panel slides in; the world keeps running, so opening it in a
+  fight is a risk.
+* One panel with three fixed sections:
+  * **Gear:** the shotgun (loaded / reserve shells) and corn cobs
+    (count of max 5). Corn can be eaten from here.
+  * **Key items:** the checklist, the transit card, keys, quest items.
+    Selecting one shows a picture and a funny description.
+  * **Joke items:** collectibles like the Gnomonaut, with descriptions.
+* Every item has a fixed place in its section, so the panel never needs
+  managing. Items that are used up or handed over simply disappear.
 
 ## Dialogs
 
@@ -180,6 +330,8 @@ Loot and inventory exist but are secondary to story and action.
   player can walk freely between the levels of one location.
 * Travel happens on a map screen: the story reveals new locations on
   the map, and the player picks where to drive.
+* Exception: stop 0 (the prologue) is linear. Its night level can't be
+  left back to the day level.
 * The car is only a way to travel between levels: no fuel, upgrades,
   driving gameplay or car combat.
 * (proposal) A short driving cutscene or animation between map and
@@ -188,8 +340,8 @@ Loot and inventory exist but are secondary to story and action.
 ## Saving
 
 * Checkpoint saves only, no save-anywhere.
-* (proposal) Checkpoints on arrival at a location, at key story moments
-  and before big fights.
+* Checkpoints on arrival at a level, at key story moments and before
+  big fights. Each level document lists its checkpoints.
 * A save stores: current location and checkpoint, story and quest
   state, dialog flags, inventory, HP, unlocked map locations.
 
@@ -205,9 +357,21 @@ Loot and inventory exist but are secondary to story and action.
 
 ## UI
 
-* HUD: HP, current weapon and ammo, interaction prompts.
+* HUD, minimal and contextual like The Last of Us:
+  * One cluster in the bottom-right corner: the HP bar, the shotgun
+    icon with loaded shells (as shell pips) and reserve count, and the
+    corn count.
+  * The cluster hides during exploration and fades in when she takes
+    damage, heals, picks up ammo or corn, draws or fires the shotgun,
+    reloads, or an enemy becomes suspicious or alerted. HP below 25%
+    keeps it visible.
+  * Before she has the shotgun, only the HP bar and corn are shown.
+  * Enemy awareness meters ("?" to "!") above enemy heads.
+  * Interaction prompts next to the object, and one-time tutorial
+    hints with gamepad or keyboard glyphs (whichever was used last).
+  * No minimap, no quest markers on screen.
 * Dialog window with speaker name, portrait (proposal) and choices.
-* Inventory screen.
+* Backpack panel (see [Backpack](#backpack)).
 * Map screen for choosing locations.
 * Journal with quests.
 * Death screen with food picture and pun line.
@@ -219,11 +383,15 @@ Loot and inventory exist but are secondary to story and action.
 These are deliberately out of scope:
 
 * Character stats, levels, experience or skill trees.
+* Weapons other than the shotgun, and weapon upgrades.
+* Crafting.
 * Random loot, item affixes, loot grinding.
 * Companions or party members.
 * Car mechanics (fuel, upgrades, driving, car combat).
 * Random or generated dungeons.
 * Disguise system (may return only if the story needs it).
+* A full stealth system (search behaviour, hiding spots, light
+  meters). Only the simple detection rules from Combat.
 * Multiplayer.
 
 ## Technical notes
@@ -237,6 +405,19 @@ These are deliberately out of scope:
 * Several levels per location, plus a separate map screen (level or
   UI).
 * Images and assets in the repo go through Git LFS (already set up).
+* (proposal) Main building blocks: a health component shared by the
+  protagonist and enemies (with the "killed by" tag), a weapon component
+  (peck, shotgun), an interactable component (talk, pick up, use), a
+  throwable actor, a story state subsystem (quests, flags, stamps) used
+  by dialogs, quests and saves, and lit zone volumes plus light cones
+  for enemy sight.
+
+## First playable
+
+Stop 0 is the first playable, because it needs every core system. The
+work is tracked as GitHub issues in the
+[First playable](https://github.com/stamerlan/ai-acrpg/milestone/1)
+milestone.
 
 ## Open questions
 
@@ -250,13 +431,7 @@ is never reached; R. Fuchs does not return):
 
 Gameplay:
 
-* Weapons: which ones, and is the shotgun the starting weapon?
-* Does the reload-only-while-standing-still rule from game 1 stay?
-* Dodge, dash or block action - yes or no?
-* Is there melee (pecking, wings) besides weapons?
-* How does healing work?
-* Is there currency or shops? (Corn as money?)
-* Points / score from game 1 (corn) - keep, change or drop?
+* Tuning of all combat numbers (first pass in stop 0).
 * Final control bindings and camera rotation style (steps or free).
 
 Tech:

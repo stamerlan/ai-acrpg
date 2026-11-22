@@ -73,14 +73,18 @@ deals in food.
 
 The drive out of Berlin with the radio ad, then the border check and
 the "CARGO: POULTRY" box. The car is impounded and she gets the transit
-card and the checklist.
+card and the checklist. Detailed build spec:
+[level0-border-town.md](level0-border-town.md).
 
-* **Level A - Border bazaar.** Cheap cigarettes, kebab stands and a sea
-  of garden gnomes. First dialogs, first Shawarmen, a shady stall owner
-  who sells "official" stamps (see forgery ending). Uncle Kolya's truck
-  waits in the border queue.
-* **Level B - Impound lot (night).** She sneaks in and gets the Civic
-  back. Combat tutorial against Shawarmen guarding the lot.
+* **Level A - Border bazaar.** Starts with the border check. Cheap
+  cigarettes, kebab stands and a sea of garden gnomes. First dialogs,
+  first Shawarmen (fought with the beak and thrown gnomes: the shotgun
+  is in the impounded car), a shady stall owner who sells "official"
+  stamps (see forgery ending). Uncle Kolya's truck waits in the border
+  queue.
+* **Level B - Impound lot (night).** She sneaks in, finds the keys and
+  the shotgun in the trunk, sets off her own car alarm and fights the
+  night shift and its manager, Mr. Kebabski.
 
 ### 1. Poznan
 
@@ -165,7 +169,9 @@ R. Fuchs does not appear: he stayed in Berlin.
 ## Enemies
 
 * **Shawarmen** - the common recurring enemy; there's a kebab stand in
-  every Polish town.
+  every Polish town. Variants: Skewermen (ranged) and Grill Sergeants
+  (heavy, shield). Mr. Kebabski, the night manager of the border
+  impound lot, is the stop 0 boss.
 * **Clerks** - rubber stamps as weapons (a stamp counts as a hit),
   flying paper, a filing-cabinet mimic, the paper golem.
 * **Hunters and their dogs** - the forest stop.
