@@ -1,0 +1,110 @@
+[
+	{
+		"Name": "q_car_trouble",
+		"Kind": "Quest",
+		"Values": ["started", "office", "night", "keys", "car", "done"],
+		"Description": "Main quest: get the Civic back before nine"
+	},
+	{
+		"Name": "q_zbyszek_box",
+		"Kind": "Quest",
+		"Values": ["started", "box_taken", "given", "kept"],
+		"Description": "Side quest: Zbyszek's box of stamps"
+	},
+	{
+		"Name": "q_gnomonaut",
+		"Kind": "Quest",
+		"Values": ["started", "found", "done"],
+		"Description": "Side quest: Krasnal's lost Gnomonaut"
+	},
+	{
+		"Name": "f_border_answer",
+		"Kind": "Flag",
+		"Values": ["other_side", "cosmos", "tourism"],
+		"Description": "Purpose of crossing told to Kotlet"
+	},
+	{
+		"Name": "f_border_check",
+		"Kind": "Flag",
+		"Values": ["scale", "done"],
+		"Description": "Border check progress: sent to the scale, done"
+	},
+	{
+		"Name": "f_kolya_met",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Talked to Kolya"
+	},
+	{
+		"Name": "f_kolya_tip",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Got Kolya's stealth tip"
+	},
+	{
+		"Name": "f_corn_lady_cob",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Got the free cob from the corn lady"
+	},
+	{
+		"Name": "f_forged_stamp",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Has the Forged stamp"
+	},
+	{
+		"Name": "f_gnomonaut",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Has the Gnomonaut"
+	},
+	{
+		"Name": "stamp_cargo_poultry",
+		"Kind": "Stamp",
+		"Values": [],
+		"Description": "Checklist: CARGO: POULTRY, always set in stop 0"
+	},
+	{
+		"Name": "item_transit_card",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "Transit card, valid in Poland only"
+	},
+	{
+		"Name": "item_checklist",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "The checklist with the stamp slots"
+	},
+	{
+		"Name": "item_corn_cob",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "Corn cob, heals 35 HP"
+	},
+	{
+		"Name": "item_car_keys",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "The Civic's keys from the guard office"
+	},
+	{
+		"Name": "item_zbyszek_box",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "Zbyszek's box from the evidence shelf"
+	},
+	{
+		"Name": "item_forged_stamp",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "Forged stamp PERSON from Zbyszek"
+	},
+	{
+		"Name": "item_gnomonaut",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "The Gnomonaut, joke item"
+	}
+]

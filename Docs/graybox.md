@@ -32,6 +32,10 @@ has a label with its name.
   example `Shawarman`, `Busy`, `PatrolA`, `CornCob`).
 * The small box on NPC and enemy markers and the notch on patrol
   points show the facing.
+* NPC, Interact and Pickup markers become playable by adding a
+  `BPC_Interactable` component (see
+  [story-system.md](story-system.md#interaction)). It brings its own
+  overlap sphere, so the marker keeps no collision.
 
 | Kind | Color | Shape | Meaning |
 |---|---|---|---|

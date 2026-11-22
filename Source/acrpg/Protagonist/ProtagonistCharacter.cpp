@@ -91,8 +91,7 @@ void AProtagonistCharacter::SetupPlayerInputComponent(
 		&AProtagonistCharacter::Move);
 
 	for (UInputAction* Action : {FireAction.Get(), PeckAction.Get(),
-		FlutterAction.Get(), InteractAction.Get(), ReloadAction.Get(),
-		EatCornAction.Get()})
+		FlutterAction.Get(), ReloadAction.Get(), EatCornAction.Get()})
 	{
 		Input->BindAction(Action, ETriggerEvent::Started, this,
 			&AProtagonistCharacter::LogPendingAction);

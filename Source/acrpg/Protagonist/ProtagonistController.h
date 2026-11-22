@@ -84,12 +84,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input|Gameplay")
 	TObjectPtr<UInputAction> PauseAction;
 
-	UPROPERTY(EditAnywhere, Category = "Input|Dialog")
-	TObjectPtr<UInputAction> DialogAdvanceAction;
-
-	UPROPERTY(EditAnywhere, Category = "Input|Dialog")
-	TObjectPtr<UInputAction> DialogNavigateAction;
-
 	UPROPERTY(EditAnywhere, Category = "Input|Menu")
 	TObjectPtr<UInputAction> MenuNavigateAction;
 

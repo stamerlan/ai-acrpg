@@ -102,7 +102,7 @@ without a registration it can't leave the city.
 
 ### 2. Village
 
-The veterinary certificate of a "live animal". The vet is on duty at the
+The veterinary certificate of a "live chicken". The vet is on duty at the
 poultry farm all week and signs nothing anywhere else.
 
 * **Level A - Village.** Church fair, neighbours, Babcia's house. Babcia
@@ -156,7 +156,7 @@ a day.
   headed east. The player sees it early; she finds out at the end.
 * **Babcia** - the village grandmother who feeds everyone. Sunday means
   chicken soup.
-* **The vet** - certifies "live animals" and stamps "FIT FOR
+* **The vet** - certifies "live chickens" and stamps "FIT FOR
   CONSUMPTION" with the same stamp.
 * **The gas station cashier** - has seen everything, impressed by
   nothing.

@@ -20,7 +20,9 @@ public class acrpg : ModuleRules
 			"GameplayStateTreeModule",
 			"Niagara",
 			"UMG",
-			"Slate"
+			"Slate",
+			"DeveloperSettings",
+			"DlgSystem"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
@@ -28,6 +30,7 @@ public class acrpg : ModuleRules
 		PublicIncludePaths.AddRange(new string[] {
 			"acrpg",
 			"acrpg/Protagonist",
+			"acrpg/Story",
 			"acrpg/Variant_Strategy",
 			"acrpg/Variant_Strategy/UI",
 			"acrpg/Variant_TwinStick",

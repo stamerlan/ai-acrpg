@@ -74,6 +74,20 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   start at `MK_Checkpoint_NightStart`. Set them back before saving.
 * The searchlight (`DonerEye_Rig`) turns at a constant 45 deg/s; the
   pauses and the lookout awareness come with the Doner system.
+* These markers carry a `BPC_Interactable` and work in Play: the NPCs
+  Kotlet, Kolya, Halina, Zbyszek, Krasnal, CornLady, CigaretteSeller
+  and KantorClerk (Talk), `MK_Interact_CargoScale` (Kotlet's dialog
+  from `weigh`, while `f_border_check` is scale), and the pickups
+  `MK_Pickup_Gnomonaut` (while `q_gnomonaut` is started),
+  `MK_Pickup_ZbyszekBox` and `MK_Pickup_CarKeys`. The stall NPCs'
+  interactables sit at the front of their counters.
+* `Road_Border` is the asphalt road from the bridge to the east bound
+  (X 6350 to 7250, with a center line) and its spur to the bazaar gate.
+* The way north is closed until the border check is done. Past the
+  scale, `Fence_BorderExit` runs along the exit line (Y = -2950) from
+  the west bound to the east bound, and `Truck_Queue_1` stands across
+  it in the queue lane. `Gate_BorderExit` (`BP_StoryGate`) is a pole
+  across the road; it opens when `f_border_check` is done.
 
 ## Story in short
 
@@ -121,7 +135,7 @@ moves south through the bazaar to the impound lot fence.
 Zones:
 
 1. **Border post.** Guard booth, a red-white barrier, and the cargo
-   scale of the veterinary border inspection ("LIVE ANIMALS"). Start of
+   scale of the veterinary border inspection ("LIVE CHICKENS"). Start of
    the level.
 2. **Truck queue.** A long line of trucks on the road east that hasn't
    moved for three days. Uncle Kolya's refrigerated truck is in it.
@@ -174,28 +188,43 @@ barrier.
 the veterinary border inspection leans out of the booth with a
 sandwich.
 
-* Kotlet: "Documents." Choices: show sunglasses / "I am a chicken of
-  the world" / "You need documents to cross a border?"
+* Kotlet looks past her into the car: "Where is the driver?" She: "I am
+  the driver." Kotlet looks down: "Hm. Documents." Choices: show
+  sunglasses / "I am a chicken of the world" / "You need documents to
+  cross a border?"
 * Kotlet: "Purpose of crossing?" Choices: "To get to the other side." /
   "Cosmos. Via Kudakhstan." / "Tourism. I love Poland. Pierogi!"
   The answer sets `f_border_answer` for later callbacks.
-* Kotlet: "Step on the scale, please." First control prompt: she gets
-  out of the car and walks to the scale (move, camera rotate and zoom
-  hints), then interacts with it.
+* Kotlet taps the sign: veterinary border inspection, live chickens
+  are weighed and registered. She: "I'm not just a chicken. I'm the
+  driver!" Kotlet: "Drivers have a license. You have feathers. Step on
+  the scale, please." First control prompt: she gets out of the car and
+  walks to the scale (move, camera rotate and zoom hints), then
+  interacts with it. The barrier and the fence past the scale stay
+  closed until the check is done.
 * Kotlet reads the scale: "Two point three kilo. Live." He has a form
   with two boxes, DRIVER and CARGO: POULTRY, LIVE, 1 PC. He ticks the
-  second one. She: "Is that a good box?" Kotlet: "It's the only box
+  second one. She: "Why cargo? I drove here!" Kotlet: "A driver weighs
+  seventy kilo. You weigh two point three. Two point three kilo of live
+  chicken is cargo." She: "Then tick DRIVER and write 'small'." Kotlet:
+  "DRIVER needs a license. CARGO needs nothing. CARGO is the only box
   that fits."
 * Kotlet shines a flashlight into the trunk: "Something long in there."
-  She: "A very long corn cob." Kotlet: "...Next." (the airport X-ray
-  joke from game 1). This is why the shotgun stays in the impounded
-  car.
-* A tow truck takes the Civic: "Cargo cannot drive cargo." This is a
-  short in-game moment, not a cutscene: the whole border check is
-  playable, with the dialogs running in the world.
-* Kotlet gives her the transit card and the checklist: "Valid in Poland
-  only. Do not leave the country. Do not leave the cage." "What cage?"
-  "...Do not leave."
+  She covers the farmer's shotgun with a wing: "A very long corn cob."
+  (the airport X-ray joke from game 1). This is why the shotgun stays
+  in the impounded car.
+* "Corn is allowed." He waves at a tow truck: "But cargo cannot drive
+  cargo. The car has no driver, so it goes to the impound lot behind
+  the bazaar." She: "But I AM the driver!" Kotlet: "You are CARGO:
+  POULTRY, LIVE, 1 PC. It says so on the form." This is a short
+  in-game moment, not a cutscene: the whole border check is playable,
+  with the dialogs running in the world.
+* Kotlet gives her the transit card and the checklist: "A transit card
+  for live cargo, valid in Poland only. And a checklist: one stamp from
+  every office. Do not leave the country. Do not leave the cage." "What
+  cage?" "...Do not leave." She: "How do I get my car back?" Kotlet:
+  "Impound office, at the back of the bazaar. Window of Pani Halina.
+  Next."
 * The checklist and the journal open for the first time. Main quest
   "Car Trouble" starts. The checklist already holds its first stamp:
   "CARGO: POULTRY". Checkpoint.
@@ -213,17 +242,20 @@ in game 1).
 **5. The impound office (main).** Pani Halina Blanca sits at the window,
 eating a kebab.
 
+* Halina: "Impound office. What?" She: "The border guard took my car.
+  A black Honda Civic."
 * Halina: "Release of a vehicle requires: owner's ID, registration
   certificate, payment of the fee. Do you have any of these?" She: "I
-  have sunglasses."
-* Halina: "Registration is issued in Poznan. The vehicle goes to auction
-  tomorrow at nine. Next."
+  have sunglasses." (or, with the transit card: "A transit card is for
+  cargo. Cargo does not collect vehicles. Cargo is collected.")
+* Halina: "No documents, no car. Registration is issued only in Poznan.
+  And the vehicle goes to auction tomorrow at nine. Next."
 * The menu board on the fence: "KEBAB & PARKING. Tonight's special:
   confiscated poultry, 1 pc." She: "A special tonight! And they don't
   even know me yet."
 * As she leaves, Halina picks up the phone: "Kebab stand? Your special
-  is at my window." Journal: "Get the Civic back before nine. Tonight."
-  Checkpoint.
+  is at my window." She: "A special? For me? How nice!" Journal: "Get
+  the Civic back before nine. Tonight." Checkpoint.
 
 **6. First fight (gnome field).** The kebab stand Shawarman runs out:
 "Tonight's special is walking away!" He comes alone first, so the
@@ -239,7 +271,8 @@ far end of the gnome field. Interacting with it in daylight: "Too
 bright. They'd see me. Wait until midnight." Two ways to wait:
 
 * Ask Kolya to rest in his cab ("Queue won't move until morning
-  anyway"). He gives the stealth tip if not given yet.
+  anyway"). He gives the stealth tip if not given yet. He offers this
+  once Halina has sent her away (`q_car_trouble` past started).
 * Interact with the hole again and choose "Wait for midnight".
 
 Both show the warning that the bazaar can't be revisited, then fade to
@@ -258,11 +291,15 @@ official who could prove she isn't food, and he deals in food.
 First meeting. Big, friendly trucker, stuck in the queue for three
 days, drinks tea from a thermos ("A samovar, but for the road").
 
-* Introduces himself in a mix of English and Russian; teaches her
-  "kudakh" ("In Russian your 'cluck' is 'kudakh'. Good word. Strong.").
-* Stealth tip with a proverb: "Tishe yedesh - dalshe budesh. Go quieter,
-  get further. Night guards eat at midnight. Always shawarma." The tip
-  is flavour only and doesn't change 0B.
+* Introduces himself in a mix of English and Russian, offers tea and
+  asks where she flies. Hearing "Kudakhstan" he teaches her "kudakh":
+  "You know what Kudakhstan means? In Russian your 'cluck' is 'kudakh'.
+  Good word. Strong."
+* Stealth tip with a proverb, once she tells him her car is in the
+  impound lot: "Kebab & Parking? Bad people. You want your car, you go
+  at night. Quietly. Tishe yedesh - dalshe budesh: go quieter, get
+  further. And remember: night guards eat at midnight. Always
+  shawarma." The tip is flavour only and doesn't change 0B.
 * Gives her 2 corn cobs.
 * His truck: "FROZEN GOODS - EXPORT EAST" with a smiling cartoon
   chicken logo. She: "A chicken on the truck! Chicken-friendly company."
@@ -309,7 +346,9 @@ Sets the tone: every seller sizes her up.
 
 Spans both levels; unlocks the forgery ending.
 
-1. 0A: she asks Zbyszek for a stamp that says PERSON. "I have
+1. 0A: she asks Zbyszek for a stamp that says PERSON ("The border
+   guard wrote me down as CARGO. Do you have a stamp that says
+   PERSON?"). "I have
    everything. Had. Customs took my box. Now it sits in the impound
    lot, same as your car. Bring it back and I make you a stamp so
    official, the office itself will believe it."
@@ -324,8 +363,11 @@ Spans both levels; unlocks the forgery ending.
 
 Short, 0A only.
 
-1. Krasnal lost his best gnome, the Gnomonaut (a gnome in a cosmonaut
-   helmet), somewhere in the gnome field.
+1. Krasnal mentions it himself ("...Except my best one. He ran
+   away."): he lost his best gnome, the Gnomonaut (a gnome in a
+   cosmonaut helmet), somewhere in the gnome field, and promises "a
+   very good price" for it. If she says she has no money: "Then the
+   price is very, very good. Find him!"
 2. She searches the field. The Gnomonaut sits on top of a crate in a
    back corner; the helmet glints when the camera faces it.
 3. She returns it. Krasnal: "Take him. He wants to go to the cosmos
@@ -625,11 +667,20 @@ arena).
 | `q_zbyszek_box` | Side quest | started, box_taken, given, kept |
 | `q_gnomonaut` | Side quest | started, found, done |
 | `f_border_answer` | Flag | other_side, cosmos, tourism |
+| `f_border_check` | Flag | scale (sent to the scale), done |
 | `f_kolya_met` | Flag | Talked to Kolya |
 | `f_kolya_tip` | Flag | Got the stealth tip |
+| `f_corn_lady_cob` | Flag | Got the free cob from the corn lady |
 | `f_forged_stamp` | Flag | Has the Forged stamp |
 | `f_gnomonaut` | Flag | Has the Gnomonaut |
 | `stamp_cargo_poultry` | Stamp | Always set in stop 0 |
+
+Item ids: `item_transit_card`, `item_checklist`, `item_corn_cob`,
+`item_car_keys`, `item_zbyszek_box`, `item_forged_stamp`,
+`item_gnomonaut`. The ids are defined in
+`Content/Story/Stop0/DT_StoryIds_Stop0.json` and the dialogs are the
+`DLG_` assets in `/Game/Story/Stop0/Dialogs`, see
+[story-system.md](story-system.md).
 
 Callbacks for later stops:
 

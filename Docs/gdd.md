@@ -309,9 +309,14 @@ slots to manage, no weight, no sorting, no dropping, no crafting.
   ("lied to the chef"), items in inventory.
 * Optional funny lines and dead-end jokes are encouraged; they cost
   little and carry the comedy.
-* The tool and data format for writing dialogs is an important early
-  tech decision (see open questions), because dialogs are most of the
-  game's content.
+* Decision (first playable): dialogs use the free DlgSystem plugin (Not
+  Yet, MIT): a graph editor that shows lines, choices, conditions and
+  events as boxes and lines. The first version was data tables written
+  as JSON; reading the branches as text got hard, so it moved to a
+  graph. The plugin's JSON export is off: the dialog assets are the
+  only copy, one source of truth. Quests, flags, stamps and
+  items live in one story state struct that dialogs, level scripts and
+  saves share. Details in [story-system.md](story-system.md).
 
 ## Quests and endings
 
@@ -397,7 +402,9 @@ These are deliberately out of scope:
 
 ## Technical notes
 
-* Unreal Engine 5.8, C++ with Blueprints where convenient.
+* Unreal Engine 5.8. Blueprints where possible; C++ for what Blueprints
+  can't do (subsystems, console commands, shared struct and enum types)
+  and for the systems already written in it.
 * Start from the Top Down template ideas (camera boom, Enhanced
   Input), but with WASD + aim instead of click-to-move.
 * (proposal) No Gameplay Ability System: without stats it is likely
@@ -441,9 +448,6 @@ Gameplay:
 
 Tech:
 
-* Dialog tool: data tables, a custom dialog graph asset, or a
-  third-party plugin.
-* Quest and story state format, shared by dialogs, quests and saves.
 * Map screen: a separate level or a UI widget.
 
 Other:

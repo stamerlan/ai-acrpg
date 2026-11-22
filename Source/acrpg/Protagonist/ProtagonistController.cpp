@@ -54,8 +54,7 @@ void AProtagonistController::SetupInputComponent()
 		&AProtagonistController::Zoom);
 
 	for (UInputAction* Action : {BackpackAction.Get(), MapAction.Get(),
-		JournalAction.Get(), PauseAction.Get(), DialogAdvanceAction.Get(),
-		DialogNavigateAction.Get(), MenuNavigateAction.Get(),
+		JournalAction.Get(), PauseAction.Get(), MenuNavigateAction.Get(),
 		MenuConfirmAction.Get(), MenuBackAction.Get(),
 		MenuPrevTabAction.Get(), MenuNextTabAction.Get()})
 	{
