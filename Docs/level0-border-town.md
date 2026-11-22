@@ -79,7 +79,9 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   from `weigh`, while `f_border_check` is scale), and the pickups
   `MK_Pickup_Gnomonaut` (while `q_gnomonaut` is started),
   `MK_Pickup_ZbyszekBox` and `MK_Pickup_CarKeys`. The stall NPCs'
-  interactables sit at the front of their counters.
+  interactables sit 80 cm behind the front of their counters with a
+  1.5 m radius: she talks to them from about 1 m in front of the
+  counter, not from the middle of the street.
 * `Road_Border` is the asphalt road from the bridge to the east bound
   (X 3810 to 4350, with a center line) and its spur to the bazaar gate.
 * The way north is closed until the border check is done. Past the
