@@ -30,6 +30,11 @@ bone. Her eyes are modeled under the lenses. She faces -Y in Blender,
 like the UE mannequin, so the mesh needs the usual -90 yaw in the
 character Blueprint.
 
+Meshy put the tail fan on a thin stalk behind the body. In the .blend the
+fan was moved 13 cm forward and tilted 4 degrees up so it grows out of
+the rump as on the turnaround; the stalk now sits inside the body. The
+tail tip is at 63 cm, under the comb top.
+
 ### Skeleton (49 bones)
 
 The armature object is named `Armature`, which UE drops; `root` is the
