@@ -56,16 +56,15 @@ exit drive through the night bazaar needs no extra set.
   destroys them.
 * **Saves** store the phase (day or night) with the checkpoint, see
   the GDD.
-* The impound lot geometry is a Level Instance, `LI_ImpoundLot`, so
-  it can be edited as one unit. It exists in both phases.
+* The impound lot geometry is plain L0 actors in `Shared/Lot/<zone>`,
+  so the map is self-contained. It exists in both phases.
 
 ### Graybox
 
 The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
 
-* Outliner folders: `Shared/` (always loaded geometry by zone, the lot
-  instance in `Shared/Lot`), `Day/` (on `DL_Day`), `Night/` (on
-  `DL_Night`). Inside `LI_ImpoundLot` the folders are `Lot/<zone>`.
+* Outliner folders: `Shared/` (always loaded geometry by zone, the lot in
+  `Shared/Lot/<zone>`), `Day/` (on `DL_Day`), `Night/` (on `DL_Night`).
 * World axes: +X is north (river side), +Y is east. The lot fence runs
   along X = 0; the bazaar is north of it, the lot south. One unit of
   the layout is 1 m.
