@@ -1,0 +1,940 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1000"
+  width="1600" height="1000">
+<defs>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e4dcc8"
+      stroke-width="1"/>
+  </pattern>
+  <pattern id="stub" width="3" height="3" patternUnits="userSpaceOnUse">
+    <circle cx="1.5" cy="1.5" r="0.6" fill="#2a1f18" opacity="0.6"/>
+  </pattern>
+  <pattern id="armhair" width="6" height="5" patternUnits="userSpaceOnUse">
+    <path d="M 1 1 L 3 3" stroke="#3a2a20" stroke-width="0.7"
+      opacity="0.6"/>
+  </pattern>
+  <linearGradient id="cyl" x1="0" x2="1" y1="0" y2="0">
+    <stop offset="0" stop-color="#000" stop-opacity="0.30"/>
+    <stop offset="0.28" stop-color="#000" stop-opacity="0.04"/>
+    <stop offset="0.5" stop-color="#fff" stop-opacity="0.14"/>
+    <stop offset="0.78" stop-color="#000" stop-opacity="0.02"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.32"/>
+  </linearGradient>
+  <linearGradient id="vsh" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.10"/>
+    <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.22"/>
+  </linearGradient>
+  <radialGradient id="hsh" cx="0.38" cy="0.32" r="0.8">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.20"/>
+    <stop offset="0.55" stop-color="#fff" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.28"/>
+  </radialGradient>
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1.4"
+      result="d"/>
+    <feFlood flood-color="#2a2522" result="c"/>
+    <feComposite in="c" in2="d" operator="in" result="o"/>
+    <feMerge result="m">
+      <feMergeNode in="o"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+    <feTurbulence type="fractalNoise" baseFrequency="0.05"
+      numOctaves="2" seed="5" result="n"/>
+    <feDisplacementMap in="m" in2="n" scale="1.2"
+      xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <style>
+    .t { font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+      fill: #2a2522; }
+    .p { font-family: 'Arial Black', Arial, sans-serif; fill: #2a2522; }
+    .h1 { font-size: 34px; font-weight: bold; }
+    .h2 { font-size: 19px; font-weight: bold; }
+    .h3 { font-size: 15px; font-weight: bold; }
+    .n { font-size: 14px; }
+    .s { font-size: 12.5px; fill: #4f483f; }
+    .fx { font-size: 22px; font-weight: bold; fill: #d8342c; }
+    .ln { stroke: #2a2522; stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .cell { fill: none; stroke: #cfc4ad; stroke-width: 1.5; }
+    .shadow { fill: #2a2522; opacity: 0.12; }
+    .skin { fill: var(--skin, #e2b08c); }
+    .shirt { fill: var(--shirt, #f2f2ee); }
+    .pants { fill: var(--pants, #2a3350); }
+    .shoe { fill: var(--shoe, #ececec); }
+    .glove { fill: var(--glove, #e2b08c); }
+    .strp { stroke: var(--stripe, none); stroke-width: 2.5; fill: none; }
+    .fold { stroke: #000; stroke-opacity: 0.18; stroke-width: 1.2;
+      fill: none; stroke-linecap: round; }
+    .hl { stroke: #fff; stroke-opacity: 0.5; stroke-width: 1.2; fill: none;
+      stroke-linecap: round; }
+    .lid { stroke: #2a2522; stroke-width: 1.3; fill: none;
+      stroke-linecap: round; }
+    .white { fill: #ffffff; }
+    .yellow { fill: #ffd23f; }
+    .gold { fill: #d9b44a; }
+  </style>
+  <!-- realistic human kit, 230 px = 1 m, origin = hip joint -->
+  <path id="thS" d="M -17 -6 C -21 25 -15 70 -11 99 L 12 99 C 16 72 24 30
+    19 -6 Z"/>
+  <path id="shS" d="M -10 -2 C -18 22 -15 62 -7 98 L 7 98 C 9 60 12 25 11 -2
+    Z"/>
+  <path id="ftS" d="M -9 -4 L 9 -4 C 13 5 28 7 38 10 C 45 12 46 18 42 19
+    L -13 19 C -15 12 -13 2 -9 -4 Z"/>
+  <path id="uaS" d="M -9 -6 C -12 22 -10 50 -7 72 L 7 72 C 10 50 12 22 9 -6
+    Z"/>
+  <path id="faS" d="M -7 -2 C -9 20 -6 44 -5 60 L 5 60 C 7 44 10 20 7 -2 Z"/>
+  <path id="hdS" d="M -6 -2 C -8 12 -7 26 -3 40 C 0 44 6 40 6 34 C 8 22 9 10
+    6 -2 Z M 4 6 C 12 10 14 20 10 26 C 6 22 4 14 4 6 Z"/>
+  <path id="fsS" d="M -7 -2 C -10 10 -9 24 -2 27 C 6 29 11 21 9 8 L 7 -2 Z"/>
+  <path id="toS" d="M -16 14 C -26 0 -27 -30 -22 -60 C -19 -84 -18 -104 -14
+    -118 C -10 -126 4 -128 10 -124 C 22 -114 26 -96 24 -76 C 22 -58 16 -44
+    16 -28 C 16 -8 14 8 8 16 C 0 20 -10 20 -16 14 Z"/>
+  <path id="nkS" d="M -8 -118 L -6 -146 L 8 -148 L 10 -118 Z"/>
+  <path id="hsS" d="M -19 -8 C -21 -28 -8 -34 4 -33 C 16 -32 22 -22 21 -8
+    L 25 2 C 25 5 23 6 21 7 L 22 10 C 22 14 20 16 18 17 C 16 21 12 24 6 24
+    C 0 24 -4 20 -7 15 C -13 11 -18 5 -19 -8 Z"/>
+  <path id="toF" d="M -38 10 C -40 -10 -32 -30 -31 -45 C -32 -70 -40 -95 -46
+    -110 C -44 -120 -30 -126 -12 -128 L 12 -128 C 30 -126 44 -120 46 -110
+    C 40 -95 32 -70 31 -45 C 32 -30 40 -10 38 10 C 20 18 -20 18 -38 10 Z"/>
+  <path id="nkF" d="M -8 -122 L -7 -150 L 7 -150 L 8 -122 Z"/>
+  <path id="thF" d="M -20 -4 C -22 30 -16 70 -12 99 L 12 99 C 15 70 19 30
+    18 -4 Z"/>
+  <path id="shF" d="M -11 -2 C -15 25 -12 62 -8 98 L 8 98 C 11 62 13 25
+    11 -2 Z"/>
+  <path id="ftF" d="M -11 -4 L 11 -4 C 14 6 16 14 15 19 L -15 19 C -16 12
+    -14 4 -11 -4 Z"/>
+  <path id="hfS" d="M -20 -6 C -22 -26 -14 -33 0 -33 C 14 -33 22 -26 20 -6
+    C 19 8 11 21 0 23 C -11 21 -19 8 -20 -6 Z"/>
+  <g id="TH"><use xlink:href="#thS" class="pants"/>
+    <use xlink:href="#thS" fill="url(#cyl)"/>
+    <path class="strp" d="M 2 -4 L 1 98"/>
+    <path class="fold" d="M -8 60 Q 0 64 10 58 M -6 90 Q 2 94 10 88"/></g>
+  <g id="SH"><use xlink:href="#shS" class="pants"/>
+    <use xlink:href="#shS" fill="url(#cyl)"/>
+    <path class="strp" d="M 1 -2 L 0 96"/>
+    <path class="fold" d="M -10 10 Q 0 6 10 12 M -6 80 Q 0 84 6 80"/></g>
+  <g id="FT"><use xlink:href="#ftS" class="shoe"/>
+    <use xlink:href="#ftS" fill="url(#vsh)"/>
+    <path d="M -13 15 L 44 15" stroke="#000" stroke-opacity="0.25"
+      stroke-width="2"/>
+    <path class="fold" d="M 8 2 L 16 8 M 4 4 L 12 10"/></g>
+  <g id="TF"><use xlink:href="#thF" class="pants"/>
+    <use xlink:href="#thF" fill="url(#cyl)"/>
+    <path class="strp" d="M -15 0 L -10 96"/>
+    <path class="fold" d="M -10 50 Q 0 54 10 48 M -8 92 Q 0 95 8 90"/></g>
+  <g id="SF"><use xlink:href="#shF" class="pants"/>
+    <use xlink:href="#shF" fill="url(#cyl)"/>
+    <path class="strp" d="M -11 0 L -8 96"/>
+    <path class="fold" d="M -8 8 Q 0 4 8 8 M -7 84 Q 0 88 7 84"/></g>
+  <g id="FF"><use xlink:href="#ftF" class="shoe"/>
+    <use xlink:href="#ftF" fill="url(#vsh)"/>
+    <path d="M -15 15 L 15 15" stroke="#000" stroke-opacity="0.25"
+      stroke-width="2"/></g>
+  <g id="HAND"><use xlink:href="#hdS" class="glove"/>
+    <use xlink:href="#hdS" fill="url(#cyl)"/>
+    <path class="fold" d="M -2 20 L -2 36 M 2 20 L 2 38"/></g>
+  <g id="FIST"><use xlink:href="#fsS" class="glove"/>
+    <use xlink:href="#fsS" fill="url(#cyl)"/>
+    <path class="fold" d="M -6 14 Q 0 16 8 12 M -5 20 Q 0 22 7 18"/></g>
+  <polygon id="star" class="yellow" points="0,-30 8,-10 30,-10 12,4
+    18,26 0,12 -18,26 -12,4 -30,-10 -8,-10"/>
+  <path id="glint" fill="#ffffff" d="M 0 -12 L 3 -3 L 12 0 L 3 3 L 0 12
+    L -3 3 L -12 0 L -3 -3 Z"/>
+  <g id="knife">
+    <rect x="-3.5" y="-4" width="7" height="26" rx="2" fill="#1d1d24"/>
+    <circle cx="0" cy="4" r="1.1" fill="#c0c4cc"/>
+    <circle cx="0" cy="14" r="1.1" fill="#c0c4cc"/>
+    <rect x="-4.5" y="-8" width="9" height="5" rx="1" fill="#8a8f99"/>
+    <path fill="#d3d8de" d="M -3 -8 L 3.5 -8 L 4 -96 C 4 -106 -1 -110 -4 -108
+      Z"/>
+    <path d="M 2.5 -12 L 3 -94" stroke="#ffffff" stroke-width="1.2"/>
+    <path d="M -1.5 -20 L -2 -100" stroke="#9aa2ac" stroke-width="0.8"/>
+  </g>
+  <pattern id="teln" width="20" height="14" patternUnits="userSpaceOnUse">
+    <rect width="20" height="6" fill="#24397a"/>
+  </pattern>
+  <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+    <circle cx="4" cy="4" r="2.6" fill="#ffffff"/>
+    <circle cx="12" cy="12" r="2.6" fill="#ffffff"/>
+  </pattern>
+  <pattern id="flow" width="24" height="24" patternUnits="userSpaceOnUse">
+    <circle cx="6" cy="6" r="3.5" fill="#e86a8a"/>
+    <circle cx="18" cy="18" r="3.5" fill="#ffd23f"/>
+    <circle cx="6" cy="6" r="1.2" fill="#ffffff"/>
+    <circle cx="18" cy="18" r="1.2" fill="#ffffff"/>
+  </pattern>
+  <pattern id="quilt" width="16" height="16" patternUnits="userSpaceOnUse">
+    <path d="M 0 0 L 16 16 M 16 0 L 0 16" stroke="#5a4a2e"
+      stroke-width="1.2"/>
+  </pattern>
+  <pattern id="leo" width="18" height="16" patternUnits="userSpaceOnUse">
+    <path d="M 3 4 C 5 1 9 2 8 5 C 7 8 3 7 3 4 Z M 12 11 C 14 8 18 9 17 12
+      C 16 15 12 14 12 11 Z" fill="#4a3220"/>
+  </pattern>
+  <pattern id="check" width="10" height="10" patternUnits="userSpaceOnUse">
+    <path d="M 0 5 L 10 5 M 5 0 L 5 10" stroke="#4a4d55" stroke-width="1.5"/>
+  </pattern>
+  <g id="gnome">
+    <rect x="-32" y="-18" width="64" height="18" fill="#6b4a2e"/>
+    <path fill="#3d7fc1" d="M -42 -15 C -46 -95 46 -95 42 -15 Z"/>
+    <path fill="#ffffff" d="M -30 -98 C -26 -40 26 -40 30 -98 Z"/>
+    <circle cy="-106" r="22" fill="#f2c9a0"/>
+    <circle cy="-100" r="8" fill="#e88a7a"/>
+    <path fill="#d8342c" d="M -36 -114 L 0 -200 L 36 -114 Z"/>
+  </g>
+  <g id="LEGSF">
+    <g transform="translate(-18 0)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="translate(18 0) scale(-1 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+  </g>
+  <path id="belF" d="M -40 12 C -46 -10 -44 -34 -40 -50 C -40 -74 -44 -96 -48
+    -110 C -46 -120 -30 -126 -12 -128 L 12 -128 C 30 -126 46 -120 48 -110
+    C 44 -96 40 -74 40 -50 C 44 -34 46 -10 40 12 C 20 22 -20 22 -40 12 Z"/>
+  <path id="toFw" d="M -34 10 C -38 -10 -30 -30 -27 -45 C -30 -62 -34 -78 -32
+    -92 C -36 -100 -40 -106 -40 -112 C -36 -120 -24 -124 -10 -126 L 10 -126
+    C 24 -124 36 -120 40 -112 C 40 -106 36 -100 32 -92 C 34 -78 30 -62 27 -45
+    C 30 -30 38 -10 34 10 C 18 18 -18 18 -34 10 Z"/>
+  <g id="SLV"><use xlink:href="#uaS" class="shirt"/>
+    <use xlink:href="#uaS" fill="url(#cyl)"/>
+    <path class="fold" d="M -8 30 Q 0 36 8 28 M -8 56 Q 0 62 8 54"/></g>
+  <g id="SLVF"><use xlink:href="#faS" class="shirt"/>
+    <use xlink:href="#faS" fill="url(#cyl)"/>
+    <path d="M -7 50 L 7 50 L 6 58 L -6 58 Z" fill="#000" opacity="0.18"/></g>
+  <g id="BARE"><use xlink:href="#faS" class="skin"/>
+    <use xlink:href="#faS" fill="url(#armhair)"/>
+    <use xlink:href="#faS" fill="url(#cyl)"/></g>
+  <g id="TELN"><use xlink:href="#uaS" fill="#f4f4f4"/>
+    <use xlink:href="#uaS" fill="url(#teln)"/>
+    <use xlink:href="#uaS" fill="url(#cyl)"/></g>
+  <g id="TELNF"><use xlink:href="#faS" fill="#f4f4f4"/>
+    <use xlink:href="#faS" fill="url(#teln)"/>
+    <use xlink:href="#faS" fill="url(#cyl)"/></g>
+
+  <!-- KOTLET -->
+  <g id="KT_TOF">
+    <use xlink:href="#belF" class="shirt"/>
+    <use xlink:href="#belF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path fill="#e8e4d8" d="M -12 -128 L 0 -106 L 12 -128 Z"/>
+    <path fill="#2f4a2a" d="M -3 -124 L 3 -124 L 5 -96 L 0 -90 L -5 -96 Z"/>
+    <path d="M -12 -128 L -4 -94 M 12 -128 L 4 -94" stroke="#3e5636"
+      stroke-width="2.5"/>
+    <path class="fold" d="M -8 -60 Q 0 -56 8 -60 M -10 -36 Q 0 -31 10 -36
+      M -36 -100 Q -28 -90 -26 -76 M 36 -100 Q 28 -90 26 -76"/>
+    <circle cx="0" cy="-78" r="2.8" class="gold"/>
+    <circle cx="0" cy="-56" r="2.8" class="gold"/>
+    <circle cx="0" cy="-32" r="2.8" class="gold"/>
+    <rect x="-36" y="-98" width="18" height="12" rx="1" fill="#4a5e40"/>
+    <rect x="18" y="-98" width="18" height="12" rx="1" fill="#4a5e40"/>
+    <path d="M 22 -112 L 32 -112 L 32 -104 L 27 -99 L 22 -104 Z" class="gold"/>
+    <rect x="-34" y="-108" width="14" height="5" class="white"/>
+    <rect x="-42" y="-16" width="84" height="9" fill="#3a2a1a"/>
+    <rect x="-6" y="-18" width="12" height="12" class="gold"/>
+    <path fill="#3e5636" d="M -48 -112 L -28 -118 L -28 -110 L -46 -104 Z
+      M 48 -112 L 28 -118 L 28 -110 L 46 -104 Z"/>
+    <path d="M -40 -112 L -40 -107 M -36 -113 L -36 -108 M 40 -112 L 40 -107
+      M 36 -113 L 36 -108" stroke="#d9b44a" stroke-width="1.5"/>
+  </g>
+  <g id="KT_HF">
+    <ellipse cx="-22" cy="1" rx="4.5" ry="7.5" class="skin"/>
+    <ellipse cx="22" cy="1" rx="4.5" ry="7.5" class="skin"/>
+    <path class="skin" d="M -22 -6 C -24 -26 -15 -33 0 -33 C 15 -33 24 -26 22 -6
+      C 23 12 15 25 0 27 C -15 25 -23 12 -22 -6 Z"/>
+    <path fill="url(#hsh)" d="M -22 -6 C -24 -26 -15 -33 0 -33 C 15 -33 24 -26
+      22 -6 C 23 12 15 25 0 27 C -15 25 -23 12 -22 -6 Z"/>
+    <path fill="#6b4a2e" d="M -22 -6 L -21 -16 L -18 -12 L -19 -4 Z M 22 -6
+      L 21 -16 L 18 -12 L 19 -4 Z"/>
+    <ellipse cx="-12" cy="8" rx="6" ry="4" fill="#e8887a" opacity="0.45"/>
+    <ellipse cx="12" cy="8" rx="6" ry="4" fill="#e8887a" opacity="0.45"/>
+    <path fill="#6b4a2e" d="M -15 -7 L -4 -6.5 L -4 -5 L -15 -5 Z M 15 -7 L 4 -6.5
+      L 4 -5 L 15 -5 Z"/>
+    <path class="white" d="M -14 -1 C -11 -2.8 -6 -2.8 -4 -1 C -6 0.5 -11 0.5
+      -14 -1 Z M 14 -1 C 11 -2.8 6 -2.8 4 -1 C 6 0.5 11 0.5 14 -1 Z"/>
+    <circle cx="-9" cy="-0.5" r="1.6" fill="#4a3220"/>
+    <circle cx="9" cy="-0.5" r="1.6" fill="#4a3220"/>
+    <path class="skin" d="M -14.5 -1 C -11 -3.6 -6 -3.6 -3.5 -1 L -3.5 -0.5
+      L -14.5 -0.5 Z M 14.5 -1 C 11 -3.6 6 -3.6 3.5 -1 L 3.5 -0.5 L 14.5 -0.5
+      Z"/>
+    <path class="lid" d="M -14.5 -0.5 L -3.5 -0.5 M 14.5 -0.5 L 3.5 -0.5"/>
+    <path class="fold" d="M 1 -3 C 3 2 5 7 4 9 M -5 10 Q -2 12 0 11 Q 2 12 5 10
+      M -10 23 Q 0 29 10 23"/>
+    <ellipse cx="0" cy="7" rx="4.5" ry="4" fill="#e09a80" opacity="0.6"/>
+    <path fill="#6b4a2e" d="M -9 12.5 C -5 11 -1 12 0 12.5 C 1 12 5 11 9 12.5
+      C 7 15 3 14.5 0 14.5 C -3 14.5 -7 15 -9 12.5 Z"/>
+    <path d="M -5 17.5 Q 0 19.5 5 17.5" stroke="#7a3a30" stroke-width="1.4"
+      fill="none"/>
+    <circle cx="6" cy="20" r="0.9" fill="#c99a5c"/>
+    <circle cx="-4" cy="21" r="0.9" fill="#c99a5c"/>
+    <path fill="#5a7350" d="M -25 -20 C -30 -44 30 -44 25 -20 Z"/>
+    <path fill="url(#vsh)" d="M -25 -20 C -30 -44 30 -44 25 -20 Z"/>
+    <rect x="-25" y="-24" width="50" height="6" fill="#2f4a2a"/>
+    <path d="M -22 -25 L 22 -25" stroke="#d9b44a" stroke-width="1.2"/>
+    <path fill="#1d1d24" d="M -21 -18 C -10 -12 10 -12 21 -18 C 10 -20 -10 -20
+      -21 -18 Z"/>
+    <circle cx="0" cy="-32" r="4.5" class="gold"/>
+  </g>
+
+  <!-- KOLYA -->
+  <g id="KY_TOF">
+    <use xlink:href="#belF" fill="#f4f4f4"/>
+    <use xlink:href="#belF" fill="url(#teln)"/>
+    <use xlink:href="#belF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path fill="#7a6440" d="M -48 -110 C -46 -120 -30 -126 -16 -127 L -18 -60
+      L -14 6 L -40 12 C -46 -10 -44 -34 -40 -50 C -40 -74 -44 -96 -48 -110 Z
+      M 48 -110 C 46 -120 30 -126 16 -127 L 18 -60 L 14 6 L 40 12 C 46 -10 44
+      -34 40 -50 C 40 -74 44 -96 48 -110 Z"/>
+    <path fill="url(#quilt)" d="M -48 -110 C -46 -120 -30 -126 -16 -127 L -18
+      -60 L -14 6 L -40 12 C -46 -10 -44 -34 -40 -50 C -40 -74 -44 -96 -48 -110
+      Z M 48 -110 C 46 -120 30 -126 16 -127 L 18 -60 L 14 6 L 40 12 C 46 -10 44
+      -34 40 -50 C 40 -74 44 -96 48 -110 Z"/>
+    <path fill="url(#cyl)" d="M -48 -110 C -46 -120 -30 -126 -16 -127 L -18 -60
+      L -14 6 L -40 12 C -46 -10 -44 -34 -40 -50 C -40 -74 -44 -96 -48 -110 Z
+      M 48 -110 C 46 -120 30 -126 16 -127 L 18 -60 L 14 6 L 40 12 C 46 -10 44
+      -34 40 -50 C 40 -74 44 -96 48 -110 Z"/>
+    <rect x="-44" y="-6" width="88" height="9" fill="#3a2a1a"/>
+    <rect x="-6" y="-8" width="12" height="12" fill="#8a8f99"/>
+    <circle cx="30" cy="10" r="5" fill="none" stroke="#c0c4cc"
+      stroke-width="2"/>
+    <path d="M 28 14 L 26 24 M 32 14 L 34 22" stroke="#c0c4cc"
+      stroke-width="2"/>
+  </g>
+  <g id="KY_HF">
+    <ellipse cx="-23" cy="1" rx="5" ry="8" class="skin"/>
+    <ellipse cx="23" cy="1" rx="5" ry="8" class="skin"/>
+    <path class="skin" d="M -23 -6 C -25 -26 -15 -34 0 -34 C 15 -34 25 -26 23 -6
+      C 23 12 15 25 0 27 C -15 25 -23 12 -23 -6 Z"/>
+    <path fill="url(#hsh)" d="M -23 -6 C -25 -26 -15 -34 0 -34 C 15 -34 25 -26 23
+      -6 C 23 12 15 25 0 27 C -15 25 -23 12 -23 -6 Z"/>
+    <path fill="#5a3e2a" d="M -23 -2 C -27 22 -16 44 0 50 C 16 44 27 22 23 -2
+      C 18 8 10 12 0 12 C -10 12 -18 8 -23 -2 Z"/>
+    <path d="M -14 16 Q -14 30 -8 40 M 0 18 L 0 46 M 14 16 Q 14 30 8 40
+      M -7 20 L -4 42 M 7 20 L 4 42" stroke="#8a7a6a" stroke-width="1.2"
+      fill="none"/>
+    <path fill="#4a3220" d="M -13 11 C -6 8 -2 9 0 10 C 2 9 6 8 13 11 C 9 15 4 14
+      0 14 C -4 14 -9 15 -13 11 Z"/>
+    <path d="M -5 18 Q 0 20 5 18" stroke="#7a3a30" stroke-width="1.6"
+      fill="none"/>
+    <ellipse cx="0" cy="5" rx="5" ry="5" fill="#d9786a"/>
+    <ellipse cx="-12" cy="5" rx="5" ry="3" fill="#e8887a" opacity="0.4"/>
+    <ellipse cx="12" cy="5" rx="5" ry="3" fill="#e8887a" opacity="0.4"/>
+    <path d="M -14 -1 Q -9 -4 -4 -1 M 14 -1 Q 9 -4 4 -1" stroke="#2a2522"
+      stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path class="fold" d="M -16 -1 L -18 1 M -16 -3 L -19 -3 M 16 -1 L 18 1
+      M 16 -3 L 19 -3"/>
+    <path fill="#5a3e2a" d="M -16 -9 L -4 -8 L -4 -6 L -16 -6.5 Z M 16 -9 L 4 -8
+      L 4 -6 L 16 -6.5 Z"/>
+    <path fill="#6b4c30" d="M -26 -20 C -30 -48 30 -48 26 -20 Z"/>
+    <path fill="url(#vsh)" d="M -26 -20 C -30 -48 30 -48 26 -20 Z"/>
+    <path d="M -10 -42 L -9 -24 M 10 -42 L 9 -24 M 0 -44 L 0 -24"
+      stroke="#4e3620" stroke-width="1"/>
+    <path fill="#a8845a" d="M -29 -24 C -14 -30 14 -30 29 -24 L 29 -13 C 14 -19
+      -14 -19 -29 -13 Z"/>
+    <path fill="#a8845a" d="M -29 -22 L -36 -34 L -28 -42 L -22 -30 Z M 29 -22
+      L 36 -34 L 28 -42 L 22 -30 Z"/>
+    <path d="M -24 -22 L -22 -16 M -14 -24 L -12 -18 M -4 -25 L -2 -19
+      M 6 -25 L 8 -19 M 16 -24 L 18 -18" stroke="#7a5a3a" stroke-width="1.2"/>
+  </g>
+
+  <!-- HALINA -->
+  <g id="HL_TOF">
+    <use xlink:href="#toFw" class="shirt"/>
+    <use xlink:href="#toFw" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path fill="#f4f1ea" d="M -12 -126 L 12 -126 L 8 -20 L -8 -20 Z"/>
+    <path d="M -10 -120 Q -5 -114 0 -120 Q 5 -114 10 -120" stroke="#d6cfc0"
+      stroke-width="1.5" fill="none"/>
+    <path class="fold" d="M -26 -80 Q -16 -70 -6 -78 M 26 -80 Q 16 -70 6 -78
+      M -30 -100 Q -26 -90 -24 -82 M 30 -100 Q 26 -90 24 -82"/>
+    <circle cx="-14" cy="-60" r="2.2" fill="#8a6d1e"/>
+    <circle cx="-14" cy="-40" r="2.2" fill="#8a6d1e"/>
+    <path d="M -8 -124 L 0 -70 L 8 -124" stroke="#c8342b" stroke-width="2"
+      fill="none"/>
+    <rect x="-8" y="-70" width="16" height="20" rx="1.5" class="white"/>
+    <rect x="-8" y="-70" width="16" height="5" fill="#c8342b"/>
+    <rect x="-5" y="-62" width="7" height="8" fill="#c0c4cc"/>
+    <path fill="#6b4a3a" d="M -36 -12 L 36 -12 L 46 112 L -46 112 Z"/>
+    <path fill="url(#cyl)" d="M -36 -12 L 36 -12 L 46 112 L -46 112 Z"/>
+    <path class="fold" d="M -20 -6 L -26 110 M 0 -6 L 0 112 M 20 -6 L 26 110"/>
+  </g>
+  <g id="HL_HF">
+    <path fill="#8a2f5a" d="M -30 6 C -42 0 -40 -26 -30 -32 C -30 -46 -12 -52 -2
+      -46 C 8 -54 28 -50 30 -38 C 42 -34 42 -12 32 -2 C 36 10 26 16 20 12 L -20
+      12 C -26 16 -36 12 -30 6 Z"/>
+    <circle cx="-30" cy="-26" r="6" fill="#a03a6a"/>
+    <circle cx="28" cy="-32" r="6" fill="#a03a6a"/>
+    <circle cx="-10" cy="-44" r="6" fill="#a03a6a"/>
+    <circle cx="12" cy="-45" r="6" fill="#a03a6a"/>
+    <circle cx="34" cy="-12" r="5" fill="#a03a6a"/>
+    <circle cx="-34" cy="-8" r="5" fill="#a03a6a"/>
+    <ellipse cx="-19" cy="1" rx="3.5" ry="6" class="skin"/>
+    <ellipse cx="19" cy="1" rx="3.5" ry="6" class="skin"/>
+    <circle cx="-19" cy="8" r="2" class="gold"/>
+    <circle cx="19" cy="8" r="2" class="gold"/>
+    <path class="skin" d="M -19 -6 C -21 -26 -13 -32 0 -32 C 13 -32 21 -26 19 -6
+      C 18 8 10 21 0 23 C -10 21 -18 8 -19 -6 Z"/>
+    <path fill="url(#hsh)" d="M -19 -6 C -21 -26 -13 -32 0 -32 C 13 -32 21 -26
+      19 -6 C 18 8 10 21 0 23 C -10 21 -18 8 -19 -6 Z"/>
+    <path fill="#8a2f5a" d="M -19 -8 C -18 -24 -8 -30 0 -30 C 10 -30 18 -24 19 -8
+      C 14 -18 8 -22 0 -20 C -8 -22 -14 -18 -19 -8 Z"/>
+    <path fill="#8ab0d8" opacity="0.6" d="M -14 -3 C -11 -6 -6 -6 -4 -3 Z M 14 -3
+      C 11 -6 6 -6 4 -3 Z"/>
+    <path class="white" d="M -13 -1 C -11 -2.5 -6 -2.5 -4 -1 C -6 0.4 -11 0.4
+      -13 -1 Z M 13 -1 C 11 -2.5 6 -2.5 4 -1 C 6 0.4 11 0.4 13 -1 Z"/>
+    <circle cx="-8.5" cy="-0.5" r="1.5" fill="#3a5a3a"/>
+    <circle cx="8.5" cy="-0.5" r="1.5" fill="#3a5a3a"/>
+    <path class="skin" d="M -13.5 -1 C -11 -3 -6 -3 -3.5 -1 L -3.5 -0.6 L -13.5
+      -0.6 Z M 13.5 -1 C 11 -3 6 -3 3.5 -1 L 3.5 -0.6 L 13.5 -0.6 Z"/>
+    <path class="lid" d="M -13.5 -0.6 L -3.5 -0.6 M 13.5 -0.6 L 3.5 -0.6"/>
+    <path d="M -16 -1 C -16 -7 -5 -7 -2 -1 C -4 4 -14 4 -16 -1 Z M 16 -1 C 16 -7
+      5 -7 2 -1 C 4 4 14 4 16 -1 Z M -2 -1 L 2 -1 M -16 -2 L -20 -6 M 16 -2
+      L 20 -6" stroke="#8a2f2f" stroke-width="1.6" fill="none"/>
+    <path d="M -18 0 Q -22 12 -16 24 M 18 0 Q 22 12 16 24" stroke="#d9b44a"
+      stroke-width="0.9" fill="none" stroke-dasharray="2 2"/>
+    <path class="fold" d="M 1 -2 C 2 3 3 6 2 8 M -3 9 Q 0 10 3 9 M -11 -9
+      Q -8 -11 -4 -9 M 11 -9 Q 8 -11 4 -9"/>
+    <path fill="#c8342b" d="M -5 14 Q 0 12.5 5 14 Q 0 17 -5 14 Z"/>
+    <circle cx="9" cy="10" r="1" fill="#6b4a2e"/>
+  </g>
+
+  <!-- ZBYSZEK -->
+  <g id="ZB_TOF">
+    <use xlink:href="#toF" fill="#c99a3a"/>
+    <use xlink:href="#toF" fill="url(#leo)"/>
+    <use xlink:href="#toF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path d="M -10 -124 Q 0 -96 10 -124" stroke="#d9b44a" stroke-width="2.5"
+      fill="none"/>
+    <circle cx="0" cy="-106" r="3" class="gold"/>
+    <path fill="#1f1f24" d="M -46 -110 C -44 -120 -30 -126 -14 -127 L -12 -60
+      L -10 12 L -38 10 C -40 -10 -32 -30 -31 -45 C -32 -70 -40 -95 -46 -110 Z"/>
+    <path fill="#5a1520" d="M 14 -127 L 12 -60 L 12 12 L 54 0 C 62 -30 62 -80
+      48 -118 Z"/>
+    <g fill="#9a6a3a">
+      <rect x="20" y="-104" width="8" height="12" rx="1.5"/>
+      <rect x="33" y="-104" width="8" height="12" rx="1.5"/>
+      <rect x="20" y="-82" width="8" height="12" rx="1.5"/>
+      <rect x="33" y="-82" width="8" height="12" rx="1.5"/>
+      <rect x="46" y="-88" width="8" height="12" rx="1.5"/>
+      <rect x="20" y="-60" width="8" height="12" rx="1.5"/>
+      <rect x="33" y="-60" width="8" height="12" rx="1.5"/>
+      <rect x="46" y="-64" width="8" height="12" rx="1.5"/>
+      <rect x="20" y="-38" width="8" height="12" rx="1.5"/>
+      <rect x="33" y="-38" width="8" height="12" rx="1.5"/>
+    </g>
+    <path d="M 18 -92 L 58 -92 M 18 -70 L 58 -70 M 18 -48 L 58 -48 M 18 -26
+      L 44 -26" stroke="#d8342c" stroke-width="2.5"/>
+    <path fill="#1f1f24" d="M 48 -118 L 54 0 L 64 -2 C 72 -40 70 -90 58 -120 Z"/>
+    <path fill="url(#cyl)" d="M -46 -110 C -44 -120 -30 -126 -14 -127 L -12 -60
+      L -10 12 L -38 10 C -40 -10 -32 -30 -31 -45 C -32 -70 -40 -95 -46 -110 Z"/>
+    <path d="M -36 -96 L -28 -30 M -24 -110 L -20 -80" stroke="#55585f"
+      stroke-width="1.5"/>
+    <path d="M -14 -127 L -12 12" stroke="#8a8f99" stroke-width="1.5"
+      stroke-dasharray="2 2"/>
+  </g>
+  <g id="LEATH"><use xlink:href="#uaS" fill="#1f1f24"/>
+    <use xlink:href="#uaS" fill="url(#cyl)"/>
+    <path d="M -4 6 L -2 60" stroke="#55585f" stroke-width="1.5"/></g>
+  <g id="LEATHF"><use xlink:href="#faS" fill="#1f1f24"/>
+    <use xlink:href="#faS" fill="url(#cyl)"/>
+    <path d="M -3 4 L -2 50" stroke="#55585f" stroke-width="1.2"/></g>
+  <g id="ZB_HF">
+    <ellipse cx="-18" cy="1" rx="4" ry="7" class="skin"/>
+    <ellipse cx="18" cy="1" rx="4" ry="7" class="skin"/>
+    <path d="M 18 -12 L 22 6" stroke="#ffd23f" stroke-width="2.5"
+      stroke-linecap="round"/>
+    <path class="skin" d="M -18 -6 C -20 -26 -12 -33 0 -33 C 12 -33 20 -26 18 -6
+      C 17 10 10 25 0 27 C -10 25 -17 10 -18 -6 Z"/>
+    <path fill="url(#hsh)" d="M -18 -6 C -20 -26 -12 -33 0 -33 C 12 -33 20 -26
+      18 -6 C 17 10 10 25 0 27 C -10 25 -17 10 -18 -6 Z"/>
+    <path fill="url(#stub)" d="M -17 2 C -15 12 -9 24 0 27 C 9 24 15 12 17 2
+      C 12 8 6 10 0 10 C -6 10 -12 8 -17 2 Z"/>
+    <path fill="#2a1f18" d="M -18 -6 L -17 -18 L -15 -14 L -16 2 Z M 18 -6
+      L 17 -18 L 15 -14 L 16 2 Z"/>
+    <path fill="#2a1f18" d="M -14 -8 L -4 -5 L -4 -3.5 L -14 -6 Z M 14 -10 L 4 -6
+      L 4 -4.5 L 14 -8 Z"/>
+    <path d="M -13 -1 Q -8.5 1 -4 -1" stroke="#2a2522" stroke-width="1.4"
+      fill="none" stroke-linecap="round"/>
+    <path class="white" d="M 13 -1.5 C 11 -3 6 -3 4 -1.5 C 6 0 11 0 13 -1.5 Z"/>
+    <circle cx="8.5" cy="-1.3" r="1.5" fill="#3a2416"/>
+    <path class="lid" d="M 13.5 -2 C 11 -4 6 -4 3.5 -2"/>
+    <path class="fold" d="M 1 -3 C 2 3 3 7 2 9 M -3 10 Q 0 11 3 10"/>
+    <path fill="#2a1f18" d="M -7 13 C -3 12 3 12 7 13 C 4 14 -4 14 -7 13 Z"/>
+    <path d="M -6 17 Q 1 21 8 16" stroke="#7a3a30" stroke-width="1.4"
+      fill="none"/>
+    <rect x="2" y="17" width="2.5" height="2.5" class="gold"/>
+    <path fill="#6b6f77" d="M -21 -18 C -22 -34 18 -38 24 -24 L 30 -20 C 20 -14
+      -10 -14 -21 -18 Z"/>
+    <path fill="url(#check)" d="M -21 -18 C -22 -34 18 -38 24 -24 L 30 -20
+      C 20 -14 -10 -14 -21 -18 Z"/>
+    <path fill="url(#vsh)" d="M -21 -18 C -22 -34 18 -38 24 -24 L 30 -20 C 20 -14
+      -10 -14 -21 -18 Z"/>
+  </g>
+
+  <!-- KRASNAL -->
+  <g id="KR_TOF">
+    <use xlink:href="#belF" class="shirt"/>
+    <use xlink:href="#belF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <path fill="#3d7fc1" d="M -28 -84 L 28 -84 L 34 -6 L -34 -6 Z"/>
+    <path fill="#3d7fc1" d="M -40 -6 L 40 -6 L 42 14 L -42 14 Z"/>
+    <path fill="url(#cyl)" d="M -40 -84 L 40 -84 L 42 14 L -42 14 Z"/>
+    <path d="M -24 -84 L -38 -116 M 24 -84 L 38 -116" stroke="#3d7fc1"
+      stroke-width="7"/>
+    <circle cx="-24" cy="-80" r="3" class="gold"/>
+    <circle cx="24" cy="-80" r="3" class="gold"/>
+    <rect x="-12" y="-66" width="24" height="18" rx="2" fill="#336ca6"/>
+    <path d="M -10 -62 L 10 -62" stroke="#2c5f93" stroke-width="1.2"/>
+    <rect x="-44" y="-10" width="88" height="7" fill="#4a3220"/>
+  </g>
+  <g id="KR_HF">
+    <ellipse cx="-22" cy="2" rx="4.5" ry="7.5" class="skin"/>
+    <ellipse cx="22" cy="2" rx="4.5" ry="7.5" class="skin"/>
+    <path class="skin" d="M -22 -6 C -24 -26 -15 -33 0 -33 C 15 -33 24 -26 22 -6
+      C 22 12 15 24 0 26 C -15 24 -22 12 -22 -6 Z"/>
+    <path fill="url(#hsh)" d="M -22 -6 C -24 -26 -15 -33 0 -33 C 15 -33 24 -26
+      22 -6 C 22 12 15 24 0 26 C -15 24 -22 12 -22 -6 Z"/>
+    <path fill="#f2f2f2" d="M -22 0 C -28 40 -20 80 0 100 C 20 80 28 40 22 0
+      C 16 12 8 14 0 14 C -8 14 -16 12 -22 0 Z"/>
+    <path fill="url(#vsh)" d="M -22 0 C -28 40 -20 80 0 100 C 20 80 28 40 22 0
+      C 16 12 8 14 0 14 C -8 14 -16 12 -22 0 Z"/>
+    <path d="M -14 20 Q -16 50 -8 80 M 0 20 Q 2 60 0 94 M 14 20 Q 16 50 8 80
+      M -7 22 Q -8 50 -4 76 M 7 22 Q 8 50 4 76" stroke="#d2d2d2"
+      stroke-width="1.2" fill="none"/>
+    <path fill="#f2f2f2" d="M -15 11 C -6 7 -2 8 0 10 C 2 8 6 7 15 11 C 10 16 4 14
+      0 15 C -4 14 -10 16 -15 11 Z"/>
+    <circle cx="0" cy="5" r="6" fill="#e07a6a"/>
+    <circle cx="-2" cy="3" r="2" fill="#f0a090"/>
+    <ellipse cx="-12" cy="5" rx="5" ry="3" fill="#e8887a" opacity="0.45"/>
+    <ellipse cx="12" cy="5" rx="5" ry="3" fill="#e8887a" opacity="0.45"/>
+    <path d="M -13 -2 Q -9 -5 -5 -2 M 13 -2 Q 9 -5 5 -2" stroke="#2a2522"
+      stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path fill="#f2f2f2" d="M -17 -9 L -4 -9 L -6 -5 L -16 -6 Z M 17 -9 L 4 -9
+      L 6 -5 L 16 -6 Z"/>
+    <path fill="#c8342b" d="M -24 -16 C -18 -50 -2 -78 20 -90 C 18 -76 22 -64 30
+      -56 C 28 -40 27 -28 24 -16 Z"/>
+    <path fill="url(#cyl)" d="M -24 -16 C -18 -50 -2 -78 20 -90 C 18 -76 22 -64
+      30 -56 C 28 -40 27 -28 24 -16 Z"/>
+    <path d="M -14 -32 L 12 -32 M -6 -50 L 16 -50 M 6 -70 L 20 -70"
+      stroke="#a8231d" stroke-width="1.2"/>
+    <rect x="-26" y="-22" width="52" height="9" rx="4" fill="#e04a3e"/>
+    <circle cx="21" cy="-90" r="5" class="white"/>
+  </g>
+
+  <!-- CORN LADY -->
+  <g id="CL_TOF">
+    <use xlink:href="#toFw" class="shirt"/>
+    <use xlink:href="#toFw" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <path fill="#3a4a7a" d="M -38 -12 L 38 -12 L 52 196 L -52 196 Z"/>
+    <path fill="url(#flow)" opacity="0.7" d="M -38 -12 L 38 -12 L 52 196
+      L -52 196 Z"/>
+    <path fill="url(#cyl)" d="M -38 -12 L 38 -12 L 52 196 L -52 196 Z"/>
+    <path fill="#f2b8c6" d="M -24 -80 L 24 -80 L 26 -16 L 40 -12 L 46 120
+      C 20 126 -20 126 -46 120 L -40 -12 L -26 -16 Z"/>
+    <path fill="url(#cyl)" d="M -24 -80 L 24 -80 L 26 -16 L 40 -12 L 46 120
+      C 20 126 -20 126 -46 120 L -40 -12 L -26 -16 Z"/>
+    <path d="M -24 -80 L -12 -124 M 24 -80 L 12 -124" stroke="#f2b8c6"
+      stroke-width="4"/>
+    <path d="M -40 100 Q -30 108 -20 100 Q -10 108 0 100 Q 10 108 20 100
+      Q 30 108 40 100" stroke="#e07a96" stroke-width="1.6" fill="none"/>
+    <rect x="-16" y="10" width="32" height="22" rx="3" fill="#e89ab0"/>
+    <path class="fold" d="M -20 40 L -26 118 M 20 40 L 26 118 M 0 40 L 0 120"/>
+  </g>
+  <g id="CL_HF">
+    <ellipse cx="-20" cy="2" rx="4" ry="7" class="skin"/>
+    <ellipse cx="20" cy="2" rx="4" ry="7" class="skin"/>
+    <path class="skin" d="M -20 -6 C -22 -26 -13 -32 0 -32 C 13 -32 22 -26 20 -6
+      C 20 10 12 23 0 25 C -12 23 -20 10 -20 -6 Z"/>
+    <path fill="url(#hsh)" d="M -20 -6 C -22 -26 -13 -32 0 -32 C 13 -32 22 -26
+      20 -6 C 20 10 12 23 0 25 C -12 23 -20 10 -20 -6 Z"/>
+    <path fill="#c8342b" d="M -26 4 C -30 -30 -14 -42 0 -42 C 14 -42 30 -30 26 4
+      C 28 18 22 30 14 30 C 20 16 20 -8 16 -16 C 8 -24 -8 -24 -16 -16 C -20 -8
+      -20 16 -14 30 C -22 30 -28 18 -26 4 Z"/>
+    <path fill="url(#dots)" d="M -26 4 C -30 -30 -14 -42 0 -42 C 14 -42 30 -30
+      26 4 C 28 18 22 30 14 30 C 20 16 20 -8 16 -16 C 8 -24 -8 -24 -16 -16
+      C -20 -8 -20 16 -14 30 C -22 30 -28 18 -26 4 Z"/>
+    <path fill="url(#vsh)" d="M -26 4 C -30 -30 -14 -42 0 -42 C 14 -42 30 -30 26
+      4 C 28 18 22 30 14 30 C 20 16 20 -8 16 -16 C 8 -24 -8 -24 -16 -16 C -20
+      -8 -20 16 -14 30 C -22 30 -28 18 -26 4 Z"/>
+    <path fill="#c8342b" d="M -8 28 L 0 34 L 8 28 L 14 40 L 4 36 L 0 44 L -4 36
+      L -14 40 Z"/>
+    <path fill="#8a8a86" d="M -16 -16 C -8 -22 8 -22 16 -16 C 10 -18 -10 -18 -16
+      -16 Z"/>
+    <path d="M -13 -1 Q -8.5 -4.5 -4 -1 M 13 -1 Q 8.5 -4.5 4 -1" stroke="#2a2522"
+      stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path class="fold" d="M -15 -1 L -18 2 M -15 -3 L -18 -4 M 15 -1 L 18 2
+      M 15 -3 L 18 -4 M -8 -10 Q 0 -12 8 -10 M -10 8 Q -12 14 -10 18 M 10 8
+      Q 12 14 10 18 M 1 -2 C 2 3 3 6 2 8"/>
+    <ellipse cx="0" cy="6" rx="4" ry="3.5" fill="#d9907a" opacity="0.7"/>
+    <ellipse cx="-11" cy="7" rx="5" ry="3.5" fill="#e8887a" opacity="0.5"/>
+    <ellipse cx="11" cy="7" rx="5" ry="3.5" fill="#e8887a" opacity="0.5"/>
+    <path fill="#5a1e14" d="M -9 13 Q 0 21 9 13 Q 0 16 -9 13 Z"/>
+    <rect x="1" y="13.5" width="3" height="2.5" class="gold"/>
+    <circle cx="-9" cy="2" r="1" fill="#6b4a2e"/>
+  </g>
+</defs>
+
+<rect width="1600" height="1000" fill="#f7f3e8"/>
+<rect width="1600" height="1000" fill="url(#grid)"/>
+<text x="40" y="58" class="t h1">STOP 0 NPCs - Kurnikowo border bazaar</text>
+<text x="40" y="86" class="t n">npcs-stop0. Realistic proportions, front
+  views on one ground line (196 px = 1 m at 1.80 m). Same human rig as the
+  cooks. Every one of them deals in food.</text>
+<line x1="20" y1="560" x2="1580" y2="560" stroke="#b9ad94"
+  stroke-width="1.5" stroke-dasharray="6 6"/>
+
+<!-- 1 KOTLET 1.80 m, s 0.85 -->
+<ellipse cx="140" cy="560" rx="55" ry="8" class="shadow"/>
+<g filter="url(#ink)" style="--skin:#ecbc9a;--shirt:#5a7350;--pants:#4a5e40;
+  --stripe:#2f4a2a;--shoe:#1d1d24;--glove:#ecbc9a">
+  <g transform="translate(140 376) scale(0.85)">
+    <g transform="scale(1.1 1)"><use xlink:href="#LEGSF"/></g>
+    <use xlink:href="#KT_TOF"/>
+    <g transform="translate(-46 -108) rotate(10)"><use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(-30)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+    <g transform="rotate(-6 -58 -10)">
+      <rect x="-82" y="-40" width="34" height="46" rx="2" fill="#9a6a3a"/>
+      <rect x="-79" y="-34" width="28" height="37" class="white"/>
+      <rect x="-70" y="-44" width="10" height="6" rx="1" fill="#8a8f99"/>
+      <path d="M -76 -28 L -56 -28 M -76 -22 L -62 -22 M -76 -12 L -71 -12
+        M -76 -5 L -71 -5" stroke="#8a8f99" stroke-width="1.5"/>
+      <path d="M -77 -7 L -71 -3 M -71 -7 L -77 -3" stroke="#d8342c"
+        stroke-width="1.8"/>
+    </g>
+    <use xlink:href="#KT_HF" transform="translate(0 -170)"/>
+    <g transform="translate(46 -108) rotate(-14)"><use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(150)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <g transform="translate(16 -106)">
+      <path fill="#e6b66e" d="M -14 -6 C -12 -16 16 -16 18 -6 Z"/>
+      <rect x="-16" y="-7" width="36" height="6" rx="2" fill="#b8742e"/>
+      <path fill="#7fb24a" d="M -16 -1 L 20 -1 L 17 3 L 12 0 L 7 3 L 2 0 L -3 3
+        L -8 0 L -13 3 Z"/>
+      <path fill="#e6b66e" d="M -14 2 L 18 2 C 16 9 -12 9 -14 2 Z"/>
+      <circle cx="18" cy="-10" r="5" fill="#f7f3e8"/>
+    </g>
+  </g>
+</g>
+
+<!-- 2 KOLYA 1.95 m, s 0.92 -->
+<ellipse cx="400" cy="560" rx="70" ry="9" class="shadow"/>
+<g filter="url(#ink)" style="--skin:#e8b490;--shirt:#f4f4f4;--pants:#4a4d55;
+  --stripe:none;--shoe:#4a3220;--glove:#e8b490">
+  <g transform="translate(400 361) scale(0.92)">
+    <g transform="scale(1.25 1)"><use xlink:href="#LEGSF"/></g>
+    <g transform="scale(1.2 1)"><use xlink:href="#KY_TOF"/></g>
+    <g transform="translate(-56 -106) rotate(10) scale(1.2 1)">
+      <use xlink:href="#TELN"/>
+      <g transform="translate(0 72) rotate(-50)"><use xlink:href="#TELNF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <rect x="-12" y="-6" width="20" height="54" rx="5" fill="#3e6b4a"/>
+          <rect x="-14" y="-16" width="24" height="12" rx="3" fill="#8a8f99"/>
+          <path d="M -12 12 L 8 12 M -12 36 L 8 36" stroke="#2c4f36"
+            stroke-width="1.5"/>
+        </g></g></g>
+    <g transform="translate(56 -106) rotate(-10) scale(1.2 1)">
+      <use xlink:href="#TELN"/>
+      <g transform="translate(0 72) rotate(4)"><use xlink:href="#TELNF"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/>
+          <path d="M -4 6 L -4 9 M 0 7 L 0 10 M 4 6 L 4 9" stroke="#3d5a8a"
+            stroke-width="1.2"/>
+        </g></g></g>
+    <use xlink:href="#KY_HF" transform="translate(0 -172) scale(1.08)"/>
+  </g>
+</g>
+<path d="M 318 330 C 313 320 323 312 318 302 M 330 328 C 325 318 335 310
+  330 300" stroke="#b9ad94" stroke-width="2.5" fill="none"/>
+
+<!-- 3 HALINA 1.65 m, s 0.78 -->
+<ellipse cx="660" cy="560" rx="50" ry="7" class="shadow"/>
+<g filter="url(#ink)" style="--skin:#f0c4a6;--shirt:#c9a23a;--pants:#d9b393;
+  --stripe:none;--shoe:#e89ab0;--glove:#f0c4a6">
+  <g transform="translate(660 392) scale(0.78)">
+    <g transform="scale(0.95 1)"><use xlink:href="#LEGSF"/></g>
+    <use xlink:href="#HL_TOF"/>
+    <g transform="translate(-38 -106) rotate(8)"><use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(-24)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <rect x="-8" y="10" width="16" height="16" rx="2" fill="#9a6a3a"/>
+          <rect x="-11" y="25" width="22" height="7" rx="1" fill="#d8342c"/>
+        </g></g></g>
+    <use xlink:href="#HL_HF" transform="translate(0 -168)"/>
+    <g transform="translate(38 -106) rotate(-12)"><use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(140)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <g transform="translate(0 6) rotate(160)">
+            <path fill="#e9c48a" d="M -8 -34 L 8 -34 L 5 6 L -5 6 Z"/>
+            <path fill="#f4f1ea" d="M -7 -12 L 7 -12 L 5 6 L -5 6 Z"/>
+            <path fill="#7fb24a" d="M -9 -34 C -7 -42 -2 -40 0 -44 C 2 -40 7 -42
+              9 -34 Z"/>
+          </g></g></g></g>
+  </g>
+</g>
+
+<!-- 4 ZBYSZEK 1.75 m, s 0.83 -->
+<ellipse cx="920" cy="560" rx="50" ry="7" class="shadow"/>
+<g filter="url(#ink)" style="--skin:#e0ac88;--shirt:#1f1f24;--pants:#26262b;
+  --stripe:#f4f4f4;--shoe:#6b3a1e;--glove:#e0ac88">
+  <g transform="translate(920 381) scale(0.83)">
+    <g transform="scale(0.92 1)"><use xlink:href="#LEGSF"/></g>
+    <g transform="scale(0.95 1)"><use xlink:href="#ZB_TOF"/></g>
+    <g transform="translate(-42 -108) rotate(150)"><use xlink:href="#LEATH"/>
+      <g transform="translate(0 72) rotate(20)"><use xlink:href="#LEATHF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <g transform="translate(1 14) rotate(180)">
+            <rect x="-8" y="-30" width="16" height="22" rx="3" fill="#9a6a3a"/>
+            <ellipse cx="0" cy="-30" rx="9" ry="4" fill="#7a4f28"/>
+            <rect x="-11" y="-10" width="22" height="7" rx="1" fill="#3a3b40"/>
+            <rect x="-10" y="-4" width="20" height="3" fill="#d8342c"/>
+          </g></g></g></g>
+    <g transform="translate(42 -108) rotate(-30)"><use xlink:href="#LEATH"/>
+      <g transform="translate(0 72) rotate(-20)"><use xlink:href="#LEATHF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <use xlink:href="#ZB_HF" transform="translate(0 -170)"/>
+  </g>
+</g>
+
+<!-- 5 KRASNAL 1.55 m, s 0.73 -->
+<ellipse cx="1180" cy="560" rx="55" ry="7" class="shadow"/>
+<g filter="url(#ink)" style="--skin:#ecbc9a;--shirt:#a8643a;--pants:#3d7fc1;
+  --stripe:none;--shoe:#5a3a20;--glove:#ecbc9a">
+  <g transform="translate(1180 402) scale(0.73)">
+    <g transform="scale(1.15 1)"><use xlink:href="#LEGSF"/></g>
+    <g transform="scale(1.12 1)"><use xlink:href="#KR_TOF"/></g>
+    <g transform="translate(-50 -108) rotate(14)"><use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(-70)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <use xlink:href="#gnome" transform="translate(-58 -30) rotate(-10)
+      scale(0.55)"/>
+    <use xlink:href="#KR_HF" transform="translate(0 -170)"/>
+    <g transform="translate(50 -108) rotate(-160)"><use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(10)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <rect x="-4" y="10" width="5" height="40" fill="#9a6a3a"/>
+        </g></g></g>
+  </g>
+</g>
+<g filter="url(#ink)"><rect x="1244" y="168" width="66" height="42" rx="2"
+  fill="#d9b88a" transform="rotate(10 1277 189)"/></g>
+<g transform="rotate(10 1277 189)">
+<text x="1255" y="186" class="p" style="font-size:10px">GNOMES</text>
+<text x="1253" y="202" class="p" style="font-size:11px">2 FOR 1!</text></g>
+
+<!-- 6 CORN LADY 1.55 m, s 0.73 -->
+<ellipse cx="1440" cy="560" rx="55" ry="7" class="shadow"/>
+<g filter="url(#ink)" style="--skin:#e8b08a;--shirt:#7a5a8a;--pants:#3a4a7a;
+  --stripe:none;--shoe:#1d1d24;--glove:#e8b08a">
+  <g transform="translate(1440 402) scale(0.73)">
+    <g transform="scale(1.1 1)"><use xlink:href="#LEGSF"/></g>
+    <g transform="scale(1.18 1)"><use xlink:href="#CL_TOF"/></g>
+    <g transform="translate(-46 -106) rotate(34) scale(1.1 1)">
+      <use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(-110)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <use xlink:href="#CL_HF" transform="translate(0 -168)"/>
+    <g transform="translate(46 -106) rotate(-20) scale(1.1 1)">
+      <use xlink:href="#SLV"/>
+      <g transform="translate(0 72) rotate(130)"><use xlink:href="#SLVF"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <path d="M -2 14 L 4 60 M 4 14 L 10 58" stroke="#8a8f99"
+            stroke-width="3" stroke-linecap="round"/>
+          <g transform="translate(8 74) rotate(80)">
+            <ellipse rx="24" ry="10" fill="#ffd23f"/>
+            <path d="M -12 -8 L -12 8 M -2 -9 L -2 9 M 8 -9 L 8 9 M 16 -7
+              L 16 7" stroke="#a86a32" stroke-width="2.5"/>
+            <path d="M -24 0 C -34 -8 -42 -2 -48 -10 C -38 6 -32 8 -24 4 Z"
+              fill="#7fb24a"/>
+          </g></g></g></g>
+  </g>
+</g>
+<path d="M 1380 330 C 1375 320 1385 312 1380 302 M 1392 328 C 1387 318 1397
+  310 1392 300" stroke="#b9ad94" stroke-width="2.5" fill="none"/>
+
+<!-- NAMES AND NOTES -->
+<g class="t">
+  <text x="40" y="592" class="h2">SERGEANT KOTLET</text>
+  <text x="40" y="610" class="s">vet border inspection, 1.80 m</text>
+  <text x="40" y="632" class="s">Olive uniform tight over the belly,</text>
+  <text x="40" y="648" class="s">peaked cap, gold badge. Always eating</text>
+  <text x="40" y="664" class="s">a cutlet sandwich (one bite gone).</text>
+  <text x="40" y="680" class="s">Sleepy eyes, rosy cheeks, crumbs in</text>
+  <text x="40" y="696" class="s">the mustache. Clipboard with THE form.</text>
+
+  <text x="300" y="592" class="h2">UNCLE KOLYA</text>
+  <text x="300" y="610" class="s">trucker, 1.95 m, the gentle giant</text>
+  <text x="300" y="632" class="s">Telnyashka (striped shirt), quilted</text>
+  <text x="300" y="648" class="s">vest, ushanka with flaps tied up, big</text>
+  <text x="300" y="664" class="s">grey-streaked beard, kind eyes.</text>
+  <text x="300" y="680" class="s">Green thermos: samovar for the road.</text>
+  <text x="300" y="696" class="s">Knuckle tattoo, keys on the belt.</text>
+
+  <text x="560" y="592" class="h2">PANI HALINA</text>
+  <text x="560" y="610" class="s">impound clerk, 1.65 m</text>
+  <text x="560" y="632" class="s">Burgundy perm, cat-eye glasses on a</text>
+  <text x="560" y="648" class="s">chain, mustard cardigan, lanyard,</text>
+  <text x="560" y="664" class="s">stockings, pink slippers. Kebab in</text>
+  <text x="560" y="680" class="s">one hand, rubber stamp in the other.</text>
+  <text x="560" y="696" class="s">Never looks up from her window.</text>
+
+  <text x="820" y="592" class="h2">PAN ZBYSZEK</text>
+  <text x="820" y="610" class="s">stamp seller, 1.75 m, shady</text>
+  <text x="820" y="632" class="s">Leather jacket held open: the lining</text>
+  <text x="820" y="648" class="s">is full of rubber stamps. Leopard</text>
+  <text x="820" y="664" class="s">shirt, gold chain, flat cap, pencil</text>
+  <text x="820" y="680" class="s">mustache, wink, gold tooth, pencil</text>
+  <text x="820" y="696" class="s">behind the ear. Holds up a stamp.</text>
+
+  <text x="1080" y="592" class="h2">MR. KRASNAL</text>
+  <text x="1080" y="610" class="s">gnome seller, 1.55 m (+ hat)</text>
+  <text x="1080" y="632" class="s">Looks like his own stock: red knit</text>
+  <text x="1080" y="648" class="s">pointy hat, long white beard, red</text>
+  <text x="1080" y="664" class="s">nose, blue overalls. Gnome under one</text>
+  <text x="1080" y="680" class="s">arm, "2 FOR 1" sign in the other.</text>
+  <text x="1080" y="696" class="s">"Germans love them!"</text>
+
+  <text x="1340" y="592" class="h2">THE CORN LADY</text>
+  <text x="1340" y="610" class="s">grilled corn seller, 1.55 m</text>
+  <text x="1340" y="632" class="s">Red polka-dot headscarf, floral</text>
+  <text x="1340" y="648" class="s">apron, long flowered dress, purple</text>
+  <text x="1340" y="664" class="s">cardigan, gold-tooth grin, tongs</text>
+  <text x="1340" y="680" class="s">with a cob. "Eat, bird. You're too</text>
+  <text x="1340" y="696" class="s">thin for the kebab anyway."</text>
+</g>
+
+<!-- PROPS ROW -->
+<text x="40" y="745" class="t h2">SIGNATURE PROPS</text>
+<g>
+  <rect x="20" y="760" width="250" height="228" class="cell"/>
+  <rect x="280" y="760" width="250" height="228" class="cell"/>
+  <rect x="540" y="760" width="250" height="228" class="cell"/>
+  <rect x="800" y="760" width="250" height="228" class="cell"/>
+  <rect x="1060" y="760" width="250" height="228" class="cell"/>
+  <rect x="1320" y="760" width="260" height="228" class="cell"/>
+</g>
+
+<!-- form -->
+<g filter="url(#ink)">
+  <rect x="55" y="780" width="180" height="200" rx="6" fill="#9a6a3a"/>
+  <rect x="65" y="796" width="160" height="176" fill="#ffffff"/>
+  <rect x="120" y="772" width="50" height="18" rx="4" fill="#8a8f99"/>
+  <circle cx="190" cy="940" r="22" fill="none" stroke="#3d6ab0"
+    stroke-width="3"/>
+</g>
+<text x="72" y="814" class="p" style="font-size:8.5px">VETERINARY BORDER</text>
+<text x="72" y="825" class="p" style="font-size:8.5px">INSPECTION - FORM 7B</text>
+<rect x="74" y="838" width="12" height="12" fill="none" stroke="#2a2522"
+  stroke-width="1.5"/>
+<text x="92" y="848" class="p" style="font-size:9px">DRIVER</text>
+<rect x="74" y="860" width="12" height="12" fill="none" stroke="#2a2522"
+  stroke-width="1.5"/>
+<path d="M 72 858 L 88 874 M 88 858 L 72 874" stroke="#d8342c"
+  stroke-width="2.5"/>
+<text x="92" y="870" class="p" style="font-size:9px">CARGO: POULTRY,</text>
+<text x="92" y="882" class="p" style="font-size:9px">LIVE, 1 PC</text>
+<text x="74" y="904" class="t s" style="font-size:11px">weight: 2.3 kg</text>
+<path d="M 74 940 C 84 925 92 950 102 932 C 108 922 116 948 126 936"
+  stroke="#3d6ab0" stroke-width="2" fill="none"/>
+<text x="176" y="944" class="p" style="font-size:7px;fill:#3d6ab0">VET</text>
+
+<!-- truck logo -->
+<g filter="url(#ink)">
+  <rect x="295" y="790" width="220" height="140" rx="10" fill="#e8f2f8"/>
+  <circle cx="345" cy="850" r="34" fill="#fbf8f0"/>
+  <path fill="#d8342c" d="M 330 818 L 336 806 L 344 816 L 350 804 L 356 818 Z"/>
+  <path fill="#f2a127" d="M 372 846 L 390 852 L 372 858 Z"/>
+  <ellipse cx="335" cy="845" rx="5" ry="7" fill="#1d1d24"/>
+  <ellipse cx="355" cy="845" rx="5" ry="7" fill="#1d1d24"/>
+  <path d="M 334 864 Q 345 874 356 864" stroke="#2a2522" stroke-width="3"
+    fill="none"/>
+  <path fill="#fbf8f0" d="M 378 870 L 396 862 L 400 876 L 386 884 Z"/>
+  <path d="M 470 800 L 470 830 M 456 808 L 484 822 M 456 822 L 484 808"
+    stroke="#8ec5ff" stroke-width="3"/>
+</g>
+<text x="400" y="840" class="p" style="font-size:15px">FROZEN</text>
+<text x="400" y="860" class="p" style="font-size:15px">GOODS</text>
+<text x="310" y="912" class="p" style="font-size:12px">EXPORT EAST</text>
+<text x="295" y="958" class="t s">Kolya's truck logo: happy cartoon</text>
+<text x="295" y="974" class="t s">chicken, frosty doors. Dark joke.</text>
+
+<!-- menu board -->
+<g filter="url(#ink)">
+  <rect x="560" y="785" width="210" height="150" rx="4" fill="#2a2a30"/>
+  <rect x="570" y="795" width="190" height="130" fill="#33363d"/>
+  <path d="M 590 935 L 585 975 M 740 935 L 745 975" stroke="#6b4a2e"
+    stroke-width="6"/>
+</g>
+<text x="582" y="822" class="p" style="font-size:15px;fill:#ffd23f">KEBAB &amp;
+  PARKING</text>
+<text x="582" y="848" class="t s" style="fill:#f4f1ea">Tonight's special:</text>
+<text x="582" y="872" class="t" style="font-size:15px;fill:#ff8a7a">confiscated</text>
+<text x="582" y="894" class="t" style="font-size:15px;fill:#ff8a7a">poultry, 1 pc</text>
+<text x="582" y="915" class="t s" style="fill:#c0c4cc">ask Pani Halina</text>
+
+<!-- stamp -->
+<g filter="url(#ink)">
+  <rect x="830" y="800" width="40" height="56" rx="6" fill="#9a6a3a"/>
+  <ellipse cx="850" cy="798" rx="22" ry="10" fill="#7a4f28"/>
+  <rect x="822" y="854" width="56" height="16" rx="2" fill="#3a3b40"/>
+  <rect x="826" y="868" width="48" height="8" fill="#d8342c"/>
+</g>
+<rect x="890" y="820" width="140" height="80" rx="6" fill="none"
+  stroke="#d8342c" stroke-width="4"/>
+<rect x="897" y="827" width="126" height="66" rx="4" fill="none"
+  stroke="#d8342c" stroke-width="1.5"/>
+<text x="912" y="866" class="p" style="font-size:22px;fill:#d8342c">PERSON</text>
+<text x="906" y="886" class="p" style="font-size:9px;fill:#d8342c">WINDOW 7 -
+  OFFICIAL</text>
+<text x="815" y="935" class="t s">Stamp for the forgery ending.</text>
+<text x="815" y="951" class="t s">Window 7 closed in 1989.</text>
+
+<!-- gnomonaut -->
+<g filter="url(#ink)">
+  <use xlink:href="#gnome" transform="translate(1185 965) scale(0.85)"/>
+  <circle cx="1185" cy="870" r="34" fill="#cfe8f8" opacity="0.55"/>
+  <circle cx="1185" cy="870" r="34" fill="none" stroke="#c0c4cc"
+    stroke-width="5"/>
+  <rect x="1155" y="896" width="60" height="10" rx="4" fill="#c0c4cc"/>
+  <path d="M 1166 852 Q 1174 844 1184 846" stroke="#ffffff" stroke-width="4"
+    fill="none" stroke-linecap="round"/>
+  <path fill="#d8342c" d="M 1155 930 L 1165 930 L 1165 940 L 1155 940 Z"/>
+</g>
+<path fill="#ffffff" d="M 1213 840 L 1216 849 L 1225 852 L 1216 855
+  L 1213 864 L 1210 855 L 1201 852 L 1210 849 Z"/>
+<text x="1075" y="790" class="t h3">THE GNOMONAUT</text>
+<text x="1232" y="925" class="t s">helmet</text>
+<text x="1232" y="941" class="t s">glints</text>
+
+<!-- corn cart -->
+<g filter="url(#ink)">
+  <rect x="1360" y="860" width="180" height="70" rx="6" fill="#8ec5a0"/>
+  <rect x="1360" y="860" width="180" height="16" fill="#6aa680"/>
+  <circle cx="1390" cy="940" r="16" fill="#2a2522"/>
+  <circle cx="1510" cy="940" r="16" fill="#2a2522"/>
+  <path fill="#4a4d55" d="M 1400 822 L 1480 822 L 1474 862 L 1406 862 Z"/>
+  <ellipse cx="1440" cy="822" rx="40" ry="8" fill="#6b6f77"/>
+  <g transform="translate(1425 818) rotate(-70)">
+    <ellipse rx="22" ry="9" fill="#ffd23f"/>
+    <path d="M -10 -8 L -10 8 M 0 -9 L 0 9 M 10 -8 L 10 8" stroke="#a86a32"
+      stroke-width="2.5"/>
+  </g>
+  <g transform="translate(1455 816) rotate(-110)">
+    <ellipse rx="22" ry="9" fill="#ffd23f"/>
+    <path d="M -10 -8 L -10 8 M 0 -9 L 0 9 M 10 -8 L 10 8" stroke="#a86a32"
+      stroke-width="2.5"/>
+  </g>
+</g>
+<path d="M 1430 790 C 1426 780 1434 774 1430 764 M 1450 790 C 1446 780
+  1454 774 1450 764" stroke="#b9ad94" stroke-width="2.5" fill="none"/>
+<text x="1385" y="905" class="p" style="font-size:16px;fill:#ffffff">KUKURYDZA</text>
+<text x="1385" y="923" class="p" style="font-size:10px;fill:#ffffff">grilled
+  corn - healing!</text>
+</svg>

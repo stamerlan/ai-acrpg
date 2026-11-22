@@ -1,0 +1,653 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1000"
+  width="1600" height="1000">
+<defs>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e4dcc8"
+      stroke-width="1"/>
+  </pattern>
+  <pattern id="stub" width="3" height="3" patternUnits="userSpaceOnUse">
+    <circle cx="1.5" cy="1.5" r="0.6" fill="#2a1f18" opacity="0.6"/>
+  </pattern>
+  <pattern id="armhair" width="6" height="5" patternUnits="userSpaceOnUse">
+    <path d="M 1 1 L 3 3" stroke="#3a2a20" stroke-width="0.7"
+      opacity="0.6"/>
+  </pattern>
+  <linearGradient id="cyl" x1="0" x2="1" y1="0" y2="0">
+    <stop offset="0" stop-color="#000" stop-opacity="0.30"/>
+    <stop offset="0.28" stop-color="#000" stop-opacity="0.04"/>
+    <stop offset="0.5" stop-color="#fff" stop-opacity="0.14"/>
+    <stop offset="0.78" stop-color="#000" stop-opacity="0.02"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.32"/>
+  </linearGradient>
+  <linearGradient id="vsh" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.10"/>
+    <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.22"/>
+  </linearGradient>
+  <radialGradient id="hsh" cx="0.38" cy="0.32" r="0.8">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.20"/>
+    <stop offset="0.55" stop-color="#fff" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.28"/>
+  </radialGradient>
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1.4"
+      result="d"/>
+    <feFlood flood-color="#2a2522" result="c"/>
+    <feComposite in="c" in2="d" operator="in" result="o"/>
+    <feMerge result="m">
+      <feMergeNode in="o"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+    <feTurbulence type="fractalNoise" baseFrequency="0.05"
+      numOctaves="2" seed="5" result="n"/>
+    <feDisplacementMap in="m" in2="n" scale="1.2"
+      xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <style>
+    .t { font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+      fill: #2a2522; }
+    .p { font-family: 'Arial Black', Arial, sans-serif; fill: #2a2522; }
+    .h1 { font-size: 34px; font-weight: bold; }
+    .h2 { font-size: 19px; font-weight: bold; }
+    .h3 { font-size: 15px; font-weight: bold; }
+    .n { font-size: 14px; }
+    .s { font-size: 12.5px; fill: #4f483f; }
+    .fx { font-size: 22px; font-weight: bold; fill: #d8342c; }
+    .ln { stroke: #2a2522; stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .cell { fill: none; stroke: #cfc4ad; stroke-width: 1.5; }
+    .shadow { fill: #2a2522; opacity: 0.12; }
+    .skin { fill: var(--skin, #e2b08c); }
+    .shirt { fill: var(--shirt, #f2f2ee); }
+    .pants { fill: var(--pants, #2a3350); }
+    .shoe { fill: var(--shoe, #ececec); }
+    .glove { fill: var(--glove, #e2b08c); }
+    .strp { stroke: var(--stripe, none); stroke-width: 2.5; fill: none; }
+    .fold { stroke: #000; stroke-opacity: 0.18; stroke-width: 1.2;
+      fill: none; stroke-linecap: round; }
+    .hl { stroke: #fff; stroke-opacity: 0.5; stroke-width: 1.2; fill: none;
+      stroke-linecap: round; }
+    .lid { stroke: #2a2522; stroke-width: 1.3; fill: none;
+      stroke-linecap: round; }
+    .white { fill: #ffffff; }
+    .yellow { fill: #ffd23f; }
+    .gold { fill: #d9b44a; }
+  </style>
+  <!-- realistic human kit, 230 px = 1 m, origin = hip joint -->
+  <path id="thS" d="M -17 -6 C -21 25 -15 70 -11 99 L 12 99 C 16 72 24 30
+    19 -6 Z"/>
+  <path id="shS" d="M -10 -2 C -18 22 -15 62 -7 98 L 7 98 C 9 60 12 25 11 -2
+    Z"/>
+  <path id="ftS" d="M -9 -4 L 9 -4 C 13 5 28 7 38 10 C 45 12 46 18 42 19
+    L -13 19 C -15 12 -13 2 -9 -4 Z"/>
+  <path id="uaS" d="M -9 -6 C -12 22 -10 50 -7 72 L 7 72 C 10 50 12 22 9 -6
+    Z"/>
+  <path id="faS" d="M -7 -2 C -9 20 -6 44 -5 60 L 5 60 C 7 44 10 20 7 -2 Z"/>
+  <path id="hdS" d="M -6 -2 C -8 12 -7 26 -3 40 C 0 44 6 40 6 34 C 8 22 9 10
+    6 -2 Z M 4 6 C 12 10 14 20 10 26 C 6 22 4 14 4 6 Z"/>
+  <path id="fsS" d="M -7 -2 C -10 10 -9 24 -2 27 C 6 29 11 21 9 8 L 7 -2 Z"/>
+  <path id="toS" d="M -16 14 C -26 0 -27 -30 -22 -60 C -19 -84 -18 -104 -14
+    -118 C -10 -126 4 -128 10 -124 C 22 -114 26 -96 24 -76 C 22 -58 16 -44
+    16 -28 C 16 -8 14 8 8 16 C 0 20 -10 20 -16 14 Z"/>
+  <path id="nkS" d="M -8 -118 L -6 -146 L 8 -148 L 10 -118 Z"/>
+  <path id="hsS" d="M -19 -8 C -21 -28 -8 -34 4 -33 C 16 -32 22 -22 21 -8
+    L 25 2 C 25 5 23 6 21 7 L 22 10 C 22 14 20 16 18 17 C 16 21 12 24 6 24
+    C 0 24 -4 20 -7 15 C -13 11 -18 5 -19 -8 Z"/>
+  <path id="toF" d="M -38 10 C -40 -10 -32 -30 -31 -45 C -32 -70 -40 -95 -46
+    -110 C -44 -120 -30 -126 -12 -128 L 12 -128 C 30 -126 44 -120 46 -110
+    C 40 -95 32 -70 31 -45 C 32 -30 40 -10 38 10 C 20 18 -20 18 -38 10 Z"/>
+  <path id="nkF" d="M -8 -122 L -7 -150 L 7 -150 L 8 -122 Z"/>
+  <path id="thF" d="M -20 -4 C -22 30 -16 70 -12 99 L 12 99 C 15 70 19 30
+    18 -4 Z"/>
+  <path id="shF" d="M -11 -2 C -15 25 -12 62 -8 98 L 8 98 C 11 62 13 25
+    11 -2 Z"/>
+  <path id="ftF" d="M -11 -4 L 11 -4 C 14 6 16 14 15 19 L -15 19 C -16 12
+    -14 4 -11 -4 Z"/>
+  <path id="hfS" d="M -20 -6 C -22 -26 -14 -33 0 -33 C 14 -33 22 -26 20 -6
+    C 19 8 11 21 0 23 C -11 21 -19 8 -20 -6 Z"/>
+  <g id="TH"><use xlink:href="#thS" class="pants"/>
+    <use xlink:href="#thS" fill="url(#cyl)"/>
+    <path class="strp" d="M 2 -4 L 1 98"/>
+    <path class="fold" d="M -8 60 Q 0 64 10 58 M -6 90 Q 2 94 10 88"/></g>
+  <g id="SH"><use xlink:href="#shS" class="pants"/>
+    <use xlink:href="#shS" fill="url(#cyl)"/>
+    <path class="strp" d="M 1 -2 L 0 96"/>
+    <path class="fold" d="M -10 10 Q 0 6 10 12 M -6 80 Q 0 84 6 80"/></g>
+  <g id="FT"><use xlink:href="#ftS" class="shoe"/>
+    <use xlink:href="#ftS" fill="url(#vsh)"/>
+    <path d="M -13 15 L 44 15" stroke="#000" stroke-opacity="0.25"
+      stroke-width="2"/>
+    <path class="fold" d="M 8 2 L 16 8 M 4 4 L 12 10"/></g>
+  <g id="TF"><use xlink:href="#thF" class="pants"/>
+    <use xlink:href="#thF" fill="url(#cyl)"/>
+    <path class="strp" d="M -15 0 L -10 96"/>
+    <path class="fold" d="M -10 50 Q 0 54 10 48 M -8 92 Q 0 95 8 90"/></g>
+  <g id="SF"><use xlink:href="#shF" class="pants"/>
+    <use xlink:href="#shF" fill="url(#cyl)"/>
+    <path class="strp" d="M -11 0 L -8 96"/>
+    <path class="fold" d="M -8 8 Q 0 4 8 8 M -7 84 Q 0 88 7 84"/></g>
+  <g id="FF"><use xlink:href="#ftF" class="shoe"/>
+    <use xlink:href="#ftF" fill="url(#vsh)"/>
+    <path d="M -15 15 L 15 15" stroke="#000" stroke-opacity="0.25"
+      stroke-width="2"/></g>
+  <g id="HAND"><use xlink:href="#hdS" class="glove"/>
+    <use xlink:href="#hdS" fill="url(#cyl)"/>
+    <path class="fold" d="M -2 20 L -2 36 M 2 20 L 2 38"/></g>
+  <g id="FIST"><use xlink:href="#fsS" class="glove"/>
+    <use xlink:href="#fsS" fill="url(#cyl)"/>
+    <path class="fold" d="M -6 14 Q 0 16 8 12 M -5 20 Q 0 22 7 18"/></g>
+  <polygon id="star" class="yellow" points="0,-30 8,-10 30,-10 12,4
+    18,26 0,12 -18,26 -12,4 -30,-10 -8,-10"/>
+  <path id="glint" fill="#ffffff" d="M 0 -12 L 3 -3 L 12 0 L 3 3 L 0 12
+    L -3 3 L -12 0 L -3 -3 Z"/>
+  <g id="knife">
+    <rect x="-3.5" y="-4" width="7" height="26" rx="2" fill="#1d1d24"/>
+    <circle cx="0" cy="4" r="1.1" fill="#c0c4cc"/>
+    <circle cx="0" cy="14" r="1.1" fill="#c0c4cc"/>
+    <rect x="-4.5" y="-8" width="9" height="5" rx="1" fill="#8a8f99"/>
+    <path fill="#d3d8de" d="M -3 -8 L 3.5 -8 L 4 -96 C 4 -106 -1 -110 -4 -108
+      Z"/>
+    <path d="M 2.5 -12 L 3 -94" stroke="#ffffff" stroke-width="1.2"/>
+    <path d="M -1.5 -20 L -2 -100" stroke="#9aa2ac" stroke-width="0.8"/>
+  </g>
+  <g id="spit">
+    <rect x="-5" y="-450" width="10" height="560" fill="#b9c0c9"/>
+    <path d="M 2 -440 L 2 100" stroke="#e6e9ee" stroke-width="2"/>
+    <path d="M -5 -450 L 0 -478 L 5 -450 Z" fill="#b9c0c9"/>
+    <rect x="-8" y="-30" width="16" height="50" rx="4" fill="#6b4a2e"/>
+    <path d="M -8 -20 L 8 -14 M -8 -6 L 8 0 M -8 8 L 8 14" stroke="#4a3220"
+      stroke-width="2"/>
+    <path d="M 0 108 L 32 108 L 32 130" stroke="#8a8f99" stroke-width="7"
+      fill="none" stroke-linejoin="round"/>
+    <rect x="25" y="126" width="14" height="22" rx="5" fill="#2a2522"/>
+    <path fill="#a8642f" d="M -62 -380 C -60 -300 -46 -220 -36 -180 L 36 -180
+      C 46 -220 60 -300 62 -380 Z"/>
+    <path fill="url(#cyl)" d="M -62 -380 C -60 -300 -46 -220 -36 -180 L 36 -180
+      C 46 -220 60 -300 62 -380 Z"/>
+    <path d="M -60 -350 Q 0 -340 60 -350 M -58 -320 Q 0 -310 58 -320
+      M -54 -290 Q 0 -280 54 -290 M -50 -260 Q 0 -250 50 -260
+      M -46 -230 Q 0 -220 46 -230 M -40 -200 Q 0 -190 40 -200"
+      stroke="#7a4019" stroke-width="2.5" fill="none"/>
+    <path d="M 40 -340 L 48 -332 M 34 -260 L 42 -252 M -40 -300 L -32 -292"
+      stroke="#3f2010" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-382" rx="66" ry="10" fill="#c0c4cc"/>
+    <ellipse cx="0" cy="-176" rx="48" ry="8" fill="#8a8f99"/>
+    <path fill="#d9a066" d="M 20 -176 C 22 -166 26 -164 24 -156 C 20 -154
+      18 -160 18 -176 Z"/>
+  </g>
+  <g id="fries">
+    <path d="M -12 0 L -30 -60 M -2 0 L -6 -70 M 8 0 L 20 -64 M 16 0
+      L 40 -50 M -20 0 L -50 -40 M 0 0 L 6 -76 M -8 0 L -18 -72"
+      stroke="#e8b632" stroke-width="10" stroke-linecap="square"/>
+    <path d="M -12 0 L -30 -60 M -2 0 L -6 -70 M 8 0 L 20 -64 M 16 0
+      L 40 -50 M -20 0 L -50 -40 M 0 0 L 6 -76 M -8 0 L -18 -72"
+      stroke="#ffd864" stroke-width="5" stroke-linecap="square"/>
+  </g>
+  <path id="kbtoS" d="M -18 14 C -28 0 -29 -30 -24 -60 C -21 -84 -20 -104 -16
+    -118 C -12 -126 4 -128 10 -124 C 26 -114 34 -98 36 -78 C 44 -58 46 -36 40
+    -14 C 36 4 26 14 10 18 C 0 20 -10 20 -18 14 Z"/>
+  <path id="kbtoF" d="M -40 12 C -46 -10 -44 -34 -40 -50 C -40 -74 -44 -96 -48
+    -110 C -46 -120 -30 -126 -12 -128 L 12 -128 C 30 -126 46 -120 48 -110
+    C 44 -96 40 -74 40 -50 C 44 -34 46 -10 40 12 C 20 22 -20 22 -40 12 Z"/>
+  <g id="KB_UA"><use xlink:href="#uaS" class="shirt"/>
+    <use xlink:href="#uaS" fill="url(#cyl)"/>
+    <path class="fold" d="M -8 20 Q 0 26 8 18 M -8 44 Q 0 50 8 42"/>
+    <path d="M -10 62 L 10 62 L 10 76 L -10 76 Z" class="shirt"/>
+    <path d="M -10 68 L 10 68" stroke="#d6cfc0" stroke-width="1.5"/></g>
+  <g id="KB_FA"><use xlink:href="#faS" class="skin"/>
+    <use xlink:href="#faS" fill="url(#armhair)"/>
+    <use xlink:href="#faS" fill="url(#cyl)"/>
+    <path fill="#c8342b" d="M 0 30 C -6 24 -8 18 -4 16 C -2 15 0 17 0 19
+      C 0 17 2 15 4 16 C 8 18 6 24 0 30 Z"/>
+    <rect x="-7" y="48" width="14" height="6" rx="2" class="gold"/></g>
+  <g id="KB_TO">
+    <use xlink:href="#kbtoS" class="shirt"/>
+    <use xlink:href="#kbtoS" fill="url(#cyl)"/>
+    <use xlink:href="#nkS" class="skin"/>
+    <use xlink:href="#nkS" fill="url(#cyl)"/>
+    <path fill="#7a1f2b" d="M 10 -116 C 26 -110 34 -96 36 -78 C 44 -58 46 -36 40
+      -14 L 28 -10 C 30 -40 26 -80 14 -112 Z"/>
+    <path fill="#5c1520" d="M -16 -116 C -24 -90 -26 -50 -22 -12 L -12 -12
+      C -14 -50 -12 -90 -6 -118 Z"/>
+    <path fill="url(#cyl)" d="M 10 -116 C 26 -110 34 -96 36 -78 C 44 -58 46 -36
+      40 -14 L 28 -10 C 30 -40 26 -80 14 -112 Z"/>
+    <circle cx="36" cy="-60" r="2.5" class="gold"/>
+    <circle cx="39" cy="-40" r="2.5" class="gold"/>
+    <circle cx="37" cy="-20" r="2.5" class="gold"/>
+    <path fill="#c8342b" d="M 8 -124 L 18 -118 L 8 -112 Z"/>
+    <path fill="#f4f1ea" d="M 34 -10 L 42 92 C 34 96 22 96 16 94 L 10 -8 Z"/>
+    <path fill="url(#cyl)" d="M 34 -10 L 42 92 C 34 96 22 96 16 94 L 10 -8 Z"/>
+    <ellipse cx="30" cy="30" rx="4" ry="3" fill="#c8a06a" opacity="0.6"/>
+    <path d="M 38 -12 L -20 -10" stroke="#e8e4d8" stroke-width="3"/>
+  </g>
+  <g id="KB_TOF">
+    <use xlink:href="#kbtoF" class="shirt"/>
+    <use xlink:href="#kbtoF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path d="M -9 -124 L 0 -116 L 9 -124" stroke="#d6cfc0" stroke-width="2"
+      fill="none"/>
+    <path fill="#7a1f2b" d="M -46 -110 C -36 -120 -20 -124 -8 -124 L -4 -100
+      L -6 -20 L -40 -6 C -46 -30 -42 -60 -40 -76 C -42 -92 -44 -102 -46 -110 Z"/>
+    <path fill="#7a1f2b" d="M 46 -110 C 36 -120 20 -124 8 -124 L 4 -100 L 6 -20
+      L 40 -6 C 46 -30 42 -60 40 -76 C 42 -92 44 -102 46 -110 Z"/>
+    <path fill="url(#cyl)" d="M -46 -110 C -36 -120 20 -124 46 -110 C 44 -80 46
+      -30 40 -6 L -40 -6 C -46 -30 -44 -80 -46 -110 Z"/>
+    <path d="M -6 -100 L -6 -20 M 6 -100 L 6 -20" stroke="#5c1520"
+      stroke-width="1.5"/>
+    <circle cx="10" cy="-86" r="2.5" class="gold"/>
+    <circle cx="10" cy="-62" r="2.5" class="gold"/>
+    <circle cx="10" cy="-38" r="2.5" class="gold"/>
+    <path fill="#c8342b" d="M -14 -128 L -2 -122 L -14 -116 Z M 14 -128 L 2 -122
+      L 14 -116 Z"/>
+    <rect x="-3.5" y="-126" width="7" height="8" rx="2" fill="#a12820"/>
+    <rect x="-38" y="-92" width="24" height="12" rx="1" class="white"/>
+    <rect x="-38" y="-92" width="24" height="4" fill="#c8342b"/>
+    <path d="M -36 -84 L -18 -84" stroke="#6b6f77" stroke-width="1.2"/>
+    <path d="M -18 -102 L -16 -94 L -20 -94 Z" class="gold"/>
+    <path fill="#f4f1ea" d="M -42 -8 L 42 -8 L 46 94 C 20 100 -20 100 -46 94 Z"/>
+    <path fill="url(#cyl)" d="M -42 -8 L 42 -8 L 46 94 C 20 100 -20 100 -46 94 Z"/>
+    <path d="M -44 -8 L 44 -8" stroke="#e0dbcc" stroke-width="3"/>
+    <circle cx="0" cy="34" r="10" class="white"/>
+    <circle cx="0" cy="34" r="10" fill="none" stroke="#c8342b"
+      stroke-width="2.5"/>
+    <path d="M -3 28 L 3 28 L 2 40 L -2 40 Z" fill="#9a5b2e"/>
+    <ellipse cx="-24" cy="10" rx="6" ry="4" fill="#c8a06a" opacity="0.55"/>
+    <ellipse cx="22" cy="64" rx="5" ry="3.5" fill="#c8a06a" opacity="0.55"/>
+    <path class="fold" d="M -30 0 L -36 92 M 30 0 L 36 92 M -10 50 L -12 96
+      M 12 50 L 14 96"/>
+  </g>
+  <g id="KB_HS">
+    <use xlink:href="#hsS" class="skin"/>
+    <use xlink:href="#hsS" fill="url(#hsh)"/>
+    <path class="skin" d="M -6 14 C -4 24 4 30 14 28 C 18 26 20 22 18 18
+      C 10 22 2 20 -6 14 Z"/>
+    <path class="fold" d="M -2 22 Q 6 28 16 25"/>
+    <path fill="#1a1612" d="M -20 -6 C -22 -24 -12 -34 4 -34 C 14 -34 20 -30 21
+      -22 C 12 -26 0 -26 -8 -22 C -12 -18 -14 -12 -14 -6 L -16 4 C -19 0 -20 -3
+      -20 -6 Z"/>
+    <path d="M -14 -28 C -6 -32 6 -32 16 -28 M -16 -22 C -8 -26 4 -26 12 -24"
+      stroke="#4a4038" stroke-width="1" fill="none"/>
+    <path fill="#9a9890" d="M -12 -8 L -8 -12 L -6 -4 L -10 -2 Z"/>
+    <ellipse cx="-4" cy="2" rx="5" ry="8" class="skin"/>
+    <ellipse cx="-4" cy="2" rx="5" ry="8" fill="url(#hsh)"/>
+    <path class="fold" d="M -4 -3 C -1 -1 -1 5 -4 7"/>
+    <path fill="#1a1612" d="M 8 -9 C 12 -11 18 -11 22 -8 L 21 -5.5 C 17 -7 12 -7
+      8 -6 Z"/>
+    <path class="white" d="M 12.5 -1 C 14.5 -2.5 17 -2.5 19 -1 C 17 0 14.5 0
+      12.5 -1 Z"/>
+    <circle cx="16.5" cy="-0.8" r="1.3" fill="#3a2416"/>
+    <path class="skin" d="M 12 -3 C 14 -4 18 -4 19.6 -2 L 19.6 -0.8 L 12 -0.8
+      Z"/>
+    <path class="lid" d="M 12 -0.8 L 19.6 -0.8"/>
+    <path class="fold" d="M 21 -3 L 25.5 4 M 20 7 Q 22 9 24.5 7 M 10 4 Q 8 10 10
+      14"/>
+    <path fill="#1a1612" d="M 14 9.5 C 20 7.5 26 9 28 11 C 31 12 33 9 32 6
+      C 35 9 33 15 28 14 C 24 13 18 13 14 12.5 Z"/>
+    <path d="M 16 16 L 21 15.5" stroke="#7a3a30" stroke-width="1.3"/>
+  </g>
+  <g id="KB_HF">
+    <ellipse cx="-22" cy="1" rx="5" ry="8" class="skin"/>
+    <ellipse cx="22" cy="1" rx="5" ry="8" class="skin"/>
+    <path class="skin" d="M -22 -6 C -24 -26 -15 -33 0 -33 C 15 -33 24 -26 22 -6
+      C 23 12 16 26 0 28 C -16 26 -23 12 -22 -6 Z"/>
+    <path fill="url(#hsh)" d="M -22 -6 C -24 -26 -15 -33 0 -33 C 15 -33 24 -26
+      22 -6 C 23 12 16 26 0 28 C -16 26 -23 12 -22 -6 Z"/>
+    <path class="fold" d="M -12 22 Q 0 28 12 22"/>
+    <path fill="#1a1612" d="M -22 -6 C -24 -24 -15 -36 0 -36 C 15 -36 24 -24 22
+      -6 C 20 -16 18 -22 14 -24 C 6 -28 -6 -28 -14 -24 C -18 -22 -20 -16 -22 -6
+      Z"/>
+    <path d="M -10 -32 C -4 -26 4 -26 10 -32 M -14 -28 C -6 -22 6 -22 14 -28"
+      stroke="#4a4038" stroke-width="1" fill="none"/>
+    <path fill="#9a9890" d="M -22 -6 L -20 -14 L -18 -6 Z M 22 -6 L 20 -14
+      L 18 -6 Z"/>
+    <path fill="#1a1612" d="M -16 -8 C -12 -10 -6 -10 -3 -7 L -3 -5 C -7 -7 -12
+      -7 -16 -6 Z M 16 -8 C 12 -10 6 -10 3 -7 L 3 -5 C 7 -7 12 -7 16 -6 Z"/>
+    <path class="white" d="M -14 -1 C -11 -2.8 -6 -2.8 -4 -1 C -6 0.5 -11 0.5
+      -14 -1 Z M 14 -1 C 11 -2.8 6 -2.8 4 -1 C 6 0.5 11 0.5 14 -1 Z"/>
+    <circle cx="-9" cy="-0.6" r="1.6" fill="#3a2416"/>
+    <circle cx="9" cy="-0.6" r="1.6" fill="#3a2416"/>
+    <path class="skin" d="M -14.5 -1 C -11 -4 -6 -4 -3.5 -1 L -3.5 -0.4 L -14.5
+      -0.4 Z M 14.5 -1 C 11 -4 6 -4 3.5 -1 L 3.5 -0.4 L 14.5 -0.4 Z"/>
+    <path class="lid" d="M -14.5 -0.4 L -3.5 -0.4 M 14.5 -0.4 L 3.5 -0.4"/>
+    <path class="fold" d="M 1 -3 C 3 2 5 7 4 10 M -5 11 Q -2 13 0 12 Q 2 13 5 11
+      M -9 6 Q -11 10 -10 14 M 9 6 Q 11 10 10 14"/>
+    <path fill="#1a1612" d="M 0 13 C -6 11 -14 12 -18 14 C -22 15 -26 12 -25 8
+      C -28 12 -25 19 -19 18 C -12 17 -6 16 0 16 C 6 16 12 17 19 18 C 25 19 28
+      12 25 8 C 26 12 22 15 18 14 C 14 12 6 11 0 13 Z"/>
+    <path d="M -6 19.5 Q 0 21 6 19.5" stroke="#7a3a30" stroke-width="1.4"
+      fill="none"/>
+  </g>
+</defs>
+
+<rect width="1600" height="1000" fill="#f7f3e8"/>
+<rect width="1600" height="1000" fill="url(#grid)"/>
+<text x="40" y="58" class="t h1">MR. KEBABSKI - night manager (stop 0
+  boss)</text>
+<text x="40" y="86" class="t n">mr-kebabski. The night manager of "Kebab
+  &amp; Parking". A huge man, 1.95 m and heavy, armed with a full doner on
+  its 2.1 m spit. 212 px = 1 m.</text>
+
+<g style="--skin:#e6b597;--shirt:#f4f2ec;--pants:#24242a;--stripe:none;
+  --shoe:#15151a;--glove:#e6b597">
+
+<!-- FRONT -->
+<ellipse cx="170" cy="545" rx="80" ry="9" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(170 346) scale(0.92)">
+    <use xlink:href="#spit" transform="translate(100 103) scale(0.75)"/>
+    <g transform="translate(-24 0) scale(1.25 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="translate(24 0) scale(-1.25 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="scale(1.3 1)"><use xlink:href="#KB_TOF"/></g>
+    <g transform="translate(-58 -106) rotate(10) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(-4)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+    <g transform="translate(58 -106) rotate(-16) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(-10)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <use xlink:href="#KB_HF" transform="translate(0 -170) scale(1.12)"/>
+  </g>
+</g>
+<text x="145" y="575" class="t h3">FRONT</text>
+
+<!-- SIDE -->
+<ellipse cx="420" cy="545" rx="80" ry="9" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(420 346) scale(0.92)">
+    <g style="--skin:#cc9c80;--shirt:#d8d6d0;--pants:#18181c">
+      <g transform="translate(-2 -112) rotate(-8) scale(1.3 1)">
+        <use xlink:href="#KB_UA"/>
+        <g transform="translate(0 72) rotate(-10)"><use xlink:href="#KB_FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+      <g transform="translate(-4 0) scale(1.25 1)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    </g>
+    <g transform="translate(4 0) scale(1.25 1)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    <g transform="scale(1.3 1)"><use xlink:href="#KB_TO"/></g>
+    <use xlink:href="#KB_HS" transform="translate(6 -170) scale(1.12)"/>
+    <use xlink:href="#spit" transform="translate(100 103) scale(0.75)"/>
+    <g transform="translate(-2 -112) rotate(-40) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(-10)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+  </g>
+</g>
+<text x="400" y="575" class="t h3">SIDE</text>
+
+<!-- TOP -->
+<g filter="url(#ink)">
+  <g transform="translate(660 330) scale(1.2)">
+    <ellipse cx="-66" cy="8" rx="12" ry="22" class="shirt"/>
+    <ellipse cx="66" cy="8" rx="12" ry="22" class="shirt"/>
+    <circle cx="-67" cy="32" r="9" class="skin"/>
+    <circle cx="67" cy="32" r="9" class="skin"/>
+    <path fill="#f4f1ea" d="M -48 -12 C -40 -34 40 -34 48 -12 Z"/>
+    <ellipse cx="0" cy="4" rx="60" ry="30" class="shirt"/>
+    <path fill="#7a1f2b" d="M -58 -4 C -50 -22 -16 -28 -8 -28 L -6 30 C -30 34
+      -52 26 -58 12 Z M 58 -4 C 50 -22 16 -28 8 -28 L 6 30 C 30 34 52 26 58 12
+      Z"/>
+    <ellipse cx="0" cy="4" rx="60" ry="30" fill="url(#cyl)"/>
+    <path fill="#1a1612" d="M -6 -22 C -18 -30 -30 -30 -34 -24 C -26 -24 -16
+      -22 -8 -18 Z M 6 -22 C 18 -30 30 -30 34 -24 C 26 -24 16 -22 8 -18 Z"/>
+    <ellipse cx="0" cy="-22" rx="5" ry="4" class="skin"/>
+    <ellipse cx="0" cy="0" rx="21" ry="23" fill="#1a1612"/>
+    <path d="M -12 -14 C -4 0 -4 10 -10 20 M 0 -20 L 0 22 M 12 -14 C 4 0 4 10 10
+      20" stroke="#4a4038" stroke-width="1.2" fill="none"/>
+    <circle cx="86" cy="-24" r="30" fill="#c0c4cc"/>
+    <circle cx="86" cy="-24" r="20" fill="none" stroke="#a6abb4"
+      stroke-width="2"/>
+    <circle cx="86" cy="-24" r="4" fill="#8a8f99"/>
+  </g>
+</g>
+<g class="ln" stroke="#d8342c">
+  <path d="M 660 215 L 660 187 M 651 199 L 660 187 L 669 199"/>
+</g>
+<text x="673" y="200" class="t s">forward</text>
+<text x="590" y="440" class="t s">From above: broad white</text>
+<text x="590" y="456" class="t s">shoulders, burgundy vest,</text>
+<text x="590" y="472" class="t s">slick black hair, mustache</text>
+<text x="590" y="488" class="t s">tips; the steel cap of his</text>
+<text x="590" y="504" class="t s">doner spit beside him.</text>
+<text x="640" y="575" class="t h3">TOP</text>
+</g>
+
+<!-- NOTES -->
+<text x="840" y="125" class="t h2">PALETTE</text>
+<g filter="url(#ink)">
+  <rect x="840" y="140" width="22" height="22" fill="#f4f2ec"/>
+  <rect x="864" y="140" width="22" height="22" fill="#7a1f2b"/>
+  <rect x="840" y="170" width="22" height="22" fill="#c8342b"/>
+  <rect x="864" y="170" width="22" height="22" fill="#d9b44a"/>
+  <rect x="840" y="200" width="22" height="22" fill="#24242a"/>
+  <rect x="864" y="200" width="22" height="22" fill="#a8642f"/>
+</g>
+<text x="900" y="156" class="t s">dress shirt #F4F2EC, manager vest #7A1F2B</text>
+<text x="900" y="186" class="t s">bow tie #C8342B, buttons, watch, ring #D9B44A</text>
+<text x="900" y="216" class="t s">trousers #24242A, doner meat #A8642F, steel #C0C4CC</text>
+
+<text x="840" y="262" class="t h2">DESIGN NOTES</text>
+<text x="840" y="288" class="t s">* A big, heavy man: 1.95 m, wide shoulders, round
+  belly, double chin. Moves slowly</text>
+<text x="840" y="306" class="t s">  until he charges. Proud and theatrical: he is the
+  manager and this is HIS kitchen.</text>
+<text x="840" y="328" class="t s">* Slicked-back black hair with grey temples, waxed
+  handlebar mustache, heavy-lidded</text>
+<text x="840" y="346" class="t s">  bored eyes, red bow tie, burgundy waistcoat with
+  gold buttons, "NIGHT MANAGER" badge.</text>
+<text x="840" y="368" class="t s">* White dress shirt with sleeves rolled to the elbow,
+  hairy forearms with a red heart</text>
+<text x="840" y="386" class="t s">  tattoo, gold watch and ring. Long white apron with
+  the K&amp;P logo and grease stains.</text>
+<text x="840" y="408" class="t s">* Weapon: a 2.1 m doner spit with a whole doner
+  still on it: crank handle, leather grip,</text>
+<text x="840" y="426" class="t s">  drip tray, steel cap. He uses it as a lance (charge)
+  and a club (spin).</text>
+<text x="840" y="448" class="t s">* Rig: humanoid, scaled 1.08 tall and ~1.3 wide;
+  belly and chin jiggle; spit is a 2-hand</text>
+<text x="840" y="466" class="t s">  prop with its own bone (the doner spins slowly
+  in idle). HP 400. ~25k tris.</text>
+<text x="840" y="492" class="t s">"Tonight's special does not leave the kitchen."</text>
+<text x="840" y="516" class="t s">Defeated: a last dizzy spin, then he falls into a
+  giant tray of fries.</text>
+
+<!-- POSE CELLS, figure scale 0.6, ground 960, pelvis 830 -->
+<g>
+  <rect x="20" y="600" width="304" height="390" class="cell"/>
+  <rect x="334" y="600" width="304" height="390" class="cell"/>
+  <rect x="648" y="600" width="304" height="390" class="cell"/>
+  <rect x="962" y="600" width="304" height="390" class="cell"/>
+  <rect x="1276" y="600" width="304" height="390" class="cell"/>
+</g>
+
+<g style="--skin:#e6b597;--shirt:#f4f2ec;--pants:#24242a;--stripe:none;
+  --shoe:#15151a;--glove:#e6b597">
+
+<!-- 1 SPIT SPIN (front) -->
+<ellipse cx="172" cy="955" rx="140" ry="14" fill="none" stroke="#d8342c"
+  stroke-width="2" stroke-dasharray="7 6"/>
+<path d="M 50 770 C 70 700 270 700 295 770" stroke="#b9ad94"
+  stroke-width="4" fill="none" stroke-dasharray="10 8"/>
+<g filter="url(#ink)">
+  <g transform="translate(172 830) scale(0.6)">
+    <g transform="translate(-28 0) rotate(8) scale(1.25 1)">
+      <use xlink:href="#TF"/>
+      <g transform="translate(0 99) rotate(-8)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="translate(28 0) rotate(-8) scale(-1.25 1)">
+      <use xlink:href="#TF"/>
+      <g transform="translate(0 99) rotate(-8)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="scale(1.3 1)"><use xlink:href="#KB_TOF"/></g>
+    <use xlink:href="#KB_HF" transform="translate(0 -170) scale(1.12)"/>
+    <g transform="translate(-58 -106) rotate(62) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(-40)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <g transform="translate(58 -106) rotate(-62) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(40)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <use xlink:href="#spit" transform="translate(-40 -40) rotate(90)
+      scale(0.75)"/>
+  </g>
+</g>
+<text x="290" y="945" class="t s" style="fill:#d8342c">3 m</text>
+<text x="32" y="625" class="t h3">1 SPIT SPIN</text>
+<text x="32" y="980" class="t s">0.8 s windup, spins 2 s, 25 dmg.</text>
+
+<!-- 2 SPIT CHARGE -->
+<path d="M 420 958 L 630 958" stroke="#d8342c" stroke-width="5"
+  stroke-dasharray="14 8"/>
+<path d="M 350 790 L 385 790 M 345 815 L 380 815 M 355 840 L 385 840"
+  stroke="#b9ad94" stroke-width="3" stroke-linecap="round"/>
+<g filter="url(#ink)">
+  <g transform="translate(430 836) scale(0.6)">
+    <g style="--skin:#cc9c80;--shirt:#d8d6d0;--pants:#18181c">
+      <g transform="translate(-4 0) rotate(-40) scale(1.25 1)">
+        <use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(50)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(-6)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(4 0) rotate(30) scale(1.25 1)">
+      <use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(20)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-40)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <g transform="rotate(20)">
+      <g transform="scale(1.3 1)"><use xlink:href="#KB_TO"/></g>
+      <use xlink:href="#KB_HS" transform="translate(6 -170) scale(1.12)
+        rotate(-16)"/>
+      <use xlink:href="#spit" transform="translate(60 -40) rotate(72)
+        scale(0.75)"/>
+      <g transform="translate(-2 -112) rotate(-75) scale(1.3 1)">
+        <use xlink:href="#KB_UA"/>
+        <g transform="translate(0 72) rotate(-10)"><use xlink:href="#KB_FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    </g>
+  </g>
+</g>
+<text x="346" y="625" class="t h3">2 SPIT CHARGE</text>
+<text x="346" y="980" class="t s">Red line first, then a lance run. 30 dmg.</text>
+
+<!-- 3 STUCK -->
+<g filter="url(#ink)">
+  <path fill="#3d7fc1" d="M 840 958 L 840 820 C 860 790 900 780 952 778
+    L 952 958 Z"/>
+  <path fill="#9fd0f0" d="M 858 826 C 872 806 900 798 940 798 L 940 850
+    L 858 850 Z"/>
+  <path d="M 890 850 L 890 940" stroke="#2c5f93" stroke-width="3"/>
+  <circle cx="880" cy="958" r="20" fill="#2a2522"/>
+  <circle cx="880" cy="958" r="9" fill="#8a8f99"/>
+  <g transform="translate(730 836) scale(0.6)">
+    <g style="--skin:#cc9c80;--shirt:#d8d6d0;--pants:#18181c">
+      <g transform="translate(-4 0) rotate(-20) scale(1.25 1)">
+        <use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(4)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(14)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(4 0) rotate(14) scale(1.25 1)">
+      <use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(4)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-18)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <g transform="rotate(-16)">
+      <g transform="scale(1.3 1)"><use xlink:href="#KB_TO"/></g>
+      <use xlink:href="#KB_HS" transform="translate(6 -170) scale(1.12)
+        rotate(10)"/>
+      <g transform="translate(-2 -112) rotate(-86) scale(1.3 1)">
+        <use xlink:href="#KB_UA"/>
+        <g transform="translate(0 72) rotate(-4)"><use xlink:href="#KB_FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    </g>
+    <use xlink:href="#spit" transform="translate(100 -130) rotate(90)
+      scale(0.75)"/>
+  </g>
+</g>
+<path d="M 905 790 L 925 765 M 930 800 L 950 780 M 870 785 L 880 760"
+  stroke="#d8342c" stroke-width="3" stroke-linecap="round"/>
+<text x="840" y="755" class="t fx" style="font-size:18px">WEE-OO</text>
+<text x="665" y="700" class="t fx">x2</text>
+<text x="660" y="625" class="t h3">3 STUCK (2.5 s)</text>
+<text x="660" y="980" class="t s">Stuck in a car: x2 damage.</text>
+
+<!-- 4 ORDER -->
+<g filter="url(#ink)">
+  <g transform="translate(1090 830) scale(0.6)">
+    <use xlink:href="#spit" transform="translate(100 103) scale(0.75)"/>
+    <g transform="translate(-24 0) scale(1.25 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="translate(24 0) scale(-1.25 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="scale(1.3 1)"><use xlink:href="#KB_TOF"/></g>
+    <g transform="translate(-58 -106) rotate(10) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(-4)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+    <use xlink:href="#KB_HF" transform="translate(0 -170) scale(1.12)"/>
+    <ellipse cx="0" cy="-149" rx="7" ry="5" fill="#5a1e14"/>
+    <g transform="translate(58 -106) rotate(-168) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(10)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/></g></g></g>
+    <path class="gold" d="M 70 -258 C 70 -284 108 -284 108 -258 Z"/>
+    <rect x="64" y="-260" width="50" height="7" rx="2" fill="#b38f2e"/>
+    <circle cx="89" cy="-286" r="4" class="gold"/>
+  </g>
+</g>
+<path d="M 1160 662 L 1176 650 M 1170 676 L 1190 670 M 1150 654 L 1156 636"
+  stroke="#d9b44a" stroke-width="3" stroke-linecap="round"/>
+<path d="M 1166 720 C 1166 698 1262 698 1262 720 C 1262 746 1200 746
+  1192 746 L 1180 760 L 1182 744 C 1172 742 1166 732 1166 720 Z"
+  fill="#ffffff" stroke="#2a2522" stroke-width="2"/>
+<text x="1178" y="718" class="t s" style="font-weight:bold">ORDER FOR</text>
+<text x="1180" y="735" class="t s" style="font-weight:bold">TABLE ONE!</text>
+<text x="974" y="625" class="t h3">4 ORDER FOR TABLE ONE</text>
+<text x="974" y="980" class="t s">50% HP: rings the bell, 2 cooks come.</text>
+
+<!-- 5 DEFEATED -->
+<g filter="url(#ink)">
+  <use xlink:href="#fries" transform="translate(1340 900)"/>
+  <use xlink:href="#fries" transform="translate(1420 902) scale(-1 1)"/>
+  <use xlink:href="#fries" transform="translate(1500 900)"/>
+  <g transform="translate(1440 900) scale(0.6) rotate(-84)">
+    <g transform="translate(-4 0) rotate(-40) scale(1.25 1)">
+      <use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(30)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    <g transform="translate(4 0) rotate(-60) scale(1.25 1)">
+      <use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(50)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    <g transform="scale(1.3 1)"><use xlink:href="#KB_TO"/></g>
+    <use xlink:href="#KB_HS" transform="translate(6 -170) scale(1.12)"/>
+    <g transform="translate(-2 -112) rotate(-150) scale(1.3 1)">
+      <use xlink:href="#KB_UA"/>
+      <g transform="translate(0 72) rotate(-20)"><use xlink:href="#KB_FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+  </g>
+  <path fill="#c8342b" d="M 1300 958 L 1310 905 L 1560 905 L 1570 958 Z"/>
+  <path d="M 1340 910 L 1335 952 M 1400 910 L 1398 952 M 1460 910 L 1462 952
+    M 1520 910 L 1525 952" stroke="#f4f1ea" stroke-width="5"/>
+  <use xlink:href="#fries" transform="translate(1380 910) scale(0.7)"/>
+  <use xlink:href="#fries" transform="translate(1530 910) scale(-0.7 0.7)"/>
+</g>
+<use xlink:href="#star" transform="translate(1320 790) scale(0.45)"/>
+<use xlink:href="#star" transform="translate(1352 772) scale(0.45)"/>
+<use xlink:href="#star" transform="translate(1384 790) scale(0.45)"/>
+<text x="1288" y="625" class="t h3">5 DEFEATED</text>
+<text x="1288" y="980" class="t s">Falls into a giant tray of fries.</text>
+</g>
+</svg>

@@ -1,0 +1,748 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1000"
+  width="1600" height="1000">
+<defs>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e4dcc8"
+      stroke-width="1"/>
+  </pattern>
+  <pattern id="stub" width="3" height="3" patternUnits="userSpaceOnUse">
+    <circle cx="1.5" cy="1.5" r="0.6" fill="#2a1f18" opacity="0.6"/>
+  </pattern>
+  <pattern id="armhair" width="6" height="5" patternUnits="userSpaceOnUse">
+    <path d="M 1 1 L 3 3" stroke="#3a2a20" stroke-width="0.7"
+      opacity="0.6"/>
+  </pattern>
+  <linearGradient id="cyl" x1="0" x2="1" y1="0" y2="0">
+    <stop offset="0" stop-color="#000" stop-opacity="0.30"/>
+    <stop offset="0.28" stop-color="#000" stop-opacity="0.04"/>
+    <stop offset="0.5" stop-color="#fff" stop-opacity="0.14"/>
+    <stop offset="0.78" stop-color="#000" stop-opacity="0.02"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.32"/>
+  </linearGradient>
+  <linearGradient id="vsh" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.10"/>
+    <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.22"/>
+  </linearGradient>
+  <radialGradient id="hsh" cx="0.38" cy="0.32" r="0.8">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.20"/>
+    <stop offset="0.55" stop-color="#fff" stop-opacity="0"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0.28"/>
+  </radialGradient>
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1.4"
+      result="d"/>
+    <feFlood flood-color="#2a2522" result="c"/>
+    <feComposite in="c" in2="d" operator="in" result="o"/>
+    <feMerge result="m">
+      <feMergeNode in="o"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+    <feTurbulence type="fractalNoise" baseFrequency="0.05"
+      numOctaves="2" seed="5" result="n"/>
+    <feDisplacementMap in="m" in2="n" scale="1.2"
+      xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <style>
+    .t { font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+      fill: #2a2522; }
+    .p { font-family: 'Arial Black', Arial, sans-serif; fill: #2a2522; }
+    .h1 { font-size: 34px; font-weight: bold; }
+    .h2 { font-size: 19px; font-weight: bold; }
+    .h3 { font-size: 15px; font-weight: bold; }
+    .n { font-size: 14px; }
+    .s { font-size: 12.5px; fill: #4f483f; }
+    .fx { font-size: 22px; font-weight: bold; fill: #d8342c; }
+    .ln { stroke: #2a2522; stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .cell { fill: none; stroke: #cfc4ad; stroke-width: 1.5; }
+    .shadow { fill: #2a2522; opacity: 0.12; }
+    .skin { fill: var(--skin, #e2b08c); }
+    .shirt { fill: var(--shirt, #f2f2ee); }
+    .pants { fill: var(--pants, #2a3350); }
+    .shoe { fill: var(--shoe, #ececec); }
+    .glove { fill: var(--glove, #e2b08c); }
+    .strp { stroke: var(--stripe, none); stroke-width: 2.5; fill: none; }
+    .fold { stroke: #000; stroke-opacity: 0.18; stroke-width: 1.2;
+      fill: none; stroke-linecap: round; }
+    .hl { stroke: #fff; stroke-opacity: 0.5; stroke-width: 1.2; fill: none;
+      stroke-linecap: round; }
+    .lid { stroke: #2a2522; stroke-width: 1.3; fill: none;
+      stroke-linecap: round; }
+    .white { fill: #ffffff; }
+    .yellow { fill: #ffd23f; }
+    .gold { fill: #d9b44a; }
+  </style>
+  <!-- realistic human kit, 230 px = 1 m, origin = hip joint -->
+  <path id="thS" d="M -17 -6 C -21 25 -15 70 -11 99 L 12 99 C 16 72 24 30
+    19 -6 Z"/>
+  <path id="shS" d="M -10 -2 C -18 22 -15 62 -7 98 L 7 98 C 9 60 12 25 11 -2
+    Z"/>
+  <path id="ftS" d="M -9 -4 L 9 -4 C 13 5 28 7 38 10 C 45 12 46 18 42 19
+    L -13 19 C -15 12 -13 2 -9 -4 Z"/>
+  <path id="uaS" d="M -9 -6 C -12 22 -10 50 -7 72 L 7 72 C 10 50 12 22 9 -6
+    Z"/>
+  <path id="faS" d="M -7 -2 C -9 20 -6 44 -5 60 L 5 60 C 7 44 10 20 7 -2 Z"/>
+  <path id="hdS" d="M -6 -2 C -8 12 -7 26 -3 40 C 0 44 6 40 6 34 C 8 22 9 10
+    6 -2 Z M 4 6 C 12 10 14 20 10 26 C 6 22 4 14 4 6 Z"/>
+  <path id="fsS" d="M -7 -2 C -10 10 -9 24 -2 27 C 6 29 11 21 9 8 L 7 -2 Z"/>
+  <path id="toS" d="M -16 14 C -26 0 -27 -30 -22 -60 C -19 -84 -18 -104 -14
+    -118 C -10 -126 4 -128 10 -124 C 22 -114 26 -96 24 -76 C 22 -58 16 -44
+    16 -28 C 16 -8 14 8 8 16 C 0 20 -10 20 -16 14 Z"/>
+  <path id="nkS" d="M -8 -118 L -6 -146 L 8 -148 L 10 -118 Z"/>
+  <path id="hsS" d="M -19 -8 C -21 -28 -8 -34 4 -33 C 16 -32 22 -22 21 -8
+    L 25 2 C 25 5 23 6 21 7 L 22 10 C 22 14 20 16 18 17 C 16 21 12 24 6 24
+    C 0 24 -4 20 -7 15 C -13 11 -18 5 -19 -8 Z"/>
+  <path id="toF" d="M -38 10 C -40 -10 -32 -30 -31 -45 C -32 -70 -40 -95 -46
+    -110 C -44 -120 -30 -126 -12 -128 L 12 -128 C 30 -126 44 -120 46 -110
+    C 40 -95 32 -70 31 -45 C 32 -30 40 -10 38 10 C 20 18 -20 18 -38 10 Z"/>
+  <path id="nkF" d="M -8 -122 L -7 -150 L 7 -150 L 8 -122 Z"/>
+  <path id="thF" d="M -20 -4 C -22 30 -16 70 -12 99 L 12 99 C 15 70 19 30
+    18 -4 Z"/>
+  <path id="shF" d="M -11 -2 C -15 25 -12 62 -8 98 L 8 98 C 11 62 13 25
+    11 -2 Z"/>
+  <path id="ftF" d="M -11 -4 L 11 -4 C 14 6 16 14 15 19 L -15 19 C -16 12
+    -14 4 -11 -4 Z"/>
+  <path id="hfS" d="M -20 -6 C -22 -26 -14 -33 0 -33 C 14 -33 22 -26 20 -6
+    C 19 8 11 21 0 23 C -11 21 -19 8 -20 -6 Z"/>
+  <g id="TH"><use xlink:href="#thS" class="pants"/>
+    <use xlink:href="#thS" fill="url(#cyl)"/>
+    <path class="strp" d="M 2 -4 L 1 98"/>
+    <path class="fold" d="M -8 60 Q 0 64 10 58 M -6 90 Q 2 94 10 88"/></g>
+  <g id="SH"><use xlink:href="#shS" class="pants"/>
+    <use xlink:href="#shS" fill="url(#cyl)"/>
+    <path class="strp" d="M 1 -2 L 0 96"/>
+    <path class="fold" d="M -10 10 Q 0 6 10 12 M -6 80 Q 0 84 6 80"/></g>
+  <g id="FT"><use xlink:href="#ftS" class="shoe"/>
+    <use xlink:href="#ftS" fill="url(#vsh)"/>
+    <path d="M -13 15 L 44 15" stroke="#000" stroke-opacity="0.25"
+      stroke-width="2"/>
+    <path class="fold" d="M 8 2 L 16 8 M 4 4 L 12 10"/></g>
+  <g id="TF"><use xlink:href="#thF" class="pants"/>
+    <use xlink:href="#thF" fill="url(#cyl)"/>
+    <path class="strp" d="M -15 0 L -10 96"/>
+    <path class="fold" d="M -10 50 Q 0 54 10 48 M -8 92 Q 0 95 8 90"/></g>
+  <g id="SF"><use xlink:href="#shF" class="pants"/>
+    <use xlink:href="#shF" fill="url(#cyl)"/>
+    <path class="strp" d="M -11 0 L -8 96"/>
+    <path class="fold" d="M -8 8 Q 0 4 8 8 M -7 84 Q 0 88 7 84"/></g>
+  <g id="FF"><use xlink:href="#ftF" class="shoe"/>
+    <use xlink:href="#ftF" fill="url(#vsh)"/>
+    <path d="M -15 15 L 15 15" stroke="#000" stroke-opacity="0.25"
+      stroke-width="2"/></g>
+  <g id="HAND"><use xlink:href="#hdS" class="glove"/>
+    <use xlink:href="#hdS" fill="url(#cyl)"/>
+    <path class="fold" d="M -2 20 L -2 36 M 2 20 L 2 38"/></g>
+  <g id="FIST"><use xlink:href="#fsS" class="glove"/>
+    <use xlink:href="#fsS" fill="url(#cyl)"/>
+    <path class="fold" d="M -6 14 Q 0 16 8 12 M -5 20 Q 0 22 7 18"/></g>
+  <polygon id="star" class="yellow" points="0,-30 8,-10 30,-10 12,4
+    18,26 0,12 -18,26 -12,4 -30,-10 -8,-10"/>
+  <path id="glint" fill="#ffffff" d="M 0 -12 L 3 -3 L 12 0 L 3 3 L 0 12
+    L -3 3 L -12 0 L -3 -3 Z"/>
+  <g id="knife">
+    <rect x="-3.5" y="-4" width="7" height="26" rx="2" fill="#1d1d24"/>
+    <circle cx="0" cy="4" r="1.1" fill="#c0c4cc"/>
+    <circle cx="0" cy="14" r="1.1" fill="#c0c4cc"/>
+    <rect x="-4.5" y="-8" width="9" height="5" rx="1" fill="#8a8f99"/>
+    <path fill="#d3d8de" d="M -3 -8 L 3.5 -8 L 4 -96 C 4 -106 -1 -110 -4 -108
+      Z"/>
+    <path d="M 2.5 -12 L 3 -94" stroke="#ffffff" stroke-width="1.2"/>
+    <path d="M -1.5 -20 L -2 -100" stroke="#9aa2ac" stroke-width="0.8"/>
+  </g>
+  <!-- Shawarman parts -->
+  <g id="UA"><use xlink:href="#uaS" class="skin"/>
+    <use xlink:href="#uaS" fill="url(#armhair)"/>
+    <use xlink:href="#uaS" fill="url(#cyl)"/>
+    <path class="shirt" d="M -11 -8 C -13 10 -13 26 -12 36 L 12 36 C 13 26 13 10
+      11 -8 Z"/>
+    <path fill="url(#cyl)" d="M -11 -8 C -13 10 -13 26 -12 36 L 12 36 C 13 26
+      13 10 11 -8 Z"/>
+    <path d="M -12 33 L 12 33" stroke="#c8342b" stroke-width="2.5"/>
+    <path class="fold" d="M -8 12 Q 0 18 8 10"/></g>
+  <g id="FA"><use xlink:href="#faS" class="skin"/>
+    <use xlink:href="#faS" fill="url(#armhair)"/>
+    <use xlink:href="#faS" fill="url(#cyl)"/>
+    <path d="M -7 46 L 7 46 L 6 60 L -5 60 Z" class="glove"/>
+    <path d="M -3 22 L 2 25" stroke="#b0503a" stroke-width="1.5"
+      opacity="0.7"/></g>
+  <g id="TO">
+    <use xlink:href="#toS" class="shirt"/>
+    <use xlink:href="#toS" fill="url(#cyl)"/>
+    <path class="fold" d="M -14 -90 Q -4 -84 6 -92 M -18 -50 Q -8 -44 2 -50
+      M -16 -8 Q -8 -4 0 -10"/>
+    <use xlink:href="#nkS" class="skin"/>
+    <use xlink:href="#nkS" fill="url(#cyl)"/>
+    <path d="M -8 -120 Q 2 -114 10 -121" stroke="#c8342b" stroke-width="3"
+      fill="none"/>
+    <rect x="-27" y="-26" width="5" height="44" rx="2" fill="#8a8f99"
+      transform="rotate(10 -24 -4)"/>
+    <rect x="-27" y="-30" width="6" height="10" rx="2" fill="#1d1d24"
+      transform="rotate(10 -24 -4)"/>
+    <path fill="#b8312a" d="M 9 -112 C 19 -106 25 -92 24 -76 C 22 -58 17 -46
+      17 -30 L 21 -28 L 34 92 C 26 96 16 96 10 94 L 2 -26 L 7 -30 C 9 -60 7 -92
+      9 -112 Z"/>
+    <path fill="url(#cyl)" d="M 9 -112 C 19 -106 25 -92 24 -76 C 22 -58 17 -46
+      17 -30 L 21 -28 L 34 92 C 26 96 16 96 10 94 L 2 -26 L 7 -30 C 9 -60 7 -92
+      9 -112 Z"/>
+    <path class="fold" d="M 12 -10 L 18 90 M 20 -8 L 28 88 M 14 -80 L 18 -50"/>
+    <ellipse cx="18" cy="-62" rx="3" ry="2" fill="#6e1a14" opacity="0.6"/>
+    <ellipse cx="24" cy="30" rx="4" ry="3" fill="#6e1a14" opacity="0.5"/>
+    <ellipse cx="16" cy="60" rx="2.5" ry="2" fill="#e8d0a0" opacity="0.6"/>
+    <path d="M 13 6 L 25 6 L 26 26 L 14 26 Z" fill="#9e2a24"/>
+    <rect x="16" y="-2" width="2.5" height="12" fill="#2a2522"/>
+    <rect x="20" y="0" width="2.5" height="10" fill="#c0c4cc"/>
+    <path d="M 10 -110 L -4 -132" stroke="#8e2620" stroke-width="3"/>
+    <path d="M 17 -30 L -22 -28" stroke="#8e2620" stroke-width="3"/>
+    <path d="M -22 -28 C -32 -38 -36 -24 -22 -28 C -32 -16 -20 -12 -22 -28
+      M -22 -28 L -26 -8 M -22 -28 L -18 -10" stroke="#8e2620"
+      stroke-width="2.5" fill="none"/>
+  </g>
+  <g id="HS">
+    <use xlink:href="#hsS" class="skin"/>
+    <use xlink:href="#hsS" fill="url(#hsh)"/>
+    <path fill="#1f1812" d="M -19 -8 C -20 -18 -16 -24 -10 -26 L 6 -26 L 4 -20
+      C -2 -18 -4 -12 -3 -4 L -6 -2 C -10 0 -14 2 -16 6 C -18 2 -19 -3 -19 -8
+      Z"/>
+    <path fill="#1f1812" d="M 0 -4 L 3 -4 L 3 6 L 0 8 Z"/>
+    <ellipse cx="-4" cy="2" rx="4.5" ry="7.5" class="skin"/>
+    <ellipse cx="-4" cy="2" rx="4.5" ry="7.5" fill="url(#hsh)"/>
+    <path class="fold" d="M -4 -3 C -1 -1 -1 5 -4 7"/>
+    <path fill="url(#stub)" d="M -7 6 C -4 14 0 20 6 24 C 12 24 18 18 20 14
+      L 21 8 C 14 10 8 10 2 8 C -2 7 -5 6 -7 6 Z"/>
+    <path fill="#1f1812" d="M 9 -8 L 21.5 -7 L 21 -4.5 L 9 -5.5 Z"/>
+    <path class="white" d="M 12 -1 C 14 -3 17 -3 19 -1 C 17 0.5 14 0.5 12 -1
+      Z"/>
+    <circle cx="16.5" cy="-1" r="1.5" fill="#3a2416"/>
+    <path class="lid" d="M 11.5 -1.5 C 14 -4 17 -4 19.5 -1.5"/>
+    <path class="fold" d="M 21 -3 L 24 3 M 20 6 Q 22 8 23.5 6
+      M 17 8 Q 15 12 16 15 M 8 -2 Q 6 4 8 8"/>
+    <path fill="#1f1812" d="M 15 9.5 C 19 8 23 9 23.5 11 C 21 13 17 13 14.5 12
+      Z"/>
+    <path d="M 16 15 L 21 14.5" stroke="#7a3a30" stroke-width="1.3"/>
+    <path fill="#f6f6f4" d="M -22 -20 L -18 -38 C -2 -46 12 -44 20 -38 L 23 -21
+      C 8 -25 -8 -25 -22 -20 Z"/>
+    <path fill="url(#vsh)" d="M -22 -20 L -18 -38 C -2 -46 12 -44 20 -38
+      L 23 -21 C 8 -25 -8 -25 -22 -20 Z"/>
+    <path fill="#c8342b" d="M -22 -20 C -8 -25 8 -25 23 -21 L 23 -18 C 8 -22
+      -8 -22 -22 -17 Z"/>
+    <path class="fold" d="M -16 -36 C -4 -40 8 -40 18 -36"/>
+    <circle cx="2" cy="-30" r="3" fill="#c8342b"/>
+  </g>
+  <g id="HF">
+    <ellipse cx="-21" cy="1" rx="4" ry="7" class="skin"/>
+    <ellipse cx="21" cy="1" rx="4" ry="7" class="skin"/>
+    <use xlink:href="#hfS" class="skin"/>
+    <use xlink:href="#hfS" fill="url(#hsh)"/>
+    <path fill="#1f1812" d="M -20 -6 C -21 -16 -18 -22 -14 -24 L -15 -16
+      C -17 -12 -18 -6 -18.5 2 Z M 20 -6 C 21 -16 18 -22 14 -24 L 15 -16
+      C 17 -12 18 -6 18.5 2 Z"/>
+    <path fill="url(#stub)" d="M -19.5 0 C -18 10 -11 21 0 23 C 11 21 18 10
+      19.5 0 C 14 7 8 9 0 9 C -8 9 -14 7 -19.5 0 Z"/>
+    <path fill="#1f1812" d="M -15 -8 L -4 -6.5 L -4 -4.5 L -15 -5.5 Z
+      M 15 -8 L 4 -6.5 L 4 -4.5 L 15 -5.5 Z"/>
+    <path class="white" d="M -14 -1 C -11 -4 -6 -4 -4 -1 C -6 1 -11 1 -14 -1 Z
+      M 14 -1 C 11 -4 6 -4 4 -1 C 6 1 11 1 14 -1 Z"/>
+    <circle cx="-9" cy="-1" r="2" fill="#3a2416"/>
+    <circle cx="9" cy="-1" r="2" fill="#3a2416"/>
+    <path class="lid" d="M -14.5 -1.5 C -11 -4.5 -6 -4.5 -3.5 -1.5
+      M 14.5 -1.5 C 11 -4.5 6 -4.5 3.5 -1.5"/>
+    <path class="fold" d="M 1 -3 C 3 2 4 6 3 8 M -4 9 Q -2 11 0 10 Q 2 11 4 9
+      M -8 8 Q -10 12 -9 15 M 8 8 Q 10 12 9 15"/>
+    <path fill="#1f1812" d="M -9 12.5 C -5 10.5 -1 11.5 0 12 C 1 11.5 5 10.5
+      9 12.5 C 8 15.5 4 14.5 0 14.5 C -4 14.5 -8 15.5 -9 12.5 Z"/>
+    <path d="M -6 17 Q 0 18.5 6 17" stroke="#7a3a30" stroke-width="1.4"
+      fill="none"/>
+    <path fill="#f6f6f4" d="M -23 -20 C -22 -34 -14 -42 0 -44 C 14 -42 22 -34
+      23 -20 C 10 -24 -10 -24 -23 -20 Z"/>
+    <path fill="url(#vsh)" d="M -23 -20 C -22 -34 -14 -42 0 -44 C 14 -42 22 -34
+      23 -20 C 10 -24 -10 -24 -23 -20 Z"/>
+    <path fill="#c8342b" d="M -23 -20 C -10 -24 10 -24 23 -20 L 23 -17
+      C 10 -21 -10 -21 -23 -17 Z"/>
+    <path class="fold" d="M 0 -42 L 0 -24"/>
+  </g>
+  <g id="HB">
+    <ellipse cx="-21" cy="1" rx="4" ry="7" class="skin"/>
+    <ellipse cx="21" cy="1" rx="4" ry="7" class="skin"/>
+    <use xlink:href="#hfS" fill="#1f1812"/>
+    <path class="skin" d="M -12 14 C -6 22 6 22 12 14 L 10 24 L -10 24 Z"/>
+    <path d="M -14 4 L -12 12 M -6 6 L -5 14 M 4 6 L 4 14 M 12 4 L 11 12"
+      stroke="#3a2e26" stroke-width="1"/>
+    <path fill="#f6f6f4" d="M -23 -20 C -22 -34 -14 -42 0 -44 C 14 -42 22 -34
+      23 -20 C 10 -24 -10 -24 -23 -20 Z"/>
+    <path fill="#c8342b" d="M -23 -20 C -10 -24 10 -24 23 -20 L 23 -17
+      C 10 -21 -10 -21 -23 -17 Z"/>
+  </g>
+  <g id="TOF">
+    <use xlink:href="#toF" class="shirt"/>
+    <use xlink:href="#toF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path d="M -9 -124 L 0 -112 L 9 -124" stroke="#c8342b" stroke-width="3"
+      fill="none"/>
+    <path class="fold" d="M -40 -100 Q -30 -90 -26 -76 M 40 -100 Q 30 -90 26
+      -76"/>
+    <path fill="#b8312a" d="M -26 -104 C -14 -108 14 -108 26 -104 L 28 -44
+      C 34 -44 38 -38 38 -32 L 44 92 C 20 98 -20 98 -44 92 L -38 -32 C -38 -38
+      -34 -44 -28 -44 Z"/>
+    <path fill="url(#cyl)" d="M -26 -104 C -14 -108 14 -108 26 -104 L 28 -44
+      C 34 -44 38 -38 38 -32 L 44 92 C 20 98 -20 98 -44 92 L -38 -32 C -38 -38
+      -34 -44 -28 -44 Z"/>
+    <path d="M -24 -104 L -9 -128 M 24 -104 L 9 -128" stroke="#8e2620"
+      stroke-width="3"/>
+    <path d="M -36 -38 L -48 -34 L -50 -20 M -48 -34 L -44 -18 M 36 -38
+      L 46 -36" stroke="#8e2620" stroke-width="2.5" fill="none"/>
+    <circle cx="0" cy="-80" r="11" class="white"/>
+    <circle cx="0" cy="-80" r="11" fill="none" stroke="#c8342b"
+      stroke-width="2.5"/>
+    <path d="M -4 -87 L 4 -87 L 2.5 -73 L -2.5 -73 Z" fill="#9a5b2e"/>
+    <path d="M 0 -91 L 0 -70" stroke="#2a2522" stroke-width="1.3"/>
+    <rect x="10" y="-100" width="14" height="6" class="white"/>
+    <path d="M -22 4 L 22 4 L 23 30 L -23 30 Z" fill="#9e2a24"/>
+    <path d="M 0 4 L 0 30" stroke="#7e1f1a" stroke-width="1.5"/>
+    <rect x="-16" y="-6" width="2.5" height="13" fill="#2a2522"/>
+    <rect x="-11" y="-4" width="2.5" height="11" fill="#c0c4cc"/>
+    <path class="fold" d="M -24 -20 L -32 90 M 0 -22 L 0 92 M 24 -20 L 32 90
+      M -12 40 L -16 92 M 12 40 L 16 92"/>
+    <ellipse cx="-14" cy="-50" rx="4" ry="3" fill="#6e1a14" opacity="0.55"/>
+    <ellipse cx="18" cy="56" rx="5" ry="3" fill="#6e1a14" opacity="0.5"/>
+    <ellipse cx="-22" cy="70" rx="3" ry="2" fill="#e8d0a0" opacity="0.7"/>
+  </g>
+  <g id="TOB">
+    <use xlink:href="#toF" class="shirt"/>
+    <use xlink:href="#toF" fill="url(#cyl)"/>
+    <use xlink:href="#nkF" class="skin"/>
+    <use xlink:href="#nkF" fill="url(#cyl)"/>
+    <path class="fold" d="M -30 -100 Q -20 -80 -24 -60 M 30 -100 Q 20 -80 24
+      -60 M 0 -110 L 0 -50"/>
+    <path fill="#b8312a" d="M -38 -32 L -46 92 L -36 93 L -31 -32 Z M 38 -32
+      L 46 92 L 36 93 L 31 -32 Z"/>
+    <path d="M -10 -128 L 30 -40 M 10 -128 L -30 -40" stroke="#8e2620"
+      stroke-width="3"/>
+    <path d="M -38 -36 L 38 -36" stroke="#8e2620" stroke-width="3"/>
+    <path d="M 0 -36 C -12 -48 -16 -28 0 -36 C 12 -48 16 -28 0 -36 M 0 -36
+      L -6 -14 M 0 -36 L 6 -14" stroke="#8e2620" stroke-width="2.5"
+      fill="none"/>
+  </g>
+  <g id="flash">
+    <rect x="-4" y="-34" width="8" height="34" rx="2" fill="#2a2a30"/>
+    <rect x="-6" y="-46" width="12" height="13" rx="2" fill="#3a3b40"/>
+    <ellipse cx="0" cy="-46" rx="6" ry="2" fill="#fff6c0"/>
+  </g>
+  <g id="kebab">
+    <path fill="#e9c48a" d="M -9 -36 L 9 -36 L 6 6 L -6 6 Z"/>
+    <path fill="#f4f1ea" d="M -8 -12 L 8 -12 L 6 6 L -6 6 Z"/>
+    <path fill="#7fb24a" d="M -10 -36 C -8 -44 -2 -42 0 -46 C 2 -42 8 -44 10
+      -36 Z"/>
+    <circle cx="3" cy="-39" r="3" fill="#e0473a"/>
+    <path fill="#9a5b2e" d="M -6 -38 L -2 -44 L 0 -38 Z"/>
+  </g>
+</defs>
+
+<rect width="1600" height="1000" fill="#f7f3e8"/>
+<rect width="1600" height="1000" fill="url(#grid)"/>
+<text x="40" y="58" class="t h1">SHAWARMAN - the kebab stand cook</text>
+<text x="40" y="86" class="t n">shawarman. The common enemy: a cook from
+  a kebab stand. Realistic proportions (7.5 heads), 1.80 m, 230 px = 1 m.
+  The outfit, not the face, says "kebab cook".</text>
+
+<g style="--skin:#d9a582;--shirt:#f2f2ee;--pants:#2a3350;--stripe:#e8e8e8;
+  --shoe:#e6e6e6;--glove:#4f8fd8">
+
+<!-- scale bar -->
+<g class="ln">
+  <line x1="40" y1="540" x2="40" y2="126" stroke-width="2.5"/>
+  <line x1="33" y1="540" x2="47" y2="540"/>
+  <line x1="33" y1="425" x2="47" y2="425"/>
+  <line x1="33" y1="310" x2="47" y2="310"/>
+  <line x1="33" y1="195" x2="47" y2="195"/>
+</g>
+<text x="10" y="429" class="t s">0.5</text>
+<text x="10" y="314" class="t s">1.0</text>
+<text x="10" y="199" class="t s">1.5</text>
+
+<!-- FRONT -->
+<ellipse cx="160" cy="540" rx="60" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(160 324)">
+    <g transform="translate(-18 0)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="translate(18 0) scale(-1 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <use xlink:href="#TOF"/>
+    <g transform="translate(-44 -108) rotate(9)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(-4)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+    <g transform="translate(44 -108) rotate(-9)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(4)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <use xlink:href="#knife" transform="translate(1 14) rotate(176)"/>
+        </g></g></g>
+    <use xlink:href="#HF" transform="translate(0 -170)"/>
+  </g>
+</g>
+<text x="135" y="572" class="t h3">FRONT</text>
+
+<!-- SIDE -->
+<ellipse cx="390" cy="540" rx="60" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(390 324)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="translate(-2 -112) rotate(-6)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-10)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+      <g transform="translate(-3 0)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    </g>
+    <g transform="translate(3 0)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    <use xlink:href="#TO"/>
+    <use xlink:href="#HS" transform="translate(4 -170)"/>
+    <g transform="translate(-2 -112) rotate(6)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(-22)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <use xlink:href="#knife" transform="translate(1 14) rotate(150)"/>
+        </g></g></g>
+  </g>
+</g>
+<text x="350" y="572" class="t h3">SIDE</text>
+
+<!-- BACK -->
+<ellipse cx="610" cy="540" rx="60" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(610 324)">
+    <g transform="translate(-18 0)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <g transform="translate(18 0) scale(-1 1)"><use xlink:href="#TF"/>
+      <g transform="translate(0 99)"><use xlink:href="#SF"/>
+        <g transform="translate(0 98)"><use xlink:href="#FF"/></g></g></g>
+    <use xlink:href="#TOB"/>
+    <g transform="translate(-44 -108) rotate(9)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(4)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <use xlink:href="#knife" transform="translate(1 14) rotate(184)"/>
+        </g></g></g>
+    <g transform="translate(44 -108) rotate(-9)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(-4)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+    <use xlink:href="#HB" transform="translate(0 -170)"/>
+  </g>
+</g>
+<text x="585" y="572" class="t h3">BACK</text>
+
+<!-- TOP -->
+<g filter="url(#ink)">
+  <g transform="translate(805 330) scale(1.3)">
+    <rect x="44" y="-80" width="7" height="90" rx="2" fill="#d3d8de"/>
+    <ellipse cx="-13" cy="-24" rx="6" ry="9" class="shoe"/>
+    <ellipse cx="13" cy="-24" rx="6" ry="9" class="shoe"/>
+    <ellipse cx="-50" cy="6" rx="9" ry="18" class="skin"/>
+    <ellipse cx="50" cy="6" rx="9" ry="18" class="skin"/>
+    <ellipse cx="-50" cy="-2" rx="11" ry="11" class="shirt"/>
+    <ellipse cx="50" cy="-2" rx="11" ry="11" class="shirt"/>
+    <circle cx="-51" cy="24" r="7" class="glove"/>
+    <circle cx="50" cy="24" r="7" class="glove"/>
+    <path fill="#b8312a" d="M -36 -6 C -30 -22 30 -22 36 -6 Z"/>
+    <ellipse cx="0" cy="4" rx="46" ry="21" class="shirt"/>
+    <ellipse cx="0" cy="4" rx="46" ry="21" fill="url(#cyl)"/>
+    <path d="M -24 -10 L -10 4 M 24 -10 L 10 4" stroke="#8e2620"
+      stroke-width="3" fill="none"/>
+    <ellipse cx="0" cy="-16" rx="3.5" ry="3" class="skin"/>
+    <ellipse cx="0" cy="0" rx="14" ry="16" fill="#1f1812"/>
+    <ellipse cx="-14" cy="1" rx="2.5" ry="4" class="skin"/>
+    <ellipse cx="14" cy="1" rx="2.5" ry="4" class="skin"/>
+    <path fill="#f6f6f4" d="M 0 -17 C 9 -13 10 13 0 17 C -10 13 -9 -13 0 -17
+      Z"/>
+    <path d="M 0 -17 L 0 17" stroke="#c8342b" stroke-width="1.5"/>
+  </g>
+</g>
+<g class="ln" stroke="#d8342c">
+  <path d="M 805 200 L 805 172 M 796 184 L 805 172 L 814 184"/>
+</g>
+<text x="818" y="186" class="t s">forward</text>
+<text x="745" y="440" class="t s">From above: white paper hat,</text>
+<text x="745" y="456" class="t s">red apron straps, long knife.</text>
+<text x="785" y="572" class="t h3">TOP</text>
+</g>
+
+<!-- NOTES -->
+<text x="930" y="125" class="t h2">PALETTE</text>
+<g filter="url(#ink)">
+  <rect x="930" y="140" width="22" height="22" fill="#f2f2ee"/>
+  <rect x="954" y="140" width="22" height="22" fill="#b8312a"/>
+  <rect x="930" y="170" width="22" height="22" fill="#2a3350"/>
+  <rect x="954" y="170" width="22" height="22" fill="#4f8fd8"/>
+  <rect x="930" y="200" width="22" height="22" fill="#d9a582"/>
+  <rect x="954" y="200" width="22" height="22" fill="#1f1812"/>
+</g>
+<text x="990" y="156" class="t s">cook T-shirt #F2F2EE (red trim), apron
+  #B8312A</text>
+<text x="990" y="186" class="t s">tracksuit trousers #2A3350, nitrile gloves
+  #4F8FD8</text>
+<text x="990" y="216" class="t s">skin #D9A582 (vary per instance), hair
+  #1F1812</text>
+
+<text x="930" y="262" class="t h2">DESIGN NOTES</text>
+<text x="930" y="288" class="t s">* A real person: the night shift cook of the
+  "Kebab &amp; Parking" stand.</text>
+<text x="930" y="306" class="t s">  Realistic anatomy, about 7.5 heads tall. Tired,
+  stern, heavy stubble.</text>
+<text x="930" y="328" class="t s">* Kitchen kit: paper garrison cap with a red band,
+  white T-shirt with</text>
+<text x="930" y="346" class="t s">  red trim, long red bib apron (grease and garlic
+  sauce stains, logo,</text>
+<text x="930" y="364" class="t s">  pocket with a pen and a probe thermometer), blue
+  nitrile gloves.</text>
+<text x="930" y="386" class="t s">* Bazaar bottom half: tracksuit trousers with
+  stripes, white sneakers.</text>
+<text x="930" y="408" class="t s">* Weapon: a doner knife, 45 cm thin blade, always
+  freshly sharpened.</text>
+<text x="930" y="426" class="t s">  A sharpening steel hangs at the back of the belt
+  (idle anim: hones).</text>
+<text x="930" y="448" class="t s">* Make 3-4 head and skin variants so a group of
+  cooks is not clones.</text>
+<text x="930" y="470" class="t s">* Rig: standard humanoid (UE mannequin compatible).
+  Apron skirt: 2</text>
+<text x="930" y="488" class="t s">  cloth bones or cloth sim. Hat: rigid, can fly off
+  on death. ~15k tris.</text>
+<text x="930" y="510" class="t s">* HP 30, walks 4 m/s. Swing: 0.6 s windup, 1.5 m,
+  15 dmg.</text>
+<text x="930" y="536" class="t s">Barks: "Fresh delivery!" "Garlic or spicy?"
+  "Extra chicken!"</text>
+<text x="930" y="560" class="t s">Death: falls flat on his back; a flatbread lands
+  on his face.</text>
+
+<!-- POSE CELLS: x0 = 20 + i*262, pelvis y 805, scale 0.72 -->
+<g>
+  <rect x="20" y="600" width="252" height="390" class="cell"/>
+  <rect x="282" y="600" width="252" height="390" class="cell"/>
+  <rect x="544" y="600" width="252" height="390" class="cell"/>
+  <rect x="806" y="600" width="252" height="390" class="cell"/>
+  <rect x="1068" y="600" width="252" height="390" class="cell"/>
+  <rect x="1330" y="600" width="252" height="390" class="cell"/>
+</g>
+
+<g style="--skin:#d9a582;--shirt:#f2f2ee;--pants:#2a3350;--stripe:#e8e8e8;
+  --shoe:#e6e6e6;--glove:#4f8fd8">
+
+<!-- 1 PATROL -->
+<path d="M 236 748 L 272 722 L 272 790 Z" fill="#ffe79a" opacity="0.6"/>
+<ellipse cx="135" cy="960" rx="50" ry="6" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(125 805) scale(0.72)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="rotate(3)">
+        <g transform="translate(-2 -112) rotate(-62)"><use xlink:href="#UA"/>
+          <g transform="translate(0 72) rotate(-22)"><use xlink:href="#FA"/>
+            <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+              <use xlink:href="#flash" transform="translate(1 14) rotate(180)"/>
+            </g></g></g>
+      </g>
+      <g transform="translate(-3 0) rotate(-18)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(14)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(4)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(3 0) rotate(16)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(18)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-24)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <g transform="rotate(3)">
+      <use xlink:href="#TO"/>
+      <use xlink:href="#HS" transform="translate(4 -170)"/>
+      <g transform="translate(-2 -112) rotate(14)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-30)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+            <use xlink:href="#knife" transform="translate(1 14) rotate(150)"/>
+          </g></g></g>
+    </g>
+  </g>
+</g>
+<text x="32" y="625" class="t h3">1 PATROL (0B)</text>
+<text x="32" y="975" class="t s">Flashlight cone = lit zone.</text>
+
+<!-- 2 WINDUP -->
+<ellipse cx="400" cy="960" rx="55" ry="6" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(395 805) scale(0.72)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="rotate(-8)">
+        <g transform="translate(-2 -112) rotate(-60)"><use xlink:href="#UA"/>
+          <g transform="translate(0 72) rotate(-20)"><use xlink:href="#FA"/>
+            <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+      </g>
+      <g transform="translate(-3 0) rotate(-24)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(16)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(8)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(3 0) rotate(20)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(6)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-26)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <g transform="rotate(-8)">
+      <use xlink:href="#TO"/>
+      <use xlink:href="#HS" transform="translate(4 -170) rotate(-4)"/>
+      <g transform="translate(-2 -112) rotate(165)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-40)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+            <use xlink:href="#knife" transform="translate(1 14) rotate(0)"/>
+          </g></g></g>
+    </g>
+  </g>
+</g>
+<text x="294" y="625" class="t h3">2 SWING - windup</text>
+<text x="294" y="975" class="t s">0.6 s: knife up, blade glints.</text>
+
+<!-- 3 STRIKE -->
+<path d="M 640 700 C 730 690 790 760 780 850" stroke="#b9ad94"
+  stroke-width="5" fill="none" stroke-dasharray="10 8"/>
+<ellipse cx="660" cy="960" rx="60" ry="6" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(640 812) scale(0.72)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="rotate(16)">
+        <g transform="translate(-2 -112) rotate(30)"><use xlink:href="#UA"/>
+          <g transform="translate(0 72) rotate(-20)"><use xlink:href="#FA"/>
+            <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+      </g>
+      <g transform="translate(-3 0) rotate(-36)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(32)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(4)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(3 0) rotate(30)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(4)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-34)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <g transform="rotate(16)">
+      <use xlink:href="#TO"/>
+      <use xlink:href="#HS" transform="translate(4 -170) rotate(-12)"/>
+      <g transform="translate(-2 -112) rotate(-100)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-8)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+            <use xlink:href="#knife" transform="translate(1 14) rotate(225)"/>
+          </g></g></g>
+    </g>
+  </g>
+</g>
+<text x="556" y="625" class="t h3">3 SWING - strike</text>
+<text x="556" y="975" class="t s">1.5 m arc, 15 dmg, 0.5 s recovery.</text>
+
+<!-- 4 BUSY -->
+<ellipse cx="920" cy="960" rx="50" ry="6" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(915 805) scale(0.72)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="translate(-2 -112) rotate(-8)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-12)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+      <g transform="translate(-3 0) rotate(-3)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    </g>
+    <g transform="translate(3 0) rotate(3)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98)"><use xlink:href="#FT"/></g></g></g>
+    <use xlink:href="#TO"/>
+    <use xlink:href="#HS" transform="translate(4 -170) rotate(6)"/>
+    <g transform="translate(-2 -112) rotate(-25)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(-150)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#FIST"/>
+          <use xlink:href="#kebab" transform="translate(1 14) rotate(195)"/>
+        </g></g></g>
+  </g>
+</g>
+<path d="M 965 700 C 960 690 970 682 965 672 M 978 703 C 973 693 983 685
+  978 675" stroke="#b9ad94" stroke-width="2.5" fill="none"/>
+<text x="818" y="625" class="t h3">4 BUSY (eating)</text>
+<text x="818" y="975" class="t s">Sees only 3 m ahead. Sneak up!</text>
+
+<!-- 5 SLEEPING -->
+<g filter="url(#ink)">
+  <path fill="#f4f4f4" d="M 1120 885 L 1215 885 L 1215 897 L 1120 897 Z"/>
+  <path fill="#f4f4f4" d="M 1118 800 C 1112 830 1112 860 1120 890 L 1130 890
+    C 1124 860 1124 830 1130 800 Z"/>
+  <path d="M 1126 897 L 1118 960 M 1208 897 L 1216 960 M 1140 897 L 1146 958"
+    stroke="#e0e0e0" stroke-width="7" stroke-linecap="round"/>
+  <g transform="translate(1150 876) scale(0.72)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="translate(-3 0) rotate(-86)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(80)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(6)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(3 0) rotate(-90)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(94)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-4)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <g transform="rotate(-16)">
+      <use xlink:href="#TO"/>
+      <g transform="translate(4 -170) rotate(30)">
+        <use xlink:href="#HS"/>
+        <path class="skin" d="M 11 -3.5 C 14 -5 18 -5 20 -2.5 L 20 1 L 11 1 Z"/>
+        <path class="lid" d="M 12 0 Q 16 2 19.5 0"/>
+      </g>
+      <g transform="translate(-2 -112) rotate(-20)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-55)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+    </g>
+    <use xlink:href="#knife" transform="translate(40 -12) rotate(94)"/>
+  </g>
+</g>
+<text x="1262" y="760" class="t fx" style="font-size:18px">z</text>
+<text x="1275" y="735" class="t fx">Z</text>
+<text x="1290" y="705" class="t fx" style="font-size:28px">Z</text>
+<text x="1080" y="625" class="t h3">5 SLEEPING (0B office)</text>
+<text x="1080" y="975" class="t s">Plastic chair. Wakes only on noise.</text>
+
+<!-- 6 KO -->
+<g filter="url(#ink)">
+  <g transform="translate(1458 941) scale(0.72) rotate(-90)">
+    <g style="--skin:#c08e6c;--shirt:#d8d8d2;--pants:#1f2640;--glove:#3f78bb;
+      --shoe:#cfcfcf">
+      <g transform="translate(-2 -112) rotate(-30)"><use xlink:href="#UA"/>
+        <g transform="translate(0 72) rotate(-40)"><use xlink:href="#FA"/>
+          <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+      <g transform="translate(-3 0) rotate(-62)"><use xlink:href="#TH"/>
+        <g transform="translate(0 99) rotate(96)"><use xlink:href="#SH"/>
+          <g transform="translate(0 98) rotate(-10)"><use xlink:href="#FT"/>
+          </g></g></g>
+    </g>
+    <g transform="translate(3 0) rotate(-74)"><use xlink:href="#TH"/>
+      <g transform="translate(0 99) rotate(112)"><use xlink:href="#SH"/>
+        <g transform="translate(0 98) rotate(-20)"><use xlink:href="#FT"/>
+        </g></g></g>
+    <use xlink:href="#TO"/>
+    <use xlink:href="#HS" transform="translate(4 -170)"/>
+    <g transform="translate(-2 -112) rotate(24)"><use xlink:href="#UA"/>
+      <g transform="translate(0 72) rotate(10)"><use xlink:href="#FA"/>
+        <g transform="translate(0 60)"><use xlink:href="#HAND"/></g></g></g>
+  </g>
+  <ellipse cx="1345" cy="928" rx="20" ry="8" fill="#e9c48a"
+    transform="rotate(-80 1345 928)"/>
+  <path d="M 1342 916 L 1346 924 M 1344 932 L 1348 940" stroke="#a86a32"
+    stroke-width="2"/>
+  <path fill="#f6f6f4" d="M 1395 760 L 1400 745 C 1412 740 1424 742 1430 748
+    L 1432 762 C 1420 758 1406 758 1395 760 Z" transform="rotate(-20 1412 752)"/>
+  <use xlink:href="#knife" transform="translate(1560 945) rotate(70)
+    scale(0.72)"/>
+</g>
+<use xlink:href="#star" transform="translate(1345 850) scale(0.35)"/>
+<use xlink:href="#star" transform="translate(1372 838) scale(0.35)"/>
+<use xlink:href="#star" transform="translate(1398 850) scale(0.35)"/>
+<text x="1342" y="625" class="t h3">6 DEATH</text>
+<text x="1342" y="975" class="t s">Flatbread on the face, hat flies.</text>
+</g>
+</svg>

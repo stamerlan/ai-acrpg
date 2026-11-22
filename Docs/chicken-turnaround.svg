@@ -1,0 +1,524 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1000"
+  width="1600" height="1000">
+<defs>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e4dcc8"
+      stroke-width="1"/>
+  </pattern>
+  <pattern id="scal" width="22" height="14" patternUnits="userSpaceOnUse">
+    <path d="M 0 0 Q 11 13 22 0 M -11 7 Q 0 20 11 7 M 11 7 Q 22 20 33 7"
+      fill="none" stroke="#d9ceb4" stroke-width="1.3"/>
+  </pattern>
+  <pattern id="scals" width="14" height="9" patternUnits="userSpaceOnUse">
+    <path d="M 0 0 Q 7 8 14 0 M -7 4.5 Q 0 13 7 4.5 M 7 4.5 Q 14 13 21 4.5"
+      fill="none" stroke="#d9ceb4" stroke-width="1"/>
+  </pattern>
+  <filter id="ink" x="-15%" y="-15%" width="130%" height="130%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="2.5"
+      result="d"/>
+    <feFlood flood-color="#2a2522" result="c"/>
+    <feComposite in="c" in2="d" operator="in" result="o"/>
+    <feMerge result="m">
+      <feMergeNode in="o"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+    <feTurbulence type="fractalNoise" baseFrequency="0.04"
+      numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="m" in2="n" scale="2.5"
+      xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <style>
+    .t { font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+      fill: #2a2522; }
+    .h1 { font-size: 34px; font-weight: bold; }
+    .h2 { font-size: 20px; font-weight: bold; }
+    .n { font-size: 14px; }
+    .s { font-size: 12px; fill: #6b6256; }
+    .ln { stroke: #2a2522; stroke-width: 2; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .fl { stroke: #bfb196; stroke-width: 1.5; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .guide { stroke: #b9ad94; stroke-width: 1.2;
+      stroke-dasharray: 6 6; }
+    .feather { fill: #fbf8f0; }
+    .fe { fill: #fbf8f0; stroke: #bfb196; stroke-width: 1.5;
+      stroke-linejoin: round; }
+    .shade { fill: #e9dfc8; }
+    .cov { fill: #efe6d2; stroke: #c9bc9f; stroke-width: 1.5; }
+    .sec { fill: #e3d8bf; stroke: #bfb196; stroke-width: 1.5; }
+    .red { fill: #d8342c; }
+    .dred { fill: #b82a23; }
+    .ridge { stroke: #a8231d; stroke-width: 1.5; fill: none;
+      stroke-linecap: round; }
+    .hil { stroke: #ef6a5f; stroke-width: 2; fill: none;
+      stroke-linecap: round; }
+    .orange { fill: #f2a127; }
+    .dorange { fill: #e08a14; }
+    .glass { fill: #1d1d24; }
+    .lens { fill: #2b2f3d; }
+    .shine { fill: #6d7ea3; }
+    .shine2 { fill: #9fb0d3; }
+    .silver { fill: #c0c4cc; }
+    .gold { fill: #d9b44a; }
+    .leg { stroke: #f2a127; stroke-width: 9; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .toe { stroke: #f2a127; stroke-width: 7; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .scale { stroke: #c97f10; stroke-width: 1.5; fill: none;
+      stroke-linecap: round; }
+    .nail { fill: #6b4a2e; }
+    .shadow { fill: #2a2522; opacity: 0.12; }
+  </style>
+
+  <!-- shared parts, side view, local coords (body origin = hip) -->
+  <g id="tf">
+    <path d="M -13 0 C -16 -50 -14 -88 0 -104 C 14 -88 16 -50 13 0 Z"
+      stroke="#bfb196" stroke-width="1.5"/>
+    <path class="fl" d="M 0 -4 L 0 -96 M 0 -30 L -8 -40 M 0 -55 L -8 -65
+      M 0 -30 L 8 -40 M 0 -55 L 8 -65 M 0 -78 L -5 -86 M 0 -78 L 5 -86"/>
+  </g>
+  <g id="pf">
+    <path d="M 0 -8 C -40 -10 -82 -6 -98 2 C -82 9 -40 10 0 8 Z"
+      stroke="#bfb196" stroke-width="1.5"/>
+    <path class="fl" d="M 0 0 L -90 2 M -30 0 L -40 -6 M -55 1 L -65 -4"/>
+  </g>
+  <g id="slegs">
+    <path class="leg" d="M 20 82 L 20 126" style="stroke:#e3931c"/>
+    <path class="toe" d="M 20 127 L 34 135 M 20 127 L 5 132"
+      style="stroke:#e3931c"/>
+    <polygon class="nail" points="34,131 42,135 34,139"/>
+    <polygon class="nail" points="6,129 -1,132 6,135"/>
+    <path class="scale" d="M 16 92 L 24 92 M 16 99 L 24 99 M 16 106
+      L 24 106 M 16 113 L 24 113 M 16 120 L 24 120"/>
+    <path class="leg" d="M 47 82 L 47 126"/>
+    <path class="toe" d="M 47 127 L 72 133 M 47 127 L 62 137
+      M 47 127 L 32 133"/>
+    <polygon class="nail" points="72,129 80,133 72,137"/>
+    <polygon class="nail" points="62,133 69,139 60,141"/>
+    <polygon class="nail" points="33,130 26,133 33,136"/>
+    <path class="scale" d="M 43 92 L 51 92 M 43 99 L 51 99 M 43 106
+      L 51 106 M 43 113 L 51 113 M 43 120 L 51 120 M 58 130 L 58 136
+      M 64 129 L 63 135"/>
+  </g>
+  <g id="sbody">
+    <use xlink:href="#tf" fill="#e9dfc8"
+      transform="translate(-58 -30) rotate(-64) scale(0.95)"/>
+    <use xlink:href="#tf" fill="#fbf8f0"
+      transform="translate(-62 -32) rotate(-50) scale(1.08)"/>
+    <use xlink:href="#tf" fill="#e9dfc8"
+      transform="translate(-64 -32) rotate(-36) scale(1.15)"/>
+    <use xlink:href="#tf" fill="#fbf8f0"
+      transform="translate(-62 -34) rotate(-22) scale(1.08)"/>
+    <use xlink:href="#tf" fill="#efe6d2"
+      transform="translate(-56 -36) rotate(-9) scale(0.92)"/>
+    <path class="feather" d="M 75 -70 C 125 -55 140 5 115 40
+      C 90 75 15 80 -35 67 C -75 57 -95 25 -92 -5 C -90 -35 -72 -52
+      -50 -58 C -15 -72 35 -80 75 -70 Z"/>
+    <path fill="url(#scal)" d="M 75 -70 C 125 -55 140 5 115 40
+      C 90 75 15 80 -35 67 C -75 57 -95 25 -92 -5 C -90 -35 -72 -52
+      -50 -58 C -15 -72 35 -80 75 -70 Z"/>
+    <path class="shade" opacity="0.6" d="M 122 20 C 100 70 15 80 -35 67
+      C 10 66 80 58 122 20 Z"/>
+    <path class="fe" d="M -30 66 L -40 78 L -42 66 L -55 72 L -55 60
+      L -68 62 L -64 50 L -78 48 L -70 38 L -40 50 Z"/>
+    <path class="fe" d="M 0 45 C -5 65 2 82 10 84 L 14 94 L 20 84
+      L 27 96 L 33 84 L 40 95 L 46 84 L 54 94 L 58 82 C 70 78 72 60
+      62 45 Z"/>
+    <path class="fl" d="M 15 60 L 18 80 M 32 58 L 33 82 M 48 58 L 46 80"/>
+    <path class="fe" d="M 40 -105 C 30 -90 22 -78 12 -66 L 26 -66
+      L 20 -52 L 38 -60 L 38 -44 L 54 -56 L 60 -40 L 72 -54 L 84 -40
+      L 92 -55 L 106 -45 L 108 -60 L 122 -56 C 126 -75 120 -95 110 -105
+      Z"/>
+    <path class="fl" d="M 45 -95 L 30 -68 M 60 -95 L 48 -60 M 78 -95
+      L 70 -58 M 95 -95 L 90 -58 M 108 -92 L 110 -62"/>
+  </g>
+  <g id="swing">
+    <use xlink:href="#pf" fill="#d8cdb2"
+      transform="translate(15 -6) rotate(6)"/>
+    <use xlink:href="#pf" fill="#ddd2b8"
+      transform="translate(15 4)"/>
+    <use xlink:href="#pf" fill="#e3d8bf"
+      transform="translate(15 14) rotate(-6)"/>
+    <path class="sec" d="M 78 -12 C 76 12 66 26 54 30 C 50 22 44 22 38 31
+      C 34 22 26 22 22 31 C 18 22 10 22 6 30 C 2 22 -6 22 -10 29
+      C -14 22 -20 20 -24 26 L -30 -6 Z"/>
+    <path class="fl" d="M 46 0 L 46 24 M 30 2 L 30 26 M 14 2 L 14 26
+      M -2 2 L -2 25 M -16 2 L -16 22"/>
+    <path class="cov" d="M 94 -6 C 90 -36 35 -44 -8 -34 C -34 -26
+      -40 -8 -24 2 C -2 8 30 10 62 9 C 84 8 95 4 94 -6 Z"/>
+    <path class="fl" d="M -18 -8 Q -11 0 -4 -8 Q 3 0 10 -8 Q 17 0 24 -8
+      Q 31 0 38 -8 Q 45 0 52 -8 Q 59 0 66 -8 Q 73 0 80 -8
+      M -6 -22 Q 1 -14 8 -22 Q 15 -14 22 -22 Q 29 -14 36 -22
+      Q 43 -14 50 -22 Q 57 -14 64 -22 Q 71 -14 78 -22"/>
+  </g>
+  <g id="shead">
+    <circle r="50" class="feather"/>
+    <path class="fl" d="M -44 0 Q -38 7 -32 0 M -40 16 Q -34 23 -28 16
+      M -32 31 Q -26 38 -20 31 M -46 -16 Q -40 -9 -34 -16
+      M -28 -30 Q -22 -23 -16 -30"/>
+    <ellipse cx="-16" cy="16" rx="8" ry="11" class="red"/>
+    <ellipse cx="-14" cy="13" rx="3" ry="5" fill="#ef6a5f"/>
+    <path class="red" d="M -38 -30 C -50 -40 -52 -52 -44 -54
+      C -40 -50 -36 -46 -32 -44 C -38 -58 -34 -70 -26 -70
+      C -22 -64 -18 -58 -14 -52 C -16 -70 -10 -82 -4 -82 L -1 -76
+      L 3 -80 C 6 -74 6 -64 4 -54 C 8 -66 16 -76 22 -74
+      C 26 -70 24 -60 20 -50 C 26 -58 34 -62 38 -58 C 42 -52 40 -44
+      36 -36 C 20 -42 -10 -40 -38 -30 Z"/>
+    <path class="ridge" d="M -30 -38 L -38 -50 M -14 -42 L -24 -62
+      M 0 -44 L -3 -72 M 12 -44 L 18 -66 M 26 -42 L 33 -54"/>
+    <path class="hil" d="M -22 -47 C -10 -52 10 -52 26 -46"/>
+    <path class="shade" d="M 4 -22 L 8 -44 L 18 -30 L 26 -52 L 34 -31
+      L 48 -46 L 52 -22 Z" stroke="#bfb196" stroke-width="1.2"/>
+    <path class="dred" d="M 34 22 C 44 26 46 44 38 52 C 30 50 28 36
+      30 26 Z"/>
+    <path class="dorange" d="M 46 13 C 60 12 73 12 80 13 C 72 21 58 23
+      46 21 Z"/>
+    <path class="orange" d="M 44 -8 C 62 -9 80 -1 88 12 C 76 9 60 11
+      44 13 Z"/>
+    <path d="M 52 -5 C 64 -5 74 0 80 6" stroke="#ffd07a" stroke-width="2"
+      fill="none" stroke-linecap="round"/>
+    <path d="M 52 -1 Q 56 -4 61 -1" stroke="#8a5a1e" stroke-width="2"
+      fill="none" stroke-linecap="round"/>
+    <path class="red" d="M 42 22 C 56 26 60 46 50 58 C 40 60 34 48 36 34
+      Z"/>
+    <path class="ridge" d="M 44 30 C 50 38 50 48 46 54"/>
+    <path class="glass" d="M 16 -24 L -36 -18 C -41 -17 -42 -12 -37 -12
+      L 16 -16 Z"/>
+    <rect x="-22" y="-19" width="10" height="4" class="gold"/>
+    <path class="glass" d="M 11 -28 L 56 -27 L 55 -18 L 12 -18 Z"/>
+    <path class="lens" d="M 15 -19 L 52 -19 L 50 2 C 42 8 26 8 19 2 Z"/>
+    <path class="shine" d="M 22 -15 L 31 -15 L 22 -2 Z"/>
+    <path class="shine2" d="M 35 -15 L 38 -15 L 29 -1 L 26 -1 Z"/>
+    <rect x="9" y="-25" width="6" height="6" class="silver"/>
+    <circle cx="2" cy="-20" r="1.8" class="silver"/>
+    <circle cx="51" cy="-23" r="1.6" class="silver"/>
+  </g>
+</defs>
+
+<rect width="1600" height="1000" fill="#f7f3e8"/>
+<rect width="1600" height="1000" fill="url(#grid)"/>
+
+<text x="40" y="58" class="t h1">THE AMBITIOUS CHICKEN - turnaround</text>
+<text x="40" y="86" class="t n">chicken-turnaround. Orthographic
+  views share one ground line and one scale (500 px = 1 m). Use as
+  Blender reference planes. Close-ups: chicken-details.</text>
+
+<!-- guides -->
+<g class="guide">
+  <line x1="95" y1="275" x2="1075" y2="275"/>
+  <line x1="95" y1="300" x2="1075" y2="300"/>
+  <line x1="95" y1="340" x2="1075" y2="340"/>
+  <line x1="95" y1="400" x2="1075" y2="400"/>
+  <line x1="95" y1="535" x2="1075" y2="535"/>
+  <line x1="95" y1="600" x2="1075" y2="600"/>
+</g>
+<text x="1080" y="279" class="t s">comb 0.65</text>
+<text x="1080" y="304" class="t s">skull 0.60</text>
+<text x="1080" y="344" class="t s">glasses 0.52</text>
+<text x="1080" y="404" class="t s">chin 0.40</text>
+<text x="1080" y="539" class="t s">belly 0.13</text>
+<text x="1080" y="604" class="t s">ground 0</text>
+
+<!-- scale bar -->
+<g class="ln">
+  <line x1="70" y1="600" x2="70" y2="275" stroke-width="3"/>
+  <line x1="62" y1="600" x2="78" y2="600"/>
+  <line x1="62" y1="550" x2="78" y2="550"/>
+  <line x1="62" y1="500" x2="78" y2="500"/>
+  <line x1="62" y1="450" x2="78" y2="450"/>
+  <line x1="62" y1="400" x2="78" y2="400"/>
+  <line x1="62" y1="350" x2="78" y2="350"/>
+  <line x1="62" y1="300" x2="78" y2="300"/>
+</g>
+<text x="30" y="554" class="t s">0.1</text>
+<text x="30" y="454" class="t s">0.3</text>
+<text x="30" y="354" class="t s">0.5</text>
+
+<!-- FRONT -->
+<text x="185" y="140" class="t h2">FRONT</text>
+<ellipse cx="230" cy="600" rx="110" ry="14" class="shadow"/>
+<g filter="url(#ink)">
+  <path class="leg" d="M 210 525 L 210 592 M 250 525 L 250 592"/>
+  <path class="toe" d="M 210 592 L 193 601 M 210 592 L 210 604
+    M 210 592 L 227 601 M 250 592 L 233 601 M 250 592 L 250 604
+    M 250 592 L 267 601"/>
+  <polygon class="nail" points="190,598 186,605 196,604"/>
+  <polygon class="nail" points="206,603 210,610 214,603"/>
+  <polygon class="nail" points="230,598 234,605 224,604"/>
+  <polygon class="nail" points="230,598 226,605 236,604"/>
+  <polygon class="nail" points="246,603 250,610 254,603"/>
+  <polygon class="nail" points="270,598 274,605 264,604"/>
+  <path class="scale" d="M 205 550 L 215 550 M 205 558 L 215 558
+    M 205 566 L 215 566 M 205 574 L 215 574 M 205 582 L 215 582
+    M 245 550 L 255 550 M 245 558 L 255 558 M 245 566 L 255 566
+    M 245 574 L 255 574 M 245 582 L 255 582"/>
+  <path class="sec" d="M 150 405 C 118 418 108 462 116 496 L 122 516
+    L 130 500 L 138 518 L 145 500 L 155 510 C 162 470 166 430 150 405 Z"/>
+  <path class="sec" d="M 310 405 C 342 418 352 462 344 496 L 338 516
+    L 330 500 L 322 518 L 315 500 L 305 510 C 298 470 294 430 310 405 Z"/>
+  <path class="fl" d="M 130 440 Q 136 448 142 440 M 128 458 Q 134 466
+    140 458 M 318 440 Q 324 448 330 440 M 320 458 Q 326 466 332 458
+    M 130 500 L 128 480 M 138 504 L 138 482 M 330 500 L 332 480
+    M 322 504 L 322 482"/>
+  <ellipse cx="230" cy="460" rx="95" ry="78" class="feather"/>
+  <ellipse cx="230" cy="460" rx="95" ry="78" fill="url(#scal)"/>
+  <path class="shade" opacity="0.6" d="M 140 480 C 160 540 300 540 320 480
+    C 290 520 170 520 140 480 Z"/>
+  <path class="fe" d="M 182 505 C 176 520 180 534 186 538 L 192 548 L 199 536 L 206 549 L 213 536
+    L 221 547 L 226 534 C 234 528 236 512 230 505 Z"/>
+  <path class="fe" d="M 278 505 C 284 520 280 534 274 538 L 268 548 L 261 536 L 254 549 L 247 536
+    L 239 547 L 234 534 C 226 528 224 512 230 505 Z"/>
+  <path class="fe" d="M 175 385 L 170 410 L 184 402 L 186 422 L 199 408
+    L 206 428 L 218 410 L 230 430 L 242 410 L 254 428 L 261 408 L 274 422
+    L 276 402 L 290 410 L 285 385 Z"/>
+  <path class="fl" d="M 190 395 L 186 414 M 210 398 L 206 420 M 230 400
+    L 230 422 M 250 398 L 254 420 M 270 395 L 274 414"/>
+  <circle cx="230" cy="350" r="50" class="feather"/>
+  <path class="fl" d="M 190 372 Q 196 379 202 372 M 258 372 Q 264 379
+    270 372 M 186 356 Q 191 362 196 356 M 264 356 Q 269 362 274 356"/>
+  <ellipse cx="182" cy="362" rx="6" ry="10" class="red"/>
+  <ellipse cx="278" cy="362" rx="6" ry="10" class="red"/>
+  <path class="red" d="M 221 306 C 214 296 218 287 222 285 C 217 276
+    224 268 228 266 L 231 270 L 233 266 C 238 268 243 276 238 285
+    C 242 287 246 296 239 306 Z"/>
+  <path class="ridge" d="M 230 302 L 230 276"/>
+  <path class="hil" d="M 224 296 L 223 286"/>
+  <path class="shade" d="M 190 328 L 193 314 L 202 324 L 208 309 L 215 323
+    L 225 315 L 226 328 Z" stroke="#bfb196" stroke-width="1.2"/>
+  <path class="shade" d="M 270 328 L 267 314 L 258 324 L 252 309 L 245 323
+    L 235 315 L 234 328 Z" stroke="#bfb196" stroke-width="1.2"/>
+  <path class="glass" d="M 184 325 C 210 322 250 322 276 325 L 275 336
+    L 185 336 Z"/>
+  <path class="lens" d="M 189 334 L 226 334 L 224 352 C 216 360 198 360
+    192 352 Z"/>
+  <path class="lens" d="M 271 334 L 234 334 L 236 352 C 244 360 262 360
+    268 352 Z"/>
+  <path class="glass" d="M 224 330 L 236 330 L 236 339 C 233 336 227 336
+    224 339 Z"/>
+  <path class="shine" d="M 195 337 L 205 337 L 197 349 Z"/>
+  <path class="shine2" d="M 208 337 L 211 337 L 203 351 L 200 351 Z"/>
+  <path class="shine" d="M 240 337 L 250 337 L 242 349 Z"/>
+  <path class="shine2" d="M 253 337 L 256 337 L 248 351 L 245 351 Z"/>
+  <circle cx="190" cy="329" r="2" class="silver"/>
+  <circle cx="270" cy="329" r="2" class="silver"/>
+  <path class="ln" d="M 184 330 L 179 333 M 276 330 L 281 333"
+    stroke-width="3"/>
+  <path class="dorange" d="M 219 369 L 230 375 L 241 369 L 230 389 Z"/>
+  <path class="orange" d="M 230 355 L 244 368 L 230 375 L 216 368 Z"/>
+  <path d="M 230 358 L 230 371" stroke="#ffd07a" stroke-width="2"/>
+  <circle cx="225" cy="364" r="1.6" fill="#8a5a1e"/>
+  <circle cx="235" cy="364" r="1.6" fill="#8a5a1e"/>
+  <path class="red" d="M 223 385 C 213 392 214 408 222 412 C 229 406
+    230 392 227 385 Z"/>
+  <path class="red" d="M 237 385 C 247 392 246 408 238 412 C 231 406
+    230 392 233 385 Z"/>
+  <path class="ridge" d="M 221 392 L 220 404 M 239 392 L 240 404"/>
+</g>
+
+<!-- SIDE -->
+<text x="540" y="140" class="t h2">SIDE (facing right)</text>
+<ellipse cx="590" cy="600" rx="150" ry="14" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(565 465)">
+    <use xlink:href="#slegs"/><use xlink:href="#sbody"/>
+    <use xlink:href="#swing"/>
+  </g>
+  <use xlink:href="#shead" transform="translate(650 350)"/>
+</g>
+
+<!-- BACK -->
+<text x="915" y="140" class="t h2">BACK</text>
+<ellipse cx="960" cy="600" rx="110" ry="14" class="shadow"/>
+<g filter="url(#ink)">
+  <path class="leg" d="M 940 525 L 940 594 M 980 525 L 980 594"/>
+  <path class="toe" d="M 940 594 L 940 603 M 980 594 L 980 603"/>
+  <polygon class="nail" points="936,602 940,609 944,602"/>
+  <polygon class="nail" points="976,602 980,609 984,602"/>
+  <path class="scale" d="M 935 550 L 945 550 M 935 558 L 945 558
+    M 935 566 L 945 566 M 935 574 L 945 574 M 935 582 L 945 582
+    M 975 550 L 985 550 M 975 558 L 985 558 M 975 566 L 985 566
+    M 975 574 L 985 574 M 975 582 L 985 582"/>
+  <circle cx="960" cy="350" r="50" class="feather"/>
+  <ellipse cx="960" cy="350" rx="50" ry="50" fill="url(#scals)"/>
+  <ellipse cx="912" cy="362" rx="6" ry="10" class="red"/>
+  <ellipse cx="1008" cy="362" rx="6" ry="10" class="red"/>
+  <path class="glass" d="M 905 328 L 913 328 L 914 360 L 909 362 Z"/>
+  <path class="glass" d="M 1015 328 L 1007 328 L 1006 360 L 1011 362 Z"/>
+  <path class="red" d="M 951 306 C 944 296 948 287 952 285 C 947 276
+    954 268 958 266 L 961 270 L 963 266 C 968 268 973 276 968 285
+    C 972 287 976 296 969 306 Z"/>
+  <path class="ridge" d="M 960 302 L 960 276"/>
+  <ellipse cx="960" cy="460" rx="95" ry="78" class="feather"/>
+  <ellipse cx="960" cy="460" rx="95" ry="78" fill="url(#scal)"/>
+  <path class="fe" d="M 905 385 L 900 410 L 914 402 L 916 424 L 929 408
+    L 936 430 L 948 410 L 960 432 L 972 410 L 984 430 L 991 408
+    L 1004 424 L 1006 402 L 1020 410 L 1015 385 Z"/>
+  <path class="sec" d="M 880 405 C 848 418 838 462 846 496 L 852 516
+    L 860 500 L 868 518 L 875 500 L 885 510 C 892 470 896 430 880 405 Z"/>
+  <path class="sec" d="M 1040 405 C 1072 418 1082 462 1074 496 L 1068 516
+    L 1060 500 L 1052 518 L 1045 500 L 1035 510 C 1028 470 1024 430
+    1040 405 Z"/>
+  <use xlink:href="#tf" fill="#e9dfc8"
+    transform="translate(960 458) rotate(-56) scale(0.95)"/>
+  <use xlink:href="#tf" fill="#e9dfc8"
+    transform="translate(960 458) rotate(56) scale(0.95)"/>
+  <use xlink:href="#tf" fill="#fbf8f0"
+    transform="translate(960 458) rotate(-38) scale(1.05)"/>
+  <use xlink:href="#tf" fill="#fbf8f0"
+    transform="translate(960 458) rotate(38) scale(1.05)"/>
+  <use xlink:href="#tf" fill="#efe6d2"
+    transform="translate(960 458) rotate(-19) scale(1.1)"/>
+  <use xlink:href="#tf" fill="#efe6d2"
+    transform="translate(960 458) rotate(19) scale(1.1)"/>
+  <use xlink:href="#tf" fill="#fbf8f0"
+    transform="translate(960 458) scale(1.12)"/>
+  <path class="fe" d="M 930 520 L 926 540 L 940 532 L 946 548 L 954 534
+    L 960 550 L 966 534 L 974 548 L 980 532 L 994 540 L 990 520 Z"/>
+</g>
+
+<!-- TOP -->
+<text x="1250" y="140" class="t h2">TOP (camera)</text>
+<g filter="url(#ink)">
+  <use xlink:href="#tf" fill="#e9dfc8"
+    transform="translate(1310 505) rotate(150) scale(0.85)"/>
+  <use xlink:href="#tf" fill="#e9dfc8"
+    transform="translate(1310 505) rotate(210) scale(0.85)"/>
+  <use xlink:href="#tf" fill="#fbf8f0"
+    transform="translate(1310 505) rotate(165) scale(0.9)"/>
+  <use xlink:href="#tf" fill="#fbf8f0"
+    transform="translate(1310 505) rotate(195) scale(0.9)"/>
+  <use xlink:href="#tf" fill="#efe6d2"
+    transform="translate(1310 505) rotate(180) scale(0.92)"/>
+  <ellipse cx="1310" cy="425" rx="100" ry="115" class="feather"/>
+  <ellipse cx="1310" cy="425" rx="100" ry="115" fill="url(#scal)"/>
+  <path class="sec" d="M 1218 380 C 1192 410 1186 480 1205 540 L 1214 566
+    L 1222 544 L 1232 562 L 1236 538 L 1246 550 C 1248 480 1242 420
+    1218 380 Z"/>
+  <path class="sec" d="M 1402 380 C 1428 410 1434 480 1415 540 L 1406 566
+    L 1398 544 L 1388 562 L 1384 538 L 1374 550 C 1372 480 1378 420
+    1402 380 Z"/>
+  <path class="fl" d="M 1210 420 Q 1218 428 1226 420 M 1206 445 Q 1214 453
+    1222 445 M 1410 420 Q 1402 428 1394 420 M 1414 445 Q 1406 453
+    1398 445 M 1214 540 L 1212 500 M 1226 545 L 1224 500
+    M 1406 540 L 1408 500 M 1394 545 L 1396 500"/>
+  <polygon class="fe" transform="translate(1310 388)"
+    points="64,0 51,10 59,24.5 43,29 45,45 29,43 24.5,59 10,51 0,64
+    -10,51 -24.5,59 -29,43 -45,45 -43,29 -59,24.5 -51,10 -64,0
+    -51,-10 -59,-24.5 -43,-29 -45,-45 -29,-43 -24.5,-59 -10,-51 0,-64
+    10,-51 24.5,-59 29,-43 45,-45 43,-29 59,-24.5 51,-10"/>
+  <path class="orange" d="M 1310 274 L 1294 316 L 1326 316 Z"/>
+  <path d="M 1310 280 L 1310 306" stroke="#ffd07a" stroke-width="2"/>
+  <circle cx="1303" cy="304" r="1.8" fill="#8a5a1e"/>
+  <circle cx="1317" cy="304" r="1.8" fill="#8a5a1e"/>
+  <circle cx="1310" cy="363" r="50" class="feather"/>
+  <ellipse cx="1310" cy="370" rx="44" ry="40" fill="url(#scals)"/>
+  <path class="red" d="M 1302 340 L 1295 350 L 1302 358 L 1295 368
+    L 1302 376 L 1295 386 L 1302 396 L 1310 403 L 1318 396 L 1325 386
+    L 1318 376 L 1325 368 L 1318 358 L 1325 350 L 1318 340 L 1310 334 Z"/>
+  <path class="ridge" d="M 1310 340 L 1310 398"/>
+  <path class="glass" d="M 1264 330 C 1282 308 1338 308 1356 330
+    L 1350 337 C 1334 320 1286 320 1270 337 Z"/>
+  <path class="glass" d="M 1265 334 L 1259 376 L 1264 377 L 1271 336 Z"/>
+  <path class="glass" d="M 1355 334 L 1361 376 L 1356 377 L 1349 336 Z"/>
+  <circle cx="1268" cy="333" r="2" class="silver"/>
+  <circle cx="1352" cy="333" r="2" class="silver"/>
+  <rect x="1258" y="352" width="4" height="9" class="gold"/>
+</g>
+<g class="ln" stroke="#d8342c">
+  <path d="M 1310 255 L 1310 225 M 1300 238 L 1310 225 L 1320 238"/>
+</g>
+<text x="1330" y="240" class="t s">forward</text>
+<text x="1205" y="625" class="t n">From the camera: red comb</text>
+<text x="1205" y="645" class="t n">stripe + beak + tail fan must</text>
+<text x="1205" y="665" class="t n">read as an arrow.</text>
+
+<!-- PALETTE -->
+<text x="40" y="700" class="t h2">PALETTE</text>
+<g filter="url(#ink)">
+  <rect x="40" y="715" width="44" height="30" class="feather"/>
+  <rect x="40" y="755" width="44" height="30" class="shade"/>
+  <rect x="40" y="795" width="20" height="30" class="red"/>
+  <rect x="62" y="795" width="22" height="30" class="dred"/>
+  <rect x="40" y="835" width="20" height="30" class="orange"/>
+  <rect x="62" y="835" width="22" height="30" class="dorange"/>
+  <rect x="40" y="875" width="20" height="30" class="glass"/>
+  <rect x="62" y="875" width="22" height="30" class="shine"/>
+  <rect x="40" y="915" width="20" height="30" class="silver"/>
+  <rect x="62" y="915" width="22" height="30" class="gold"/>
+</g>
+<text x="98" y="736" class="t n">feathers #FBF8F0, lines #BFB196</text>
+<text x="98" y="776" class="t n">wings #E9DFC8 / #E3D8BF / #D8CDB2</text>
+<text x="98" y="816" class="t n">comb, wattle #D8342C / #B82A23</text>
+<text x="98" y="856" class="t n">beak top #F2A127 / bottom #E08A14</text>
+<text x="98" y="896" class="t n">frame #1D1D24, lens #2B2F3D</text>
+<text x="98" y="936" class="t n">rivets #C0C4CC, monogram #D9B44A</text>
+<text x="40" y="975" class="t s">legs #F2A127, scales #C97F10,
+  claws #6B4A2E</text>
+
+<!-- NOTES -->
+<text x="470" y="700" class="t h2">MODELING NOTES</text>
+<text x="470" y="728" class="t n">* 0.65 m to comb top (a real hen is ~0.4 m; she is
+  scaled up to read from the camera).</text>
+<text x="470" y="750" class="t n">* Feathers are modeled where they break the
+  silhouette: tail (7 cards), primaries</text>
+<text x="470" y="770" class="t n">  (3 per wing), hackle cape, thigh and vent fluff.
+  Everything else is a</text>
+<text x="470" y="790" class="t n">  scallop normal/vertex pattern (big on body, small
+  on head).</text>
+<text x="470" y="812" class="t n">* Wing = coverts + scalloped secondaries + 3 long
+  primaries = 3 fingers.</text>
+<text x="470" y="834" class="t n">* Comb: 5 points, the middle one has a nick (souvenir
+  from game 1).</text>
+<text x="470" y="856" class="t n">* Brow tufts above the frame carry her expressions,
+  since eyes are hidden.</text>
+<text x="470" y="878" class="t n">* Wayfarer sunglasses: own mesh, silver rivets,
+  gold "R.F." plate on the left arm.</text>
+<text x="470" y="900" class="t n">* Legs: scaled shanks, 3 front toes + 1 back toe,
+  dark claws. Feet IK.</text>
+<text x="470" y="922" class="t n">* Jiggle bones: comb, wattles, tail, hackle.
+  Budget ~8k tris (zoom-in close-ups).</text>
+
+<!-- SCALE COMPARISON 120 px = 1 m, ground y 965 -->
+<text x="1080" y="700" class="t h2">SCALE (120 px = 1 m)</text>
+<line x1="1060" y1="965" x2="1570" y2="965" class="ln"/>
+<g filter="url(#ink)">
+  <g transform="translate(1105 933) scale(0.24) translate(-565 -465)">
+    <g transform="translate(565 465)">
+      <use xlink:href="#slegs"/><use xlink:href="#sbody"/>
+      <use xlink:href="#swing"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(650 350)"/>
+  </g>
+</g>
+<text x="1085" y="990" class="t s">hen 0.65</text>
+<g filter="url(#ink)">
+  <path fill="#7a6a5a" d="M 1212 965 L 1214 945 L 1236 945 L 1238 965 Z"/>
+  <path fill="#3d7fc1" d="M 1208 948 C 1208 935 1242 935 1242 948 Z"/>
+  <path fill="#ffffff" d="M 1213 940 C 1216 958 1234 958 1237 940 Z"/>
+  <circle cx="1225" cy="934" r="7" fill="#f2c9a0"/>
+  <path fill="#d8342c" d="M 1214 932 L 1225 917 L 1236 932 Z"/>
+</g>
+<text x="1200" y="990" class="t s">gnome 0.40</text>
+<g filter="url(#ink)">
+  <path fill="#3b4a8c" d="M 1330 878 L 1352 878 L 1352 958 L 1330 958 Z
+    M 1362 878 L 1384 878 L 1384 958 L 1362 958 Z"/>
+  <path fill="#f4f4f4" d="M 1326 958 L 1354 958 L 1354 966 L 1322 966 Z
+    M 1360 958 L 1388 958 L 1392 966 L 1360 966 Z"/>
+  <path fill="#e8c88a" d="M 1314 770 C 1340 758 1380 758 1406 770
+    L 1392 880 L 1324 880 Z"/>
+  <path fill="#d9d9d9" d="M 1320 830 L 1396 830 L 1392 882
+    L 1324 882 Z"/>
+  <path fill="#7fb24a" d="M 1312 772 C 1320 755 1335 765 1345 758
+    C 1355 766 1370 754 1380 762 C 1392 756 1400 765 1408 770
+    C 1385 780 1335 780 1312 772 Z"/>
+</g>
+<text x="1306" y="990" class="t s">Shawarman 1.70</text>
+<g filter="url(#ink)">
+  <circle cx="1495" cy="767" r="18" fill="#e2b48a"/>
+  <path fill="#5a6e8a" d="M 1462 790 L 1528 790 L 1534 882
+    L 1456 882 Z"/>
+  <path fill="#3a3a3a" d="M 1462 880 L 1492 880 L 1492 965
+    L 1462 965 Z M 1498 880 L 1528 880 L 1528 965 L 1498 965 Z"/>
+</g>
+<text x="1462" y="990" class="t s">human 1.80</text>
+</svg>

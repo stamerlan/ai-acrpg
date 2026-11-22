@@ -1,0 +1,538 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 1000"
+  width="1600" height="1000">
+<defs>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#e4dcc8"
+      stroke-width="1"/>
+  </pattern>
+  <pattern id="scal" width="22" height="14" patternUnits="userSpaceOnUse">
+    <path d="M 0 0 Q 11 13 22 0 M -11 7 Q 0 20 11 7 M 11 7 Q 22 20 33 7"
+      fill="none" stroke="#d9ceb4" stroke-width="1.3"/>
+  </pattern>
+  <pattern id="scals" width="14" height="9" patternUnits="userSpaceOnUse">
+    <path d="M 0 0 Q 7 8 14 0 M -7 4.5 Q 0 13 7 4.5 M 7 4.5 Q 14 13 21 4.5"
+      fill="none" stroke="#d9ceb4" stroke-width="1"/>
+  </pattern>
+  <filter id="ink" x="-20%" y="-20%" width="140%" height="140%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="2"
+      result="d"/>
+    <feFlood flood-color="#2a2522" result="c"/>
+    <feComposite in="c" in2="d" operator="in" result="o"/>
+    <feMerge result="m">
+      <feMergeNode in="o"/><feMergeNode in="SourceGraphic"/>
+    </feMerge>
+    <feTurbulence type="fractalNoise" baseFrequency="0.05"
+      numOctaves="2" seed="5" result="n"/>
+    <feDisplacementMap in="m" in2="n" scale="2.5"
+      xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <style>
+    .t { font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+      fill: #2a2522; }
+    .h1 { font-size: 34px; font-weight: bold; }
+    .h2 { font-size: 18px; font-weight: bold; }
+    .n { font-size: 13px; }
+    .fx { font-size: 26px; font-weight: bold; fill: #d8342c; }
+    .ln { stroke: #2a2522; stroke-width: 4; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .feather { fill: #fbf8f0; }
+    .shade { fill: #e9dfc8; }
+    .red { fill: #d8342c; }
+    .orange { fill: #f2a127; }
+    .glass { fill: #1d1d24; }
+    .shine { fill: #6d7ea3; }
+    .leg { stroke: #f2a127; stroke-width: 10; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .shadow { fill: #2a2522; opacity: 0.12; }
+    .wood { fill: #9a6431; }
+    .metal { fill: #4a4d55; }
+    .yellow { fill: #ffd23f; }
+    .cell { fill: none; stroke: #cfc4ad; stroke-width: 1.5; }
+    .fl { stroke: #bfb196; stroke-width: 1.5; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .fe { fill: #fbf8f0; stroke: #bfb196; stroke-width: 1.5;
+      stroke-linejoin: round; }
+    .cov { fill: #efe6d2; stroke: #c9bc9f; stroke-width: 1.5; }
+    .sec { fill: #e3d8bf; stroke: #bfb196; stroke-width: 1.5; }
+    .dred { fill: #b82a23; }
+    .ridge { stroke: #a8231d; stroke-width: 1.5; fill: none;
+      stroke-linecap: round; }
+    .hil { stroke: #ef6a5f; stroke-width: 2; fill: none;
+      stroke-linecap: round; }
+    .dorange { fill: #e08a14; }
+    .lens { fill: #2b2f3d; }
+    .shine2 { fill: #9fb0d3; }
+    .silver { fill: #c0c4cc; }
+    .gold { fill: #d9b44a; }
+    .toe { stroke: #f2a127; stroke-width: 7; fill: none;
+      stroke-linecap: round; stroke-linejoin: round; }
+    .scale { stroke: #c97f10; stroke-width: 1.5; fill: none;
+      stroke-linecap: round; }
+    .nail { fill: #6b4a2e; }
+  </style>
+
+  <!-- shared parts, side view, local coords (body origin = hip) -->
+  <g id="tf">
+    <path d="M -13 0 C -16 -50 -14 -88 0 -104 C 14 -88 16 -50 13 0 Z"
+      stroke="#bfb196" stroke-width="1.5"/>
+    <path class="fl" d="M 0 -4 L 0 -96 M 0 -30 L -8 -40 M 0 -55 L -8 -65
+      M 0 -30 L 8 -40 M 0 -55 L 8 -65 M 0 -78 L -5 -86 M 0 -78 L 5 -86"/>
+  </g>
+  <g id="pf">
+    <path d="M 0 -8 C -40 -10 -82 -6 -98 2 C -82 9 -40 10 0 8 Z"
+      stroke="#bfb196" stroke-width="1.5"/>
+    <path class="fl" d="M 0 0 L -90 2 M -30 0 L -40 -6 M -55 1 L -65 -4"/>
+  </g>
+  <g id="slegs">
+    <path class="leg" d="M 20 82 L 20 126" style="stroke:#e3931c"/>
+    <path class="toe" d="M 20 127 L 34 135 M 20 127 L 5 132"
+      style="stroke:#e3931c"/>
+    <polygon class="nail" points="34,131 42,135 34,139"/>
+    <polygon class="nail" points="6,129 -1,132 6,135"/>
+    <path class="scale" d="M 16 92 L 24 92 M 16 99 L 24 99 M 16 106
+      L 24 106 M 16 113 L 24 113 M 16 120 L 24 120"/>
+    <path class="leg" d="M 47 82 L 47 126"/>
+    <path class="toe" d="M 47 127 L 72 133 M 47 127 L 62 137
+      M 47 127 L 32 133"/>
+    <polygon class="nail" points="72,129 80,133 72,137"/>
+    <polygon class="nail" points="62,133 69,139 60,141"/>
+    <polygon class="nail" points="33,130 26,133 33,136"/>
+    <path class="scale" d="M 43 92 L 51 92 M 43 99 L 51 99 M 43 106
+      L 51 106 M 43 113 L 51 113 M 43 120 L 51 120 M 58 130 L 58 136
+      M 64 129 L 63 135"/>
+  </g>
+  <g id="sbody">
+    <use xlink:href="#tf" fill="#e9dfc8"
+      transform="translate(-58 -30) rotate(-64) scale(0.95)"/>
+    <use xlink:href="#tf" fill="#fbf8f0"
+      transform="translate(-62 -32) rotate(-50) scale(1.08)"/>
+    <use xlink:href="#tf" fill="#e9dfc8"
+      transform="translate(-64 -32) rotate(-36) scale(1.15)"/>
+    <use xlink:href="#tf" fill="#fbf8f0"
+      transform="translate(-62 -34) rotate(-22) scale(1.08)"/>
+    <use xlink:href="#tf" fill="#efe6d2"
+      transform="translate(-56 -36) rotate(-9) scale(0.92)"/>
+    <path class="feather" d="M 75 -70 C 125 -55 140 5 115 40
+      C 90 75 15 80 -35 67 C -75 57 -95 25 -92 -5 C -90 -35 -72 -52
+      -50 -58 C -15 -72 35 -80 75 -70 Z"/>
+    <path fill="url(#scal)" d="M 75 -70 C 125 -55 140 5 115 40
+      C 90 75 15 80 -35 67 C -75 57 -95 25 -92 -5 C -90 -35 -72 -52
+      -50 -58 C -15 -72 35 -80 75 -70 Z"/>
+    <path class="shade" opacity="0.6" d="M 122 20 C 100 70 15 80 -35 67
+      C 10 66 80 58 122 20 Z"/>
+    <path class="fe" d="M -30 66 L -40 78 L -42 66 L -55 72 L -55 60
+      L -68 62 L -64 50 L -78 48 L -70 38 L -40 50 Z"/>
+    <path class="fe" d="M 0 45 C -5 65 2 82 10 84 L 14 94 L 20 84
+      L 27 96 L 33 84 L 40 95 L 46 84 L 54 94 L 58 82 C 70 78 72 60
+      62 45 Z"/>
+    <path class="fl" d="M 15 60 L 18 80 M 32 58 L 33 82 M 48 58 L 46 80"/>
+    <path class="fe" d="M 40 -105 C 30 -90 22 -78 12 -66 L 26 -66
+      L 20 -52 L 38 -60 L 38 -44 L 54 -56 L 60 -40 L 72 -54 L 84 -40
+      L 92 -55 L 106 -45 L 108 -60 L 122 -56 C 126 -75 120 -95 110 -105
+      Z"/>
+    <path class="fl" d="M 45 -95 L 30 -68 M 60 -95 L 48 -60 M 78 -95
+      L 70 -58 M 95 -95 L 90 -58 M 108 -92 L 110 -62"/>
+  </g>
+  <g id="swing">
+    <use xlink:href="#pf" fill="#d8cdb2"
+      transform="translate(15 -6) rotate(6)"/>
+    <use xlink:href="#pf" fill="#ddd2b8"
+      transform="translate(15 4)"/>
+    <use xlink:href="#pf" fill="#e3d8bf"
+      transform="translate(15 14) rotate(-6)"/>
+    <path class="sec" d="M 78 -12 C 76 12 66 26 54 30 C 50 22 44 22 38 31
+      C 34 22 26 22 22 31 C 18 22 10 22 6 30 C 2 22 -6 22 -10 29
+      C -14 22 -20 20 -24 26 L -30 -6 Z"/>
+    <path class="fl" d="M 46 0 L 46 24 M 30 2 L 30 26 M 14 2 L 14 26
+      M -2 2 L -2 25 M -16 2 L -16 22"/>
+    <path class="cov" d="M 94 -6 C 90 -36 35 -44 -8 -34 C -34 -26
+      -40 -8 -24 2 C -2 8 30 10 62 9 C 84 8 95 4 94 -6 Z"/>
+    <path class="fl" d="M -18 -8 Q -11 0 -4 -8 Q 3 0 10 -8 Q 17 0 24 -8
+      Q 31 0 38 -8 Q 45 0 52 -8 Q 59 0 66 -8 Q 73 0 80 -8
+      M -6 -22 Q 1 -14 8 -22 Q 15 -14 22 -22 Q 29 -14 36 -22
+      Q 43 -14 50 -22 Q 57 -14 64 -22 Q 71 -14 78 -22"/>
+  </g>
+  <g id="shead">
+    <circle r="50" class="feather"/>
+    <path class="fl" d="M -44 0 Q -38 7 -32 0 M -40 16 Q -34 23 -28 16
+      M -32 31 Q -26 38 -20 31 M -46 -16 Q -40 -9 -34 -16
+      M -28 -30 Q -22 -23 -16 -30"/>
+    <ellipse cx="-16" cy="16" rx="8" ry="11" class="red"/>
+    <ellipse cx="-14" cy="13" rx="3" ry="5" fill="#ef6a5f"/>
+    <path class="red" d="M -38 -30 C -50 -40 -52 -52 -44 -54
+      C -40 -50 -36 -46 -32 -44 C -38 -58 -34 -70 -26 -70
+      C -22 -64 -18 -58 -14 -52 C -16 -70 -10 -82 -4 -82 L -1 -76
+      L 3 -80 C 6 -74 6 -64 4 -54 C 8 -66 16 -76 22 -74
+      C 26 -70 24 -60 20 -50 C 26 -58 34 -62 38 -58 C 42 -52 40 -44
+      36 -36 C 20 -42 -10 -40 -38 -30 Z"/>
+    <path class="ridge" d="M -30 -38 L -38 -50 M -14 -42 L -24 -62
+      M 0 -44 L -3 -72 M 12 -44 L 18 -66 M 26 -42 L 33 -54"/>
+    <path class="hil" d="M -22 -47 C -10 -52 10 -52 26 -46"/>
+    <path class="shade" d="M 4 -22 L 8 -44 L 18 -30 L 26 -52 L 34 -31
+      L 48 -46 L 52 -22 Z" stroke="#bfb196" stroke-width="1.2"/>
+    <path class="dred" d="M 34 22 C 44 26 46 44 38 52 C 30 50 28 36
+      30 26 Z"/>
+    <path class="dorange" d="M 46 13 C 60 12 73 12 80 13 C 72 21 58 23
+      46 21 Z"/>
+    <path class="orange" d="M 44 -8 C 62 -9 80 -1 88 12 C 76 9 60 11
+      44 13 Z"/>
+    <path d="M 52 -5 C 64 -5 74 0 80 6" stroke="#ffd07a" stroke-width="2"
+      fill="none" stroke-linecap="round"/>
+    <path d="M 52 -1 Q 56 -4 61 -1" stroke="#8a5a1e" stroke-width="2"
+      fill="none" stroke-linecap="round"/>
+    <path class="red" d="M 42 22 C 56 26 60 46 50 58 C 40 60 34 48 36 34
+      Z"/>
+    <path class="ridge" d="M 44 30 C 50 38 50 48 46 54"/>
+    <path class="glass" d="M 16 -24 L -36 -18 C -41 -17 -42 -12 -37 -12
+      L 16 -16 Z"/>
+    <rect x="-22" y="-19" width="10" height="4" class="gold"/>
+    <path class="glass" d="M 11 -28 L 56 -27 L 55 -18 L 12 -18 Z"/>
+    <path class="lens" d="M 15 -19 L 52 -19 L 50 2 C 42 8 26 8 19 2 Z"/>
+    <path class="shine" d="M 22 -15 L 31 -15 L 22 -2 Z"/>
+    <path class="shine2" d="M 35 -15 L 38 -15 L 29 -1 L 26 -1 Z"/>
+    <rect x="9" y="-25" width="6" height="6" class="silver"/>
+    <circle cx="2" cy="-20" r="1.8" class="silver"/>
+    <circle cx="51" cy="-23" r="1.6" class="silver"/>
+  </g>
+  <path id="wingopen" class="shade" d="M 0 0 C 20 -40 80 -90 140 -100
+    L 128 -78 L 152 -72 L 128 -50 L 146 -38 L 118 -22 L 130 -8
+    C 80 5 40 10 0 0 Z"/>
+  <path id="wingup" class="shade" d="M 0 0 C -20 -70 10 -140 40 -160
+    L 62 -150 C 52 -110 44 -60 34 -10 Z"/>
+  <g id="gun">
+    <path class="wood" d="M -170 -4 L -60 -18 L -60 10 L -170 32 Z"/>
+    <rect x="-60" y="-20" width="80" height="30" rx="4" class="metal"/>
+    <rect x="20" y="-18" width="262" height="11" class="metal"/>
+    <rect x="20" y="-5" width="200" height="9" class="metal"/>
+    <rect x="70" y="-11" width="80" height="18" rx="6" class="wood"/>
+  </g>
+  <g id="gnome">
+    <rect x="-32" y="-18" width="64" height="18" fill="#6b4a2e"/>
+    <path fill="#3d7fc1" d="M -42 -15 C -46 -95 46 -95 42 -15 Z"/>
+    <path fill="#ffffff" d="M -30 -98 C -26 -40 26 -40 30 -98 Z"/>
+    <circle cy="-106" r="22" fill="#f2c9a0"/>
+    <circle cy="-100" r="8" fill="#e88a7a"/>
+    <path class="red" d="M -36 -114 L 0 -200 L 36 -114 Z"/>
+  </g>
+  <g id="corn">
+    <ellipse rx="50" ry="17" fill="#ffd23f"/>
+    <path fill="#7fb24a" d="M -50 0 C -70 -20 -90 -10 -100 -22
+      C -80 5 -70 10 -50 6 Z"/>
+    <path class="ln" stroke="#d9a400" stroke-width="2"
+      d="M -30 -14 L -30 14 M -10 -16 L -10 16 M 10 -16 L 10 16
+      M 30 -14 L 30 14"/>
+  </g>
+  <polygon id="star" class="yellow" points="0,-30 8,-10 30,-10 12,4
+    18,26 0,12 -18,26 -12,4 -30,-10 -8,-10"/>
+  <g id="plume">
+    <ellipse rx="14" ry="5" class="feather"/>
+    <path class="ln" stroke-width="2" d="M -14 0 L 14 0"/>
+  </g>
+</defs>
+
+<rect width="1600" height="1000" fill="#f7f3e8"/>
+<rect width="1600" height="1000" fill="url(#grid)"/>
+<text x="40" y="58" class="t h1">THE AMBITIOUS CHICKEN - key poses</text>
+<text x="40" y="86" class="t n" style="font-size:15px">chicken-poses.
+  Side view, 250 px = 1 m. One cell = one animation; the pose is the
+  key frame that sells it. Timings are from the GDD.</text>
+
+<!-- cells: x0 = 20 + c*312, y0 = 105 + r*295, ground at y0+225 -->
+<g>
+  <rect x="20" y="105" width="300" height="285" class="cell"/>
+  <rect x="332" y="105" width="300" height="285" class="cell"/>
+  <rect x="644" y="105" width="300" height="285" class="cell"/>
+  <rect x="956" y="105" width="300" height="285" class="cell"/>
+  <rect x="1268" y="105" width="300" height="285" class="cell"/>
+  <rect x="20" y="400" width="300" height="285" class="cell"/>
+  <rect x="332" y="400" width="300" height="285" class="cell"/>
+  <rect x="644" y="400" width="300" height="285" class="cell"/>
+  <rect x="956" y="400" width="300" height="285" class="cell"/>
+  <rect x="1268" y="400" width="300" height="285" class="cell"/>
+  <rect x="20" y="695" width="300" height="285" class="cell"/>
+  <rect x="332" y="695" width="300" height="285" class="cell"/>
+  <rect x="644" y="695" width="300" height="285" class="cell"/>
+  <rect x="956" y="695" width="300" height="285" class="cell"/>
+  <rect x="1268" y="695" width="300" height="285" class="cell"/>
+</g>
+
+<!-- 1 IDLE -->
+<ellipse cx="150" cy="330" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(140 330) scale(0.5) translate(0 -130)">
+    <use xlink:href="#slegs"/><use xlink:href="#sbody"/>
+    <use xlink:href="#swing"/>
+    <use xlink:href="#shead" transform="translate(85 -115)"/>
+  </g>
+</g>
+<text x="32" y="130" class="t h2">1 IDLE (loop)</text>
+<text x="32" y="355" class="t n">2 s loop: chest breathes, head</text>
+<text x="32" y="372" class="t n">jerks side to side, glasses glint.</text>
+
+<!-- 2 RUN -->
+<ellipse cx="465" cy="330" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(450 330) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 35 55 L 70 120 L 95 122 M 20 55 L -10 105
+      L -35 118"/>
+    <g transform="rotate(12)">
+      <use xlink:href="#sbody"/>
+      <use xlink:href="#swing" transform="rotate(-18)"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(115 -95)"/>
+  </g>
+</g>
+<path class="ln" d="M 350 250 L 385 250 M 345 275 L 375 275
+  M 355 300 L 385 300" stroke="#b9ad94"/>
+<text x="344" y="130" class="t h2">2 WALK / RUN</text>
+<text x="344" y="355" class="t n">Run 5 m/s. Body leans 12 deg, head</text>
+<text x="344" y="372" class="t n">stays locked level (chicken head).</text>
+
+<!-- 3 PECK WINDUP -->
+<ellipse cx="775" cy="330" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(765 330) scale(0.5) translate(0 -130)">
+    <use xlink:href="#slegs"/>
+    <g transform="rotate(-8)">
+      <use xlink:href="#sbody"/><use xlink:href="#swing"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(45 -125) rotate(-18)"/>
+  </g>
+</g>
+<text x="656" y="130" class="t h2">3 PECK - windup</text>
+<text x="656" y="355" class="t n">0.1 s: neck pulls back, body</text>
+<text x="656" y="372" class="t n">coils. Readable even from above.</text>
+
+<!-- 4 PECK STRIKE -->
+<ellipse cx="1070" cy="330" rx="80" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(1060 330) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 10 60 L -15 128 L 10 132 M 45 55 L 70 128
+      L 95 132"/>
+    <g transform="rotate(14)">
+      <use xlink:href="#sbody"/><use xlink:href="#swing"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(150 -45) rotate(32)"/>
+    <use xlink:href="#star" transform="translate(240 40) scale(1.2)"/>
+  </g>
+</g>
+<text x="1170" y="200" class="t fx">PECK!</text>
+<text x="968" y="130" class="t h2">4 PECK - strike</text>
+<text x="968" y="355" class="t n">Arc 1.5 m / 90 deg. Unaware target:</text>
+<text x="968" y="372" class="t n">bigger star, "SURPRISE!" x3 dmg.</text>
+
+<!-- 5 FLUTTER -->
+<ellipse cx="1395" cy="330" rx="45" ry="6" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(1380 305) scale(0.5) translate(0 -130)">
+    <use xlink:href="#wingopen" transform="translate(-20 -30)
+      rotate(-25) scale(1.15)" style="fill:#d8cdb2"/>
+    <path class="leg" d="M 15 55 L 0 85 L 20 92 M 42 55 L 35 88
+      L 55 94"/>
+    <g transform="rotate(-6)"><use xlink:href="#sbody"/></g>
+    <use xlink:href="#wingopen" transform="translate(10 -25) rotate(-5) scale(1.15)"/>
+    <use xlink:href="#shead" transform="translate(85 -112)"/>
+  </g>
+  <use xlink:href="#plume" transform="translate(1300 250) rotate(20)"/>
+  <use xlink:href="#plume" transform="translate(1320 300) rotate(-30)"/>
+  <use xlink:href="#plume" transform="translate(1290 200) rotate(60)"/>
+</g>
+<text x="1280" y="130" class="t h2">5 FLUTTER (dodge)</text>
+<text x="1280" y="355" class="t n">4 m in 0.25 s, invulnerable. Wild</text>
+<text x="1280" y="372" class="t n">flapping, feathers fall off.</text>
+
+<!-- 6 CARRY -->
+<ellipse cx="150" cy="625" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(140 625) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 5 60 L 0 130 L 25 135 M 55 60 L 65 130
+      L 90 135"/>
+    <use xlink:href="#wingup" transform="translate(30 -40)"
+      style="fill:#d8cdb2"/>
+    <use xlink:href="#sbody"/>
+    <use xlink:href="#shead" transform="translate(80 -118) rotate(-8)"/>
+    <use xlink:href="#gnome" transform="translate(-50 -200) rotate(90) scale(0.8)"/>
+    <use xlink:href="#wingup" transform="translate(70 -40)"/>
+  </g>
+</g>
+<text x="32" y="425" class="t h2">6 CARRY (gnome)</text>
+<text x="32" y="650" class="t n">Overhead, 30% slower, wobbly</text>
+<text x="32" y="667" class="t n">waddle. No peck while carrying.</text>
+
+<!-- 7 THROW -->
+<ellipse cx="420" cy="625" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(410 625) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 10 60 L -20 128 L 5 133 M 45 55 L 70 128
+      L 95 133"/>
+    <g transform="rotate(15)"><use xlink:href="#sbody"/></g>
+    <use xlink:href="#shead" transform="translate(110 -95) rotate(10)"/>
+    <use xlink:href="#wingopen" transform="translate(30 -30) rotate(30)"/>
+    <use xlink:href="#gnome" transform="translate(290 -190) rotate(70)
+      scale(0.8)"/>
+  </g>
+</g>
+<path class="ln" d="M 480 570 Q 540 470 600 520" stroke="#b9ad94"
+  stroke-dasharray="8 8"/>
+<text x="344" y="425" class="t h2">7 THROW</text>
+<text x="344" y="650" class="t n">Arc up to 10 m, 25 dmg, knockdown.</text>
+<text x="344" y="667" class="t n">Gnome tumbles, shatters on hit.</text>
+
+<!-- 8 SHOTGUN AIM -->
+<ellipse cx="770" cy="625" rx="80" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(730 625) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 0 60 L -10 130 L 15 135 M 50 60 L 65 130
+      L 90 135"/>
+    <g transform="rotate(-5)"><use xlink:href="#sbody"/></g>
+    <use xlink:href="#gun" transform="translate(30 5)"/>
+    <use xlink:href="#swing" transform="translate(10 -5) rotate(5)"/>
+    <use xlink:href="#shead" transform="translate(80 -118)"/>
+  </g>
+</g>
+<text x="656" y="425" class="t h2">8 SHOTGUN - aim</text>
+<text x="656" y="650" class="t n">Gun 0.9 m: longer than she is. Wing</text>
+<text x="656" y="667" class="t n">tucks it, body leans back from weight.</text>
+
+<!-- 9 FIRE -->
+<ellipse cx="1070" cy="625" rx="80" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(1030 625) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M -5 60 L -35 128 L -10 133 M 40 60 L 20 128
+      L 45 133"/>
+    <g transform="rotate(-16)">
+      <use xlink:href="#sbody"/>
+      <use xlink:href="#gun" transform="translate(10 5)"/>
+      <use xlink:href="#swing" transform="translate(-5 -5)"/>
+      <use xlink:href="#shead" transform="translate(70 -125) rotate(-10)"/>
+      <use xlink:href="#star" transform="translate(320 -10) scale(2.4)"
+        style="fill:#ff8a1f"/>
+      <use xlink:href="#star" transform="translate(320 -10) scale(1.2)"/>
+    </g>
+    <use xlink:href="#plume" transform="translate(-140 -140) rotate(30)"/>
+    <use xlink:href="#plume" transform="translate(-100 -200) rotate(-40)"/>
+  </g>
+</g>
+<path class="ln" d="M 945 610 L 985 610 M 955 598 L 985 598"
+  stroke="#b9ad94"/>
+<text x="1160" y="480" class="t fx">BOOM</text>
+<text x="968" y="425" class="t h2">9 SHOTGUN - fire</text>
+<text x="968" y="650" class="t n">Recoil kicks her back 0.3 m, glasses</text>
+<text x="968" y="667" class="t n">jump, 2 feathers pop. Loud: 25 m.</text>
+
+<!-- 10 PUMP -->
+<ellipse cx="1390" cy="625" rx="80" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(1350 625) scale(0.5) translate(0 -130)">
+    <use xlink:href="#slegs"/>
+    <use xlink:href="#sbody"/>
+    <use xlink:href="#gun" transform="translate(30 5) rotate(-6)"/>
+    <use xlink:href="#swing" transform="translate(30 0) rotate(8)"/>
+    <use xlink:href="#shead" transform="translate(85 -118)"/>
+    <rect x="20" y="-150" width="16" height="30" rx="4" class="red"
+      transform="rotate(30 28 -135)"/>
+  </g>
+</g>
+<path class="ln" d="M 1450 605 L 1420 605 M 1428 597 L 1420 605
+  L 1428 613" stroke="#d8342c"/>
+<text x="1440" y="510" class="t fx" style="font-size:20px">chk-chk</text>
+<text x="1280" y="425" class="t h2">10 SHOTGUN - pump</text>
+<text x="1280" y="650" class="t n">0.7 s between shots. Wing slides</text>
+<text x="1280" y="667" class="t n">the pump, red shell flies out.</text>
+
+<!-- 11 RELOAD -->
+<ellipse cx="150" cy="920" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(130 920) scale(0.5) translate(0 -130)">
+    <use xlink:href="#slegs"/>
+    <use xlink:href="#gun" transform="translate(10 0) rotate(-45)"/>
+    <use xlink:href="#sbody"/>
+    <use xlink:href="#swing" transform="translate(15 -15) rotate(-20)"/>
+    <use xlink:href="#shead" transform="translate(80 -110) rotate(20)"/>
+    <rect x="60" y="-45" width="16" height="30" rx="4" class="red"/>
+  </g>
+</g>
+<text x="32" y="720" class="t h2">11 RELOAD (loop)</text>
+<text x="32" y="945" class="t n">Standing still only. 1 shell per</text>
+<text x="32" y="962" class="t n">0.5 s; any action cancels.</text>
+
+<!-- 12 EAT CORN -->
+<ellipse cx="465" cy="920" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(440 920) scale(0.5) translate(0 -130)">
+    <use xlink:href="#slegs"/>
+    <g transform="rotate(8)"><use xlink:href="#sbody"/></g>
+    <use xlink:href="#corn" transform="translate(185 10) rotate(-15)"/>
+    <use xlink:href="#wingopen" transform="translate(40 0) rotate(45)
+      scale(0.7)"/>
+    <use xlink:href="#shead" transform="translate(125 -80) rotate(35)"/>
+    <circle cx="250" cy="-40" r="6" class="yellow"/>
+    <circle cx="270" cy="-10" r="6" class="yellow"/>
+    <circle cx="240" cy="-80" r="6" class="yellow"/>
+  </g>
+</g>
+<text x="344" y="720" class="t h2">12 EAT CORN (heal)</text>
+<text x="344" y="945" class="t n">Machine-gun pecks at the cob,</text>
+<text x="344" y="962" class="t n">kernels fly. +35 HP, 1 s.</text>
+
+<!-- 13 BACKPACK -->
+<ellipse cx="775" cy="920" rx="80" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(750 920) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 40 125 L 75 130 M 10 125 L -10 130"/>
+    <g transform="translate(0 50) rotate(4)">
+      <use xlink:href="#sbody"/><use xlink:href="#swing"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(105 -45) rotate(35)"/>
+    <path fill="#7a8b4a" d="M 150 130 L 160 40 C 180 20 240 20 260 40
+      L 268 130 Z"/>
+    <path fill="#5f6d3a" d="M 155 50 C 190 70 230 70 265 50 L 268 30
+      C 230 40 190 40 152 32 Z"/>
+    <rect x="195" y="80" width="30" height="20" fill="#c9b27a"/>
+  </g>
+</g>
+<text x="656" y="720" class="t h2">13 BACKPACK (open)</text>
+<text x="656" y="945" class="t n">Kneels, digs in the bag. Game does</text>
+<text x="656" y="962" class="t n">NOT pause - pose must look exposed.</text>
+
+<!-- 14 HIT -->
+<ellipse cx="1090" cy="920" rx="70" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(1090 920) scale(0.5) translate(0 -130)">
+    <path class="leg" d="M 0 55 L -30 125 L -5 132 M 40 55 L 80 90
+      L 100 85"/>
+    <g transform="rotate(-25)">
+      <use xlink:href="#sbody"/>
+      <use xlink:href="#wingopen" transform="translate(0 -20)
+        rotate(-40) scale(0.8)"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(30 -125) rotate(-35)"/>
+    <use xlink:href="#plume" transform="translate(-130 -200) rotate(20)"/>
+    <use xlink:href="#plume" transform="translate(150 -170) rotate(-50)"/>
+    <use xlink:href="#plume" transform="translate(-170 -60) rotate(70)"/>
+    <use xlink:href="#star" transform="translate(130 -60) scale(0.9)"/>
+  </g>
+</g>
+<text x="968" y="720" class="t h2">14 HIT REACT</text>
+<text x="968" y="945" class="t n">Snaps back, feathers burst. Short</text>
+<text x="968" y="962" class="t n">(0.2 s) so control returns fast.</text>
+
+<!-- 15 KO -->
+<ellipse cx="1415" cy="920" rx="90" ry="8" class="shadow"/>
+<g filter="url(#ink)">
+  <g transform="translate(1410 920) scale(0.5) translate(0 -130)">
+    <g transform="translate(0 18) rotate(180)">
+      <use xlink:href="#slegs"/>
+      <use xlink:href="#sbody"/><use xlink:href="#swing"/>
+    </g>
+    <use xlink:href="#shead" transform="translate(-118 58) rotate(200)"/>
+    <use xlink:href="#star" transform="translate(-60 -170) scale(0.5)"/>
+    <use xlink:href="#star" transform="translate(10 -200) scale(0.5)"/>
+    <use xlink:href="#star" transform="translate(80 -170) scale(0.5)"/>
+  </g>
+</g>
+<text x="1280" y="720" class="t h2">15 KO (before death screen)</text>
+<text x="1280" y="945" class="t n">Flops on her back, feet up, stars</text>
+<text x="1280" y="962" class="t n">spin. Then cut to the food screen.</text>
+</svg>
