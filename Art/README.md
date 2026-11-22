@@ -21,8 +21,19 @@ the chicken 65 cm to the comb top and her feet at 0.
 
 Import `SK_Chicken.fbx` first, then the clips onto its skeleton. Every
 FBX in `Mesh/` and `Anims/` comes from the .blend, so they share one
-skeleton; re-export from there after changes. Export settings: FBX Units
-Scale, no leaf bones, all bones, Y primary / X secondary bone axis.
+skeleton; re-export from there after changes.
+
+Both .blend files work in centimeters (unit scale 0.01), because UE
+ignores the FBX unit scale and reads values as centimeters. Export
+settings: Apply Scalings "All Local", scale 1.0, no leaf bones, all
+bones, Y primary / X secondary bone axis.
+
+In UE the assets live in `/Game/Characters/Chicken`. `ABP_Chicken`
+blends Idle, Walk (from 0 to 150 cm/s) and Run (150 to 450 cm/s) by
+speed and has a `DefaultSlot` for montages; `BP_Protagonist` uses it
+with a 25 cm x 33 cm capsule. The MCP import tool cannot import a
+skeleton-only FBX, so the clips were imported from one temporary FBX
+with the mesh and all 15 actions.
 
 The mesh has two parts: the body (8423 tris, `M_Chicken`) and the
 sunglasses (622 tris, `M_Sunglasses`), skinned 100% to the `Glasses`
