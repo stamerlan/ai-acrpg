@@ -19,7 +19,7 @@ AChickenCharacter::AChickenCharacter()
 	bUseControllerRotationRoll = false;
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = 500.f;
+	Movement->MaxWalkSpeed = 300.f;
 	Movement->MaxAcceleration = 3000.f;
 	Movement->BrakingDecelerationWalking = 3000.f;
 	Movement->bOrientRotationToMovement = true;
