@@ -21,10 +21,59 @@ Status: first draft. All numbers are starting values for tuning.
 | | flutter, throwing, healing, sneaking, shotgun, reload, boss |
 | Enemies | Shawarman, Skewerman, Grill Sergeant, boss Mr. Kebabski |
 | Unlocks | Poznan on the map |
-| UE maps | `/Game/Maps/Stop0/L_0A_BorderBazaar`, `L_0B_ImpoundLot` |
+| UE map | `/Game/Maps/Stop0/L0_BorderBazaar` (both levels) |
 
 Stop 0 is linear: once the night level starts, she can't go back to the
 bazaar.
+
+## Map
+
+Both levels share one UE map, `L0_BorderBazaar`: 0B is the impound lot
+behind the bazaar's fence, so the two levels are one space at two times
+of day. The lot seen through the fence in 0A is the real 0B, and the
+exit drive through the night bazaar needs no extra set.
+
+* **Always loaded:** the shared geometry (bridge, border post, truck
+  queue, bazaar, gnome field, impound lot) and the PlayerStart.
+* **Data layer `DL_Day`** (starts activated): the sun and the day-only
+  content of 0A: NPCs, the first fight, pickups, throwables, the Civic
+  at the border, the "BACK AT MIDNIGHT" sign (shown after the first
+  fight).
+* **Data layer `DL_Night`** (starts unloaded): night lighting (moon,
+  fixed night exposure, lamps, grill shack, office, the All-Seeing
+  Doner searchlight) and the content of 0B: guards, patrols, waves,
+  the boss, pickups, lit zones. With `DL_Day` unloaded the bazaar is
+  empty and closed.
+* **Transition to night:** fade out, unload `DL_Day`, activate
+  `DL_Night`, place her inside the lot at the hole (marker
+  `MK_Checkpoint_NightStart`), fade in. The fade lasts long enough to
+  hide the light change.
+* **No way back:** a blocker just outside the hole keeps her out of the
+  lot by day and in it at night. The main gate stays locked until the
+  exit cutscene.
+* **Cleanup:** things spawned during the day (enemies of the first
+  fight, thrown gnomes) are not on a data layer, so the transition
+  destroys them.
+* **Saves** store the phase (day or night) with the checkpoint, see
+  the GDD.
+* The impound lot geometry is a Level Instance, `LI_ImpoundLot`, so
+  it can be edited as one unit. It exists in both phases.
+
+### Graybox
+
+The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
+
+* Outliner folders: `Shared/` (always loaded geometry by zone, the lot
+  instance in `Shared/Lot`), `Day/` (on `DL_Day`), `Night/` (on
+  `DL_Night`). Inside `LI_ImpoundLot` the folders are `Lot/<zone>`.
+* World axes: +X is north (river side), +Y is east. The lot fence runs
+  along X = 0; the bazaar is north of it, the lot south. One unit of
+  the layout is 1 m.
+* To play the night, set `DL_Day` to Unloaded and `DL_Night` to
+  Activated (initial runtime state in the Data Layers outliner) and
+  start at `MK_Checkpoint_NightStart`. Set them back before saving.
+* The searchlight (`DonerEye_Rig`) turns at a constant 45 deg/s; the
+  pauses and the lookout awareness come with the Doner system.
 
 ## Story in short
 
@@ -94,9 +143,8 @@ Zones:
    locked main gate. Through the fence the player can see the lot and
    the black Civic in the far corner. A menu board hangs on the fence.
 
-The lot itself is visible behind the fence (background only in 0A) and
-should match the layout of 0B. Build the lot as a shared Level Instance
-used by both maps, so the two can't drift apart.
+The lot itself is visible behind the fence. In 0A it is out of bounds;
+it is the same lot she sneaks into in 0B (see [Map](#map)).
 
 ### Scale
 
@@ -195,7 +243,7 @@ bright. They'd see me. Wait until midnight." Two ways to wait:
 * Interact with the hole again and choose "Wait for midnight".
 
 Both show the warning that the bazaar can't be revisited, then fade to
-night and load 0B.
+night (see [Map](#map)) and 0B starts at the hole.
 
 ### NPCs
 

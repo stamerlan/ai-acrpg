@@ -342,8 +342,9 @@ slots to manage, no weight, no sorting, no dropping, no crafting.
 * Checkpoint saves only, no save-anywhere.
 * Checkpoints on arrival at a level, at key story moments and before
   big fights. Each level document lists its checkpoints.
-* A save stores: current location and checkpoint, story and quest
-  state, dialog flags, inventory, HP, unlocked map locations.
+* A save stores: current location and checkpoint, the level phase
+  when a map holds more than one (stop 0: day or night), story and
+  quest state, dialog flags, inventory, HP, unlocked map locations.
 
 ## Art direction
 
@@ -403,7 +404,11 @@ These are deliberately out of scope:
   overkill. A health component, a weapon component and data-driven
   dialog and quest assets should be enough.
 * Several levels per location, plus a separate map screen (level or
-  UI).
+  UI). Levels that share ground share one World Partition map, with a
+  data layer per level phase (stop 0: day and night); levels apart from
+  each other are separate maps.
+* Levels are blocked out first with placeholder geometry and markers,
+  see [graybox.md](graybox.md).
 * Images and assets in the repo go through Git LFS (already set up).
 * (proposal) Main building blocks: a health component shared by the
   protagonist and enemies (with the "killed by" tag), a weapon component
