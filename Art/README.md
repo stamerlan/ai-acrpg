@@ -46,7 +46,10 @@ character Blueprint.
 Meshy put the tail fan on a thin stalk behind the body. In the .blend the
 fan was moved 13 cm forward and tilted 4 degrees up so it grows out of
 the rump as on the turnaround; the stalk now sits inside the body. The
-tail tip is at 63 cm, under the comb top.
+tail tip is at 63 cm, under the comb top. Meshy skinned the tips of the
+two outer feathers to the shoulders, so they broke off the fan whenever
+the wings moved; now every feather blends from `Tail_01` to `Tail_02` by
+distance from the rump (8 to 16 cm) and follows only the tail bones.
 
 ### Skeleton (49 bones)
 
