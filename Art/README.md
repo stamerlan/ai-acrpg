@@ -4,89 +4,93 @@ Source models and animations made outside the editor, kept here so they
 can be re-imported. Nothing in this folder is loaded by the game; UE
 assets made from it live under `Content/`.
 
-All assets below were generated with Meshy (issues #12 and #14) on
-2026-11-22. Units are meters in GLB and centimeters in FBX; the chicken
-is 0.65 m to the comb top with her feet at 0.
+The chicken and props were generated with Meshy (issues #12 and #14) and
+finished in Blender 5.3 on 2026-11-22. FBX files are in centimeters with
+the chicken 65 cm to the comb top and her feet at 0.
 
 ## Chicken (`Chicken/`)
 
 | File | What |
 |---|---|
+| `Source/SK_Chicken.blend` | Working file: mesh, rig, all 15 actions |
+| `Mesh/SK_Chicken.fbx` | Skeletal mesh for UE, no animation |
+| `Mesh/T_Chicken_BaseColor.png` | Body texture |
+| `Anims/A_Chicken_*.fbx` | One clip per file, skeleton only |
+| `Meshy/` | Raw Meshy output the .blend was built from |
 | `Reference/chicken-tpose-ref.png` | T-pose image the mesh was built from |
-| `Mesh/SK_Chicken.fbx`, `.glb` | Textured, rigged mesh, 8423 tris |
-| `Anims/A_Chicken_*.glb` | One clip per file, skin included |
-| `Anims/A_Chicken_LibrarySet.*` | 7 library clips in one file |
-| `Anims/A_Chicken_Walk.fbx`, `Run.fbx` | Same clips as the GLBs |
 
-Wings are the arms of a humanoid rig, so the wings work as hands. The
-eyes are visible: the sunglasses are a separate prop.
+Import `SK_Chicken.fbx` first, then the clips onto its skeleton. Every
+FBX in `Mesh/` and `Anims/` comes from the .blend, so they share one
+skeleton; re-export from there after changes. Export settings: FBX Units
+Scale, no leaf bones, all bones, Y primary / X secondary bone axis.
 
-Skeleton (24 bones, Meshy humanoid): Hips, Spine02, Spine01, Spine,
-neck, Head, head_end, headfront, Left/Right Shoulder, Arm, ForeArm,
-Hand, Left/Right UpLeg, Leg, Foot, ToeBase.
+The mesh has two parts: the body (8423 tris, `M_Chicken`) and the
+sunglasses (622 tris, `M_Sunglasses`), skinned 100% to the `Glasses`
+bone. Her eyes are modeled under the lenses. She faces -Y in Blender,
+like the UE mannequin, so the mesh needs the usual -90 yaw in the
+character Blueprint.
 
-### Import format
+### Skeleton (49 bones)
 
-Import animations from the GLB files. Every GLB shares the same armature
-frame. Meshy's FBX export of the custom (text-to-motion) clips uses a
-different root frame than `SK_Chicken.fbx`, which tips the chicken onto
-her back, so those FBX files are not kept. The walk, run and library FBX
-files match `SK_Chicken.fbx` and are safe to use.
+The armature object is named `Armature`, which UE drops; `root` is the
+skeleton root. The Meshy humanoid bones (Hips to ToeBase) are kept, so
+wings are arms and work as hands.
+
+| Bones | Parent | Use |
+|---|---|---|
+| `root` | - | Skeleton root at the feet |
+| `ik_foot_root`, `ik_foot_l/r` | `root` | Baked to the feet in all clips |
+| `Left/RightPrimary1..3` | `Left/RightHand` | 3 primary feathers = fingers |
+| `Tail_01`, `Tail_02` | `Hips` | Tail fan, jiggle |
+| `Comb_01`, `Comb_02` | `Head` | Comb, jiggle and flop |
+| `Wattle` | `Head` | Wattles, jiggle |
+| `Hackle` | `neck` | Neck cape, jiggle (40% weight) |
+| `BeakUpper`, `BeakLower` | `Head` | Hinged beak |
+| `Brow_L/R` | `Head` | Brow tufts, her eyebrows |
+| `Eye_L/R` | `Head` | Eyes under the lenses |
+| `Glasses` | `Head` | Glasses slide down the beak or push up |
+| `Left/RightToeBack` | `Left/RightFoot` | Back toe; `ToeBase` curls front |
+
+Apart from the ik bones, the new bones have no keys in the clips (they
+stay at rest); jiggle is meant for AnimDynamics or Control Rig in UE.
 
 ### Clips for #14
 
-Lengths are as generated; the GDD timings are set in UE (play rate,
-trimming, montage sections). Names in backticks without a file are
-clips inside `A_Chicken_LibrarySet`.
+Lengths are as generated, at 24 fps; the GDD timings are set in UE (play
+rate, trimming, montage sections). The custom clips came from Meshy
+text-to-motion, the rest from the Meshy animation library.
 
 | #14 item | Clip | Length | Notes |
 |---|---|---|---|
-| Idle loop | `Idle` | 4.0 s | GDD wants 2 s |
-| Walk | `A_Chicken_Walk` | 1.07 s | Meshy walk |
-| Run | `A_Chicken_Run` | 0.67 s | Meshy run |
+| Idle loop | `A_Chicken_Idle` | 4.0 s | GDD wants 2 s |
+| Walk | `A_Chicken_Walk` | 1.0 s | Loop |
+| Run | `A_Chicken_Run` | 0.6 s | Loop |
 | Peck windup and strike | `A_Chicken_Peck` | 2.0 s | Split in a montage |
 | Flutter dodge | `A_Chicken_Flutter` | 2.0 s | GDD: 0.25 s |
-| Carry gnome | `Carry_Heavy_Object_Walk_inplace` | 6.5 s | In place |
-| Throw | `Over_Shoulder_Throw` | 4.3 s | |
+| Carry gnome | `A_Chicken_CarryWalk` | 6.5 s | Loop, in place |
+| Throw | `A_Chicken_Throw` | 4.3 s | |
 | Shotgun aim | `A_Chicken_ShotgunAim` | 2.5 s | Loop |
 | Shotgun fire | `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
 | Shotgun pump | `A_Chicken_ShotgunPump` | 2.0 s | GDD: 0.7 s |
-| Reload loop | `Standing_Reload` | 3.3 s | GDD: 0.5 s/shell |
+| Reload loop | `A_Chicken_Reload` | 3.3 s | GDD: 0.5 s/shell |
 | Eat corn | `A_Chicken_EatCorn` | 2.0 s | GDD: 1 s |
-| Kneel at backpack | `Female_Crouch_Pick_Up_Place_Side` | 9.5 s | Crouch |
-| Hit react | `Hit_Reaction` | 1.6 s | GDD: 0.2 s |
-| KO | `dying_backwards` | 2.2 s | Ends on her back |
-
-The custom clips came from Meshy text-to-motion and were retargeted to
-this rig; the rest are from the Meshy animation library.
-
-### Not done yet (from #12)
-
-Meshy only builds the 24-bone humanoid rig above. Still missing:
-
-* Finger bones for the 3 primary feathers per wing.
-* Jiggle bones for comb, wattles, tail and hackle.
-* A `glasses` bone that slides down the beak; for now the glasses go on
-  a socket on `Head` or `headfront`.
-* Hinged beak (upper / lower), brow tufts, eye meshes, toe curl.
-* Comb, wattles and beak as separate meshes.
-
-These need a Blender pass on `SK_Chicken`, or UE-side work (virtual
-bones, Control Rig, AnimDynamics for the jiggle).
+| Kneel at backpack | `A_Chicken_Kneel` | 9.5 s | Use the crouch part |
+| Hit react | `A_Chicken_HitReact` | 1.6 s | GDD: 0.2 s |
+| KO | `A_Chicken_KO` | 2.2 s | Ends on her back |
 
 ## Props (`Props/`)
 
-FBX with their textures next to them. `Reference/` holds the images the
-shotgun and corn were built from.
+FBX at real size with their textures next to them. `Source/Props.blend`
+is the working file; `Reference/` holds the images the shotgun and corn
+were built from.
 
-| File | What | Target tris |
-|---|---|---|
-| `Shotgun/SM_Shotgun.fbx` | Pump-action shotgun | 3000 |
-| `Gnome/SM_Gnome.fbx` | Garden gnome | 2500 |
-| `Gnome/SM_GnomeBroken.fbx` | Broken gnome with shards | 2500 |
-| `Corn/SM_CornCob.fbx` | Corn cob | 1500 |
-| `Backpack/SM_Backpack.fbx` | Green backpack, flap closed | 2500 |
-| `Sunglasses/SM_Sunglasses.fbx` | Wayfarers, rivets, gold plate | 1500 |
+| File | Size | Tris | Origin |
+|---|---|---|---|
+| `Shotgun/SM_Shotgun.fbx` | 0.90 m long | 3067 | Center, muzzle +X |
+| `Gnome/SM_Gnome.fbx` | 0.40 m tall | 2600 | Bottom |
+| `Gnome/SM_GnomeBroken.fbx` | 0.40 m long | 2576 | Bottom |
+| `Corn/SM_CornCob.fbx` | 0.20 m long | 1523 | Center |
+| `Backpack/SM_Backpack.fbx` | 0.30 m tall | 2113 | Bottom |
+| `Sunglasses/SM_Sunglasses.fbx` | 0.15 m wide | 622 | `Glasses` bone |
 
-Prop sizes are not set yet: scale them on import (shotgun 0.9 m long,
-gnome 0.4 m tall).
+The backpack flap is closed; the poses sheet shows it open.

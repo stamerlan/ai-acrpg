@@ -44,3 +44,6 @@ Plugins/**/Intermediate/
 *.log
 Thumbs.db
 .DS_Store
+
+# Blender backups
+*.blend1
