@@ -9,9 +9,10 @@ class UPrimitiveComponent;
 /**
  *  Finds primitives between the owner's camera and the owner and drives
  *  their custom primitive data, so materials using MF_OcclusionCutout cut
- *  a hole around the owner:
+ *  a hole around the owner, in pixels closer to the camera than the owner:
  *   - FadeDataIndex: cutout amount, 0 (none) to 1 (full)
  *   - FadeDataIndex + 1, + 2: owner position in viewport UV
+ *   - FadeDataIndex + 3: owner view depth
  *  Actors tagged NoOcclusionCutout are never cut.
  */
 UCLASS(ClassGroup = (Camera), meta = (BlueprintSpawnableComponent))
@@ -44,7 +45,7 @@ protected:
 		meta = (ClampMin = 0.01, Units = "s"))
 	float FadeTime = 0.2f;
 
-	/** First of the three custom primitive data floats it writes */
+	/** First of the four custom primitive data floats it writes */
 	UPROPERTY(EditAnywhere, Category = "Occlusion", meta = (ClampMin = 0))
 	int32 FadeDataIndex = 0;
 

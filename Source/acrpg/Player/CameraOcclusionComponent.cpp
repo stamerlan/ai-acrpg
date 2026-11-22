@@ -26,8 +26,10 @@ void UCameraOcclusionComponent::TickComponent(float DeltaTime,
 		return;
 	}
 
+	const FVector CameraLocation =
+		PC->PlayerCameraManager->GetCameraLocation();
 	TSet<UPrimitiveComponent*> Current;
-	FindOccluders(PC->PlayerCameraManager->GetCameraLocation(), Current);
+	FindOccluders(CameraLocation, Current);
 	for (UPrimitiveComponent* Component : Current)
 	{
 		Occluders.FindOrAdd(Component, 0.f);
@@ -42,6 +44,11 @@ void UCameraOcclusionComponent::TickComponent(float DeltaTime,
 	{
 		Screen /= FVector2D(ViewX, ViewY);
 	}
+
+	// View depth of the owner, the material cuts only pixels closer than it
+	const float Depth = FVector::DotProduct(
+		Pawn->GetActorLocation() - CameraLocation,
+		PC->PlayerCameraManager->GetCameraRotation().Vector());
 
 	const float Rate = 1.f / FadeTime;
 	for (auto It = Occluders.CreateIterator(); It; ++It)
@@ -61,6 +68,7 @@ void UCameraOcclusionComponent::TickComponent(float DeltaTime,
 			Screen.X);
 		Component->SetCustomPrimitiveDataFloat(FadeDataIndex + 2,
 			Screen.Y);
+		Component->SetCustomPrimitiveDataFloat(FadeDataIndex + 3, Depth);
 		if (!bOccluding && It.Value() <= 0.f)
 		{
 			It.RemoveCurrent();
@@ -93,6 +101,8 @@ void UCameraOcclusionComponent::FindOccluders(
 	for (const FVector& Offset : ProbeOffsets)
 	{
 		const FVector Target = Owner->GetActorLocation() + Offset;
+		const FVector Direction = (Target - CameraLocation).GetSafeNormal();
+		const float TargetDistance = FVector::Dist(CameraLocation, Target);
 		FCollisionQueryParams Params(SCENE_QUERY_STAT(CameraOcclusion));
 		Params.AddIgnoredActor(Owner);
 
@@ -115,7 +125,12 @@ void UCameraOcclusionComponent::FindOccluders(
 			}
 			Params.AddIgnoredComponent(Component);
 
-			if (!Cast<APawn>(HitActor) &&
+			// The sphere also touches a wall the owner stands against with
+			// the camera in front of her, so cut only surfaces in front of
+			// the probe point along the camera ray
+			const bool bInFront = FVector::DotProduct(
+				Hit.ImpactPoint - CameraLocation, Direction) < TargetDistance;
+			if (bInFront && !Cast<APawn>(HitActor) &&
 				!(HitActor && HitActor->ActorHasTag(NoOcclusionCutoutTag)))
 			{
 				OutOccluders.Add(Component);
