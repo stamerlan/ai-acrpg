@@ -511,7 +511,7 @@
   Apron skirt: 2</text>
 <text x="930" y="488" class="t s">  cloth bones or cloth sim. Hat: rigid, can fly off
   on death. ~15k tris.</text>
-<text x="930" y="510" class="t s">* HP 30, walks 4 m/s. Swing: 0.6 s windup, 1.5 m,
+<text x="930" y="510" class="t s">* HP 30, walks 2.4 m/s. Swing: 0.6 s windup, 0.9 m,
   15 dmg.</text>
 <text x="930" y="536" class="t s">Barks: "Fresh delivery!" "Garlic or spicy?"
   "Extra chicken!"</text>
@@ -636,7 +636,7 @@
   </g>
 </g>
 <text x="556" y="625" class="t h3">3 SWING - strike</text>
-<text x="556" y="975" class="t s">1.5 m arc, 15 dmg, 0.5 s recovery.</text>
+<text x="556" y="975" class="t s">0.9 m arc, 15 dmg, 0.5 s recovery.</text>
 
 <!-- 4 BUSY -->
 <ellipse cx="920" cy="960" rx="50" ry="6" class="shadow"/>
@@ -666,7 +666,7 @@
 <path d="M 965 700 C 960 690 970 682 965 672 M 978 703 C 973 693 983 685
   978 675" stroke="#b9ad94" stroke-width="2.5" fill="none"/>
 <text x="818" y="625" class="t h3">4 BUSY (eating)</text>
-<text x="818" y="975" class="t s">Sees only 3 m ahead. Sneak up!</text>
+<text x="818" y="975" class="t s">Sees only 1.8 m ahead. Sneak up!</text>
 
 <!-- 5 SLEEPING -->
 <g filter="url(#ink)">

@@ -286,7 +286,7 @@
 <path class="ln" d="M 350 250 L 385 250 M 345 275 L 375 275
   M 355 300 L 385 300" stroke="#b9ad94"/>
 <text x="344" y="130" class="t h2">2 WALK / RUN</text>
-<text x="344" y="355" class="t n">Run 5 m/s. Body leans 12 deg, head</text>
+<text x="344" y="355" class="t n">Run 3 m/s. Body leans 12 deg, head</text>
 <text x="344" y="372" class="t n">stays locked level (chicken head).</text>
 
 <!-- 3 PECK WINDUP -->
@@ -319,7 +319,7 @@
 </g>
 <text x="1170" y="200" class="t fx">PECK!</text>
 <text x="968" y="130" class="t h2">4 PECK - strike</text>
-<text x="968" y="355" class="t n">Arc 1.5 m / 90 deg. Unaware target:</text>
+<text x="968" y="355" class="t n">Arc 0.9 m / 90 deg. Unaware target:</text>
 <text x="968" y="372" class="t n">bigger star, "SURPRISE!" x3 dmg.</text>
 
 <!-- 5 FLUTTER -->
@@ -339,7 +339,7 @@
   <use xlink:href="#plume" transform="translate(1290 200) rotate(60)"/>
 </g>
 <text x="1280" y="130" class="t h2">5 FLUTTER (dodge)</text>
-<text x="1280" y="355" class="t n">4 m in 0.25 s, invulnerable. Wild</text>
+<text x="1280" y="355" class="t n">2.4 m in 0.25 s, invulnerable. Wild</text>
 <text x="1280" y="372" class="t n">flapping, feathers fall off.</text>
 
 <!-- 6 CARRY -->
@@ -376,7 +376,7 @@
 <path class="ln" d="M 480 570 Q 540 470 600 520" stroke="#b9ad94"
   stroke-dasharray="8 8"/>
 <text x="344" y="425" class="t h2">7 THROW</text>
-<text x="344" y="650" class="t n">Arc up to 10 m, 25 dmg, knockdown.</text>
+<text x="344" y="650" class="t n">Arc up to 6 m, 25 dmg, knockdown.</text>
 <text x="344" y="667" class="t n">Gnome tumbles, shatters on hit.</text>
 
 <!-- 8 SHOTGUN AIM -->
@@ -418,8 +418,8 @@
   stroke="#b9ad94"/>
 <text x="1160" y="480" class="t fx">BOOM</text>
 <text x="968" y="425" class="t h2">9 SHOTGUN - fire</text>
-<text x="968" y="650" class="t n">Recoil kicks her back 0.3 m, glasses</text>
-<text x="968" y="667" class="t n">jump, 2 feathers pop. Loud: 25 m.</text>
+<text x="968" y="650" class="t n">Recoil kicks her back 0.2 m, glasses</text>
+<text x="968" y="667" class="t n">jump, 2 feathers pop. Loud: 15 m.</text>
 
 <!-- 10 PUMP -->
 <ellipse cx="1390" cy="625" rx="80" ry="8" class="shadow"/>

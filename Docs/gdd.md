@@ -129,6 +129,9 @@ Notes:
 
 * Movement is relative to the camera, so rotating the camera does not
   flip the controls.
+* World scale: she runs at 3 m/s. All world distances, ranges and other
+  speeds are x0.6 of the earlier draft (written for 5 m/s); keep new
+  numbers in this scale.
 * With a gamepad, aim follows the right stick; when the right stick is
   released, the chicken faces her movement direction. (proposal) Light
   aim assist toward the nearest enemy in the aim direction.
@@ -154,7 +157,7 @@ bed for all of them.
 
 ### Peck
 
-* Always available melee: a short frontal arc (1.5 m, 90 degrees),
+* Always available melee: a short frontal arc (0.9 m, 90 degrees),
   10 damage, one peck per 0.4 s, small knockback.
 * **Surprise peck:** the first hit on an enemy that hasn't noticed her
   does triple damage. That kills a basic Shawarman in one peck and is
@@ -164,7 +167,7 @@ bed for all of them.
 ### Flutter
 
 * The dodge: a short flapping hop, the closest she gets to flying.
-* 4 m in 0.25 s in the movement direction (aim direction when standing
+* 2.4 m in 0.25 s in the movement direction (aim direction when standing
   still). Invulnerable during the hop. 0.8 s cooldown.
 * It does not cross gaps or obstacles. It drops a carried object.
 
@@ -175,7 +178,7 @@ bed for all of them.
   (paper stacks, logs, cabbages).
 * One at a time, carried above her head: 30% slower movement, no peck
   while carrying.
-* Thrown in an arc toward the aim point, up to 10 m. 25 damage, knocks
+* Thrown in an arc toward the aim point, up to 6 m. 25 damage, knocks
   the target down for 1.5 s, the object shatters.
 
 ### Shotgun
@@ -186,7 +189,7 @@ it to the end. There are no other weapons and no upgrades; variety
 comes from enemies, throwables and level design.
 
 * Holds 8 shells. One shot fires 8 pellets of 6 damage in a cone. Full
-  damage up to 4 m, half at 8 m, nothing past 12 m. A pump between
+  damage up to 2.4 m, half at 4.8 m, nothing past 7.2 m. A pump between
   shots: 0.7 s per shot.
 * Reload only on a button press (R / X), never automatic. The reload
   rule from game 1 stays: she reloads only while standing still, one
@@ -212,10 +215,10 @@ themed around who wants to eat her there. Shared rules for all of them:
 * **States:** unaware (idle, patrol, busy, sleeping), suspicious and
   alerted. In the first pass an alerted enemy fights until it dies; no
   searching or returning to patrol.
-* **Sight:** a 70 degree cone in front of the enemy. Range 10 m when
-  the chicken is lit, 5 m when she is in the dark (dark exists only in
+* **Sight:** a 70 degree cone in front of the enemy. Range 6 m when
+  the chicken is lit, 3 m when she is in the dark (dark exists only in
   night levels).
-* **Busy** enemies (eating, working) see only 3 m, still only in their
+* **Busy** enemies (eating, working) see only 1.8 m, still only in their
   front cone, so she can sneak up from behind or the side and peck.
   **Sleeping** enemies react only to noise.
 * **Spotting is not instant.** While she is in sight, the enemy's
@@ -226,9 +229,9 @@ themed around who wants to eat her there. Shared rules for all of them:
   awareness drains at the same speed, so the player has time to back
   off after a mistake. Suspicious enemies stop and look but don't
   move toward her in the first pass.
-* **Noise** alerts every enemy in range at once: peck hit 6 m,
-  shattered throwable 10 m, shotgun 25 m.
-* **Shout:** an enemy that becomes alerted alerts others within 12 m.
+* **Noise** alerts every enemy in range at once: peck hit 3.6 m,
+  shattered throwable 6 m, shotgun 15 m.
+* **Shout:** an enemy that becomes alerted alerts others within 7.2 m.
 * **Telegraphs:** every attack has a readable windup (pose, glint,
   sound), at least 0.5 s for melee. Ranged projectiles are slow enough
   to dodge.

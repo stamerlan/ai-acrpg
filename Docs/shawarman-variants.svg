@@ -554,8 +554,8 @@
 <text x="440" y="296" class="t s">  on a leather strap (quiver).</text>
 <text x="440" y="318" class="t s">* Skewer 0.55 m: meat, pepper, meat,</text>
 <text x="440" y="334" class="t s">  onion, meat, ring at the grip end.</text>
-<text x="440" y="356" class="t s">* HP 20. Keeps 6-10 m, backs off when</text>
-<text x="440" y="372" class="t s">  close. Throw: 1.0 s windup, 12 m/s,</text>
+<text x="440" y="356" class="t s">* HP 20. Keeps 3.6-6 m, backs off when</text>
+<text x="440" y="372" class="t s">  close. Throw: 1.0 s windup, 7.2 m/s,</text>
 <text x="440" y="388" class="t s">  10 dmg. Climbs low containers.</text>
 <text x="440" y="414" class="t h3">From the top</text>
 <text x="440" y="434" class="t s">Red bandana + white-red bucket on the</text>
@@ -636,8 +636,8 @@
 <text x="1300" y="330" class="t s">  Front hits do 25% dmg.</text>
 <text x="1300" y="352" class="t s">* Weapon: portable charcoal grill</text>
 <text x="1300" y="368" class="t s">  with live coals (emissive).</text>
-<text x="1300" y="390" class="t s">* HP 80, 3 m/s. Slam: 1.0 s windup,</text>
-<text x="1300" y="406" class="t s">  2 m, 25 dmg, coals burn 3 s at</text>
+<text x="1300" y="390" class="t s">* HP 80, 1.8 m/s. Slam: 1.0 s windup,</text>
+<text x="1300" y="406" class="t s">  1.2 m, 25 dmg, coals burn 3 s at</text>
 <text x="1300" y="422" class="t s">  10 dmg/s.</text>
 <text x="1300" y="448" class="t s">"Drop and give me twenty...</text>
 <text x="1300" y="464" class="t s">  wings!"</text>
@@ -724,7 +724,7 @@
     scale(0.62)"/>
 </g>
 <text x="287" y="615" class="t h3">2 THROW - release</text>
-<text x="287" y="975" class="t s">12 m/s, 10 dmg. Dodgeable.</text>
+<text x="287" y="975" class="t s">7.2 m/s, 10 dmg. Dodgeable.</text>
 
 <!-- SK3 CONTAINER -->
 <g filter="url(#ink)">
@@ -850,7 +850,7 @@
 <ellipse cx="1480" cy="952" rx="95" ry="12" fill="#ff7a1a" opacity="0.18"/>
 <ellipse cx="1480" cy="952" rx="95" ry="12" fill="none" stroke="#ff7a1a"
   stroke-width="2" stroke-dasharray="6 5"/>
-<text x="1548" y="940" class="t s" style="fill:#c8342b">2 m</text>
+<text x="1548" y="940" class="t s" style="fill:#c8342b">1.2 m</text>
 <g filter="url(#ink)">
   <g transform="translate(1410 840) scale(0.62)">
     <g style="--skin:#c8987a;--shirt:#4a5730">

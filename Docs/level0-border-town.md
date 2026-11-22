@@ -82,9 +82,9 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   `MK_Pickup_ZbyszekBox` and `MK_Pickup_CarKeys`. The stall NPCs'
   interactables sit at the front of their counters.
 * `Road_Border` is the asphalt road from the bridge to the east bound
-  (X 6350 to 7250, with a center line) and its spur to the bazaar gate.
+  (X 3810 to 4350, with a center line) and its spur to the bazaar gate.
 * The way north is closed until the border check is done. Past the
-  scale, `Fence_BorderExit` runs along the exit line (Y = -2950) from
+  scale, `Fence_BorderExit` runs along the exit line (Y = -1770) from
   the west bound to the east bound, and `Truck_Queue_1` stands across
   it in the queue lane. `Gate_BorderExit` (`BP_StoryGate`) is a pole
   across the road; it opens when `f_border_check` is done.
@@ -162,17 +162,17 @@ it is the same lot she sneaks into in 0B (see [Map](#map)).
 
 ### Scale
 
-Starting sizes for the graybox, to be tuned (she runs at 5 m/s).
+Starting sizes for the graybox, to be tuned (she runs at 3 m/s).
 
 | Area | Size |
 |---|---|
-| Whole level | about 130 x 90 m |
-| Bridge and border post | 30 x 20 m |
-| Truck queue road | 60 m long, about 8 trucks |
-| Bazaar gate arch | 8 m wide |
-| Main street | 60 m long, 6 m walkway, 5-6 stalls per side |
-| Gnome field | 35 x 25 m |
-| Impound office front | 15 m of fence |
+| Whole level | about 78 x 54 m |
+| Bridge and border post | 18 x 12 m |
+| Truck queue road | 36 m long, about 8 trucks |
+| Bazaar gate arch | 4.8 m wide |
+| Main street | 36 m long, 3.6 m walkway, 5-6 stalls per side |
+| Gnome field | 21 x 15 m |
+| Impound office front | 9 m of fence |
 
 The main path from the scale to the hole in the fence is about one
 minute of walking.
@@ -431,7 +431,7 @@ Zones:
 3. **Grill shack.** A shed with a big grill, plastic chairs and a
    radio. Three Shawarmen eat at midnight, sitting with their backs to
    the lot and facing the grill. Strong light. They are busy, so they
-   only see 3 m in front, but a peck hit is noise: pecking one of them
+   only see 1.8 m in front, but a peck hit is noise: pecking one of them
    alerts the other two.
 4. **Container stacks.** Shipping containers in two levels. A crate of
    shells inside an open container (found before the shotgun; she
@@ -442,7 +442,7 @@ Zones:
    key board, the evidence shelf, the inner gate button.
 6. **Inner lot.** A fenced area for "special" confiscations behind a
    locked gate. The Civic is here. This is also the combat arena:
-   about 30 x 25 m, containers along the walls (Skewermen climb them),
+   about 18 x 15 m, containers along the walls (Skewermen climb them),
    4-5 cars as cover, two shell crates. The Civic stands at the south
    end of the arena: its trunk refills shells at any time (see the
    GDD), but it is far from the inner gate where enemies come in, so
@@ -455,13 +455,13 @@ Starting sizes for the graybox, to be tuned.
 
 | Area | Size |
 |---|---|
-| Whole level | about 90 x 75 m |
-| Outer lot | 80 x 35 m, 4 car rows with 3 m dark gaps |
-| Grill shack | 10 x 8 m |
-| Container stacks | 20 x 15 m |
-| Guard office | 8 x 6 m |
-| Inner lot (arena) | 30 x 25 m |
-| All-Seeing Doner | Center of the outer lot; beam 25 m long, 20 deg wide |
+| Whole level | about 54 x 45 m |
+| Outer lot | 48 x 21 m, 4 car rows with 1.8 m dark gaps |
+| Grill shack | 6 x 4.8 m |
+| Container stacks | 12 x 9 m |
+| Guard office | 4.8 x 3.6 m |
+| Inner lot (arena) | 18 x 15 m |
+| All-Seeing Doner | Center of the outer lot; beam 15 m long, 20 deg wide |
 
 ### Lighting and sneaking
 
@@ -481,8 +481,8 @@ busy enemies, noise). In this level:
   * The Eye itself is a lookout with its own awareness: if she stays in
     the beam, the pupil narrows and the glow grows brighter over 1 s.
     When it is full, the Eye stops on her, plays the kebab stand
-    jingle at full volume and alerts every Shawarman within 20 m of
-    her. This is a deliberate exception to the 12 m enemy shout of the
+    jingle at full volume and alerts every Shawarman within 12 m of
+    her. This is a deliberate exception to the 7.2 m enemy shout of the
     GDD. Leaving the beam in time drains it, like any enemy awareness.
   * It is a timing puzzle: move between the car rows while the gaze
     looks away.
@@ -586,10 +586,10 @@ lines are in [Death screens](#death-screens).
 
 The common enemy of the whole game. Melee grunt.
 
-* HP 30. Walks at 4 m/s (the chicken runs at 5 m/s, so she can always
+* HP 30. Walks at 2.4 m/s (the chicken runs at 3 m/s, so she can always
   kite).
 * Attack: a big knife swing. 0.6 s windup (raises the knife, glint and
-  sound), 1.5 m reach, 15 damage.
+  sound), 0.9 m reach, 15 damage.
 * Barks: "Fresh delivery!", "Garlic or spicy?", "Extra chicken!",
   "Tonight's special!"
 * In 0B, may drop 2 shells. The chance depends on her reserve shells:
@@ -599,19 +599,19 @@ The common enemy of the whole game. Melee grunt.
 
 Ranged Shawarman, 0B only.
 
-* HP 20. Keeps 6-10 m away and backs off when she gets close.
+* HP 20. Keeps 3.6-6 m away and backs off when she gets close.
 * Attack: throws a skewer, 1.0 s windup, slow visible projectile
-  (12 m/s) that can be dodged or out-walked, 10 damage.
+  (7.2 m/s) that can be dodged or out-walked, 10 damage.
 * Climbs onto low containers in the arena (fixed climb points).
 
 ### Grill Sergeant
 
 Heavy Shawarman with a portable grill, 0B only.
 
-* HP 80. Walks at 3 m/s.
+* HP 80. Walks at 1.8 m/s.
 * The grill lid is a shield: shots and pecks from the front do 25%
   damage. Teaches flanking and flutter.
-* Attack: grill slam, 1.0 s windup, 2 m radius in front, 25 damage,
+* Attack: grill slam, 1.0 s windup, 1.2 m radius in front, 25 damage,
   leaves hot coals on the ground for 3 s (10 damage per second).
 * Bark: "Drop and give me twenty... wings!"
 
@@ -620,7 +620,7 @@ Heavy Shawarman with a portable grill, 0B only.
 The night manager of "Kebab & Parking". HP 400. Fought in the inner
 lot.
 
-* **Spit Spin.** Holds the doner spit out and spins for 2 s, 3 m
+* **Spit Spin.** Holds the doner spit out and spins for 2 s, 1.8 m
   radius, 25 damage. Telegraph: plants his feet and winds up for 0.8 s.
   Counter: flutter out of range.
 * **Spit Charge.** Lowers the spit like a lance, 1.0 s windup with a

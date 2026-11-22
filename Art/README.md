@@ -29,7 +29,7 @@ settings: Apply Scalings "All Local", scale 1.0, no leaf bones, all
 bones, Y primary / X secondary bone axis.
 
 In UE the assets live in `/Game/Characters/Chicken`. `ABP_Chicken`
-blends Idle, Walk (from 0 to 150 cm/s) and Run (150 to 450 cm/s) by
+blends Idle, Walk (from 0 to 90 cm/s) and Run (90 to 270 cm/s) by
 speed. Walk and run each have forward, back, left and right clips,
 picked by the movement direction relative to where she faces (that
 only differs while she aims). It has a `DefaultSlot` for montages;
@@ -113,9 +113,9 @@ loop was cut, and the right-side clips are mirrors of the left ones.
 | `A_Chicken_RunBack` | 85 cm/s back | 0.65 s |
 | `A_Chicken_RunLeft`, `RunRight` | 66 cm/s sideways | 0.75 s |
 
-The game keeps the GDD speed (5 m/s), so `ABP_Chicken` plays each clip
+The game keeps the GDD speed (3 m/s), so `ABP_Chicken` plays each clip
 at its speed divided by the clip's natural speed (the run plays about
-3.8 times faster at full speed).
+2.3 times faster at full speed).
 
 ## Props (`Props/`)
 
