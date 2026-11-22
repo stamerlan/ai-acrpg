@@ -4,7 +4,7 @@
 #include "GameFramework/GameUserSettings.h"
 #include "AcrpgGameUserSettings.generated.h"
 
-/** How the player rotates the camera around the protagonist */
+/** How the player rotates the camera around the chicken */
 UENUM(BlueprintType)
 enum class ECameraRotationStyle : uint8
 {

@@ -30,10 +30,12 @@ bones, Y primary / X secondary bone axis.
 
 In UE the assets live in `/Game/Characters/Chicken`. `ABP_Chicken`
 blends Idle, Walk (from 0 to 150 cm/s) and Run (150 to 450 cm/s) by
-speed and has a `DefaultSlot` for montages; `BP_Protagonist` uses it
-with a 25 cm x 33 cm capsule. The MCP import tool cannot import a
-skeleton-only FBX, so the clips were imported from one temporary FBX
-with the mesh and all 15 actions.
+speed. Walk and run each have forward, back, left and right clips,
+picked by the movement direction relative to where she faces (that
+only differs while she aims). It has a `DefaultSlot` for montages;
+`BP_Chicken` (in `/Game/Player`) uses it with a 25 cm x 33 cm capsule.
+The MCP import tool cannot import a skeleton-only FBX, so clips are
+imported from a temporary FBX that holds the mesh and the actions.
 
 The mesh has two parts: the body (8423 tris, `M_Chicken`) and the
 sunglasses (622 tris, `M_Sunglasses`), skinned 100% to the `Glasses`
@@ -93,6 +95,27 @@ text-to-motion, the rest from the Meshy animation library.
 | Kneel at backpack | `A_Chicken_Kneel` | 9.5 s | Use the crouch part |
 | Hit react | `A_Chicken_HitReact` | 1.6 s | GDD: 0.2 s |
 | KO | `A_Chicken_KO` | 2.2 s | Ends on her back |
+
+### Locomotion
+
+All locomotion clips are in place. Natural ground speed is measured from
+the planted foot (walk, run) or from the root drift that was removed
+from the generated clips. The back and side clips came from Meshy
+text-to-motion; their body yaw was turned back to face forward, a clean
+loop was cut, and the right-side clips are mirrors of the left ones.
+
+| Clip | Natural speed | Loop |
+|---|---|---|
+| `A_Chicken_Walk` | 33 cm/s forward | 1.0 s |
+| `A_Chicken_Run` | 130 cm/s forward | 0.6 s |
+| `A_Chicken_WalkBack` | 21 cm/s back | 1.25 s |
+| `A_Chicken_WalkLeft`, `WalkRight` | 28 cm/s sideways | 1.1 s |
+| `A_Chicken_RunBack` | 85 cm/s back | 0.65 s |
+| `A_Chicken_RunLeft`, `RunRight` | 66 cm/s sideways | 0.75 s |
+
+The game keeps the GDD speed (5 m/s), so `ABP_Chicken` plays each clip
+at its speed divided by the clip's natural speed (the run plays about
+3.8 times faster at full speed).
 
 ## Props (`Props/`)
 

@@ -106,7 +106,7 @@ vehicle registration is issued only in Poznan.
 ## Level 0A - Border bazaar (day)
 
 A sunny, crowded border bazaar between the bridge over the Oder and the
-impound lot fence. The protagonist has no weapon: the shotgun is in the
+impound lot fence. The chicken has no weapon: the shotgun is in the
 Civic's trunk. She fights with her beak, flutters and garden gnomes.
 
 ### Layout
@@ -327,7 +327,7 @@ Germans love them! Two for one!" Starts the side quest
 
 #### The corn lady
 
-Sells grilled corn on the cob. Gives the protagonist a free cob and the
+Sells grilled corn on the cob. Gives the chicken a free cob and the
 healing tutorial: "Eat, bird. You're too thin for the kebab anyway."
 Sets the tone: every seller sizes her up.
 
@@ -493,7 +493,7 @@ busy enemies, noise). In this level:
 * Getting spotted is never a fail: alerted guards fight. Sneaking only
   decides how many fights she takes before the shotgun.
 * Dark must stay readable from the camera height: the player has to
-  see the protagonist, the enemies and the lit-zone edges clearly in the
+  see the chicken, the enemies and the lit-zone edges clearly in the
   dark parts, which should still feel dark.
 
 ### Walkthrough
@@ -586,7 +586,7 @@ lines are in [Death screens](#death-screens).
 
 The common enemy of the whole game. Melee grunt.
 
-* HP 30. Walks at 4 m/s (the protagonist runs at 5 m/s, so she can always
+* HP 30. Walks at 4 m/s (the chicken runs at 5 m/s, so she can always
   kite).
 * Attack: a big knife swing. 0.6 s windup (raises the knife, glint and
   sound), 1.5 m reach, 15 damage.
@@ -742,7 +742,7 @@ depending on the last used device.
 Placeholder versions are enough to start; final look comes from the
 art style document.
 
-* **Characters:** the protagonist (with sunglasses), Sergeant Kotlet,
+* **Characters:** the chicken (with sunglasses), Sergeant Kotlet,
   Uncle Kolya, Pani Halina Blanca, Pan Zbyszek, Mr. Krasnal, the corn
   lady, the cigarette seller, the kantor clerk, background truckers.
 * **Enemies:** Shawarman, Skewerman, Grill Sergeant, Mr. Kebabski.

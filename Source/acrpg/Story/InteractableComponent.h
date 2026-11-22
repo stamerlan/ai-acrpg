@@ -11,7 +11,7 @@ class UDlgDialogue;
 /**
  *  Something she can talk to, pick up or use. The sphere is the range in
  *  which the prompt shows. BPC_Interactable implements the interaction,
- *  BPC_Interactor on the protagonist finds the closest one.
+ *  BPC_Interactor on the chicken finds the closest one.
  *
  *  For Talk it is also the NPC's dialogue participant: dialogue nodes
  *  owned by ParticipantName show DisplayName as the speaker.

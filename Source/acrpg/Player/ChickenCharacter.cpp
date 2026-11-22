@@ -1,4 +1,4 @@
-#include "ProtagonistCharacter.h"
+#include "ChickenCharacter.h"
 #include "CameraOcclusionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -8,7 +8,7 @@
 #include "InputAction.h"
 #include "acrpg.h"
 
-AProtagonistCharacter::AProtagonistCharacter()
+AChickenCharacter::AChickenCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -49,7 +49,7 @@ AProtagonistCharacter::AProtagonistCharacter()
 		TEXT("CameraOcclusion"));
 }
 
-void AProtagonistCharacter::Tick(float DeltaSeconds)
+void AChickenCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
@@ -72,7 +72,7 @@ void AProtagonistCharacter::Tick(float DeltaSeconds)
 		Current, Target, DeltaSeconds, AimTurnRate));
 }
 
-void AProtagonistCharacter::SetupPlayerInputComponent(
+void AChickenCharacter::SetupPlayerInputComponent(
 	UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -88,28 +88,28 @@ void AProtagonistCharacter::SetupPlayerInputComponent(
 	}
 
 	Input->BindAction(MoveAction, ETriggerEvent::Triggered, this,
-		&AProtagonistCharacter::Move);
+		&AChickenCharacter::Move);
 
 	for (UInputAction* Action : {FireAction.Get(), PeckAction.Get(),
 		FlutterAction.Get(), ReloadAction.Get(), EatCornAction.Get()})
 	{
 		Input->BindAction(Action, ETriggerEvent::Started, this,
-			&AProtagonistCharacter::LogPendingAction);
+			&AChickenCharacter::LogPendingAction);
 	}
 }
 
-void AProtagonistCharacter::SetAimPoint(const FVector& Point)
+void AChickenCharacter::SetAimPoint(const FVector& Point)
 {
 	AimPoint = Point;
 	bHasAimPoint = true;
 }
 
-void AProtagonistCharacter::ClearAimPoint()
+void AChickenCharacter::ClearAimPoint()
 {
 	bHasAimPoint = false;
 }
 
-void AProtagonistCharacter::Move(const FInputActionValue& Value)
+void AChickenCharacter::Move(const FInputActionValue& Value)
 {
 	// X is right, Y is forward, both relative to the camera yaw
 	const FVector2D Input = Value.Get<FVector2D>();
@@ -118,7 +118,7 @@ void AProtagonistCharacter::Move(const FInputActionValue& Value)
 	AddMovementInput(Yaw.RotateVector(FVector::RightVector), Input.X);
 }
 
-void AProtagonistCharacter::LogPendingAction(
+void AChickenCharacter::LogPendingAction(
 	const FInputActionInstance& Instance)
 {
 	UE_LOG(Logacrpg, Log, TEXT("%s: not implemented yet"),

@@ -1,6 +1,6 @@
-#include "ProtagonistController.h"
+#include "ChickenPlayerController.h"
 #include "AcrpgGameUserSettings.h"
-#include "ProtagonistCharacter.h"
+#include "ChickenCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
@@ -10,13 +10,13 @@
 #include "InputMappingContext.h"
 #include "acrpg.h"
 
-AProtagonistController::AProtagonistController()
+AChickenPlayerController::AChickenPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
 
-void AProtagonistController::SetupInputComponent()
+void AChickenPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
@@ -37,21 +37,21 @@ void AProtagonistController::SetupInputComponent()
 	}
 
 	Input->BindAction(AimStickAction, ETriggerEvent::Triggered, this,
-		&AProtagonistController::AimStick);
+		&AChickenPlayerController::AimStick);
 	Input->BindAction(AimStickAction, ETriggerEvent::Completed, this,
-		&AProtagonistController::AimStickCompleted);
+		&AChickenPlayerController::AimStickCompleted);
 	Input->BindAction(CameraRotateAction, ETriggerEvent::Started, this,
-		&AProtagonistController::CameraRotateStarted);
+		&AChickenPlayerController::CameraRotateStarted);
 	Input->BindAction(CameraRotateAction, ETriggerEvent::Triggered, this,
-		&AProtagonistController::CameraRotateTriggered);
+		&AChickenPlayerController::CameraRotateTriggered);
 	Input->BindAction(CameraDragAction, ETriggerEvent::Started, this,
-		&AProtagonistController::CameraDragStarted);
+		&AChickenPlayerController::CameraDragStarted);
 	Input->BindAction(CameraDragAction, ETriggerEvent::Completed, this,
-		&AProtagonistController::CameraDragCompleted);
+		&AChickenPlayerController::CameraDragCompleted);
 	Input->BindAction(CameraDragDeltaAction, ETriggerEvent::Triggered, this,
-		&AProtagonistController::CameraDragDelta);
+		&AChickenPlayerController::CameraDragDelta);
 	Input->BindAction(ZoomAction, ETriggerEvent::Triggered, this,
-		&AProtagonistController::Zoom);
+		&AChickenPlayerController::Zoom);
 
 	for (UInputAction* Action : {BackpackAction.Get(), MapAction.Get(),
 		JournalAction.Get(), PauseAction.Get(), MenuNavigateAction.Get(),
@@ -59,11 +59,11 @@ void AProtagonistController::SetupInputComponent()
 		MenuPrevTabAction.Get(), MenuNextTabAction.Get()})
 	{
 		Input->BindAction(Action, ETriggerEvent::Started, this,
-			&AProtagonistController::LogPendingAction);
+			&AChickenPlayerController::LogPendingAction);
 	}
 }
 
-void AProtagonistController::OnPossess(APawn* InPawn)
+void AChickenPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
@@ -77,38 +77,36 @@ void AProtagonistController::OnPossess(APawn* InPawn)
 	CameraYaw = TargetCameraYaw;
 	SetControlRotation(FRotator(0.f, CameraYaw, 0.f));
 
-	if (const AProtagonistCharacter* Protagonist =
-		Cast<AProtagonistCharacter>(InPawn))
+	if (const AChickenCharacter* Chicken = Cast<AChickenCharacter>(InPawn))
 	{
 		TargetArmLength = FMath::Clamp(
-			Protagonist->GetCameraBoom()->TargetArmLength,
+			Chicken->GetCameraBoom()->TargetArmLength,
 			MinArmLength, MaxArmLength);
 	}
 }
 
-void AProtagonistController::PlayerTick(float DeltaTime)
+void AChickenPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	AProtagonistCharacter* Protagonist =
-		Cast<AProtagonistCharacter>(GetPawn());
-	if (!Protagonist)
+	AChickenCharacter* Chicken = Cast<AChickenCharacter>(GetPawn());
+	if (!Chicken)
 	{
 		return;
 	}
 
 	if (InputContext == EAcrpgInputContext::Gameplay)
 	{
-		UpdateAim(Protagonist);
+		UpdateAim(Chicken);
 	}
 	else
 	{
-		Protagonist->ClearAimPoint();
+		Chicken->ClearAimPoint();
 	}
-	UpdateCamera(Protagonist, DeltaTime);
+	UpdateCamera(Chicken, DeltaTime);
 }
 
-bool AProtagonistController::InputKey(const FInputKeyEventArgs& Params)
+bool AChickenPlayerController::InputKey(const FInputKeyEventArgs& Params)
 {
 	// Analog keys send events while at rest, so they need a real deflection
 	const bool bAnalog = Params.Key.IsAnalog();
@@ -129,7 +127,7 @@ bool AProtagonistController::InputKey(const FInputKeyEventArgs& Params)
 	return Super::InputKey(Params);
 }
 
-void AProtagonistController::SetInputContext(EAcrpgInputContext Context)
+void AChickenPlayerController::SetInputContext(EAcrpgInputContext Context)
 {
 	UEnhancedInputLocalPlayerSubsystem* Subsystem =
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
@@ -164,7 +162,7 @@ void AProtagonistController::SetInputContext(EAcrpgInputContext Context)
 		? EMouseCursor::Crosshairs : EMouseCursor::Default;
 }
 
-void AProtagonistController::SetFreeCameraRotation(bool bFree)
+void AChickenPlayerController::SetFreeCameraRotation(bool bFree)
 {
 	if (UAcrpgGameUserSettings* Settings =
 		UAcrpgGameUserSettings::GetAcrpgGameUserSettings())
@@ -180,7 +178,7 @@ void AProtagonistController::SetFreeCameraRotation(bool bFree)
 	}
 }
 
-bool AProtagonistController::IsFreeRotation() const
+bool AChickenPlayerController::IsFreeRotation() const
 {
 	const UAcrpgGameUserSettings* Settings =
 		UAcrpgGameUserSettings::GetAcrpgGameUserSettings();
@@ -188,7 +186,7 @@ bool AProtagonistController::IsFreeRotation() const
 		Settings->CameraRotationStyle == ECameraRotationStyle::Free;
 }
 
-void AProtagonistController::SetLastInputDevice(EAcrpgInputDevice Device)
+void AChickenPlayerController::SetLastInputDevice(EAcrpgInputDevice Device)
 {
 	if (Device == LastInputDevice)
 	{
@@ -200,13 +198,13 @@ void AProtagonistController::SetLastInputDevice(EAcrpgInputDevice Device)
 	OnInputDeviceChanged.Broadcast(Device);
 }
 
-void AProtagonistController::UpdateAim(AProtagonistCharacter* Protagonist)
+void AChickenPlayerController::UpdateAim(AChickenCharacter* Chicken)
 {
 	if (LastInputDevice == EAcrpgInputDevice::Gamepad)
 	{
 		if (StickAim.Size() < StickAimThreshold)
 		{
-			Protagonist->ClearAimPoint();
+			Chicken->ClearAimPoint();
 			return;
 		}
 
@@ -214,8 +212,8 @@ void AProtagonistController::UpdateAim(AProtagonistCharacter* Protagonist)
 		const FVector Direction = FRotator(0.f, CameraYaw, 0.f)
 			.RotateVector(FVector(StickAim.Y, StickAim.X, 0.f))
 			.GetSafeNormal();
-		Protagonist->SetAimPoint(
-			Protagonist->GetActorLocation() + Direction * StickAimDistance);
+		Chicken->SetAimPoint(
+			Chicken->GetActorLocation() + Direction * StickAimDistance);
 		return;
 	}
 
@@ -228,13 +226,13 @@ void AProtagonistController::UpdateAim(AProtagonistCharacter* Protagonist)
 	{
 		return;
 	}
-	const double GroundZ = Protagonist->GetNavAgentLocation().Z;
-	Protagonist->SetAimPoint(
+	const double GroundZ = Chicken->GetNavAgentLocation().Z;
+	Chicken->SetAimPoint(
 		Origin + Direction * ((GroundZ - Origin.Z) / Direction.Z));
 }
 
-void AProtagonistController::UpdateCamera(
-	AProtagonistCharacter* Protagonist, float DeltaTime)
+void AChickenPlayerController::UpdateCamera(
+	AChickenCharacter* Chicken, float DeltaTime)
 {
 	TargetCameraYaw = FRotator::NormalizeAxis(TargetCameraYaw);
 	const float Delta =
@@ -245,12 +243,12 @@ void AProtagonistController::UpdateCamera(
 		: FRotator::NormalizeAxis(CameraYaw + Delta * Alpha);
 	SetControlRotation(FRotator(0.f, CameraYaw, 0.f));
 
-	USpringArmComponent* Boom = Protagonist->GetCameraBoom();
+	USpringArmComponent* Boom = Chicken->GetCameraBoom();
 	Boom->TargetArmLength = FMath::FInterpTo(Boom->TargetArmLength,
 		TargetArmLength, DeltaTime, ZoomInterpSpeed);
 }
 
-void AProtagonistController::CameraRotateStarted(
+void AChickenPlayerController::CameraRotateStarted(
 	const FInputActionValue& Value)
 {
 	if (!IsFreeRotation())
@@ -261,7 +259,7 @@ void AProtagonistController::CameraRotateStarted(
 	}
 }
 
-void AProtagonistController::CameraRotateTriggered(
+void AChickenPlayerController::CameraRotateTriggered(
 	const FInputActionValue& Value)
 {
 	if (IsFreeRotation())
@@ -271,12 +269,12 @@ void AProtagonistController::CameraRotateTriggered(
 	}
 }
 
-void AProtagonistController::CameraDragStarted()
+void AChickenPlayerController::CameraDragStarted()
 {
 	bDraggingCamera = true;
 }
 
-void AProtagonistController::CameraDragCompleted()
+void AChickenPlayerController::CameraDragCompleted()
 {
 	bDraggingCamera = false;
 	if (!IsFreeRotation())
@@ -285,7 +283,7 @@ void AProtagonistController::CameraDragCompleted()
 	}
 }
 
-void AProtagonistController::CameraDragDelta(const FInputActionValue& Value)
+void AChickenPlayerController::CameraDragDelta(const FInputActionValue& Value)
 {
 	if (bDraggingCamera)
 	{
@@ -293,24 +291,24 @@ void AProtagonistController::CameraDragDelta(const FInputActionValue& Value)
 	}
 }
 
-void AProtagonistController::Zoom(const FInputActionValue& Value)
+void AChickenPlayerController::Zoom(const FInputActionValue& Value)
 {
 	TargetArmLength = FMath::Clamp(
 		TargetArmLength - Value.Get<float>() * ZoomStep,
 		MinArmLength, MaxArmLength);
 }
 
-void AProtagonistController::AimStick(const FInputActionValue& Value)
+void AChickenPlayerController::AimStick(const FInputActionValue& Value)
 {
 	StickAim = Value.Get<FVector2D>();
 }
 
-void AProtagonistController::AimStickCompleted()
+void AChickenPlayerController::AimStickCompleted()
 {
 	StickAim = FVector2D::ZeroVector;
 }
 
-void AProtagonistController::LogPendingAction(
+void AChickenPlayerController::LogPendingAction(
 	const FInputActionInstance& Instance)
 {
 	UE_LOG(Logacrpg, Log, TEXT("%s: not implemented yet"),

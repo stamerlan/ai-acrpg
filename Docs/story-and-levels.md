@@ -147,7 +147,7 @@ a day.
 
 ## Characters
 
-* **The Ambitious Chicken** - the protagonist (name to be decided). Brave,
+* **The Ambitious Chicken** - the player character (name to be decided). Brave,
   stubborn, a bit naive; misreads every danger as an invitation.
 * **Uncle Kolya** - a big trucker with a refrigerated truck and the
   main home for the Russian jokes: proverbs, road songs, tips. He turns
@@ -206,7 +206,7 @@ Every ending closes on the Baltic shore with the radio crackling:
 
 ## Open questions
 
-* The protagonist's name.
+* The chicken's name.
 * Lavash Baron: a shawarma-chain boss behind the Shawarmen, following
   her east in a giant food truck. Keep him as a second villain, or let
   bureaucracy be the only main antagonist?

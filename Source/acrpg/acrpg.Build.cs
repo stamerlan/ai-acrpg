@@ -29,7 +29,7 @@ public class acrpg : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"acrpg",
-			"acrpg/Protagonist",
+			"acrpg/Player",
 			"acrpg/Story",
 			"acrpg/Variant_Strategy",
 			"acrpg/Variant_Strategy/UI",

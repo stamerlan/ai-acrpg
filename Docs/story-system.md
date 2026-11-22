@@ -11,8 +11,8 @@ content for them. Design goals are in the [GDD](gdd.md#dialogs).
 | Story state | `UStoryStateSubsystem` (C++) | Quests, flags, stamps, items; conditions and actions; console; the `Story` dialog participant |
 | Dialogs | `DLG_*` assets, [DlgSystem](https://github.com/NotYetGames/DlgSystem) plugin | Dialog graphs, edited in the plugin's graph editor |
 | Interactable | `BPC_Interactable` (BP on `UInteractableComponent`) | Talk, pick up or use; its sphere is the prompt range; the NPC dialog participant |
-| Interactor | `BPC_Interactor` on `BP_Protagonist` | Finds the closest interactable, shows the prompt, Interact |
-| Dialog runner | `BPC_DialogRunner` on `BP_ProtagonistController` | Plays a dialog, switches to the dialog input context |
+| Interactor | `BPC_Interactor` on `BP_Chicken` | Finds the closest interactable, shows the prompt, Interact |
+| Dialog runner | `BPC_DialogRunner` on `BP_ChickenPlayerController` | Plays a dialog, switches to the dialog input context |
 | Widgets | `/Game/Story/UI` | `WBP_InteractPrompt`, `WBP_Dialog`, `WBP_DialogChoice` |
 
 C++ holds only what Blueprints can't: the subsystem, the console
@@ -93,7 +93,7 @@ open the graph editor. A dialog has up to two participants:
 How a dialog plays:
 
 * A **speech node** is a line of the NPC. Its edges are the
-  protagonist's choices: the edge text is what she says. Only choices
+  chicken's choices: the edge text is what she says. Only choices
   whose conditions pass are shown. A single edge with no text means
   "continue": Advance follows it.
 * A **selector node** (type First) isn't shown: it goes to its first

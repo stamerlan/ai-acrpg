@@ -2,11 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "ProtagonistController.generated.h"
+#include "ChickenPlayerController.generated.h"
 
 class UInputAction;
 class UInputMappingContext;
-class AProtagonistCharacter;
+class AChickenCharacter;
 struct FInputActionValue;
 struct FInputActionInstance;
 
@@ -31,13 +31,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputDeviceChangedSignature,
 	EAcrpgInputDevice, Device);
 
 /**
- *  Player controller for the protagonist.
+ *  Player controller for the chicken.
  *  Switches the gameplay, dialog and menu mapping contexts, drives the
  *  camera yaw (as the control rotation) and zoom, aims with the mouse
  *  cursor or the right stick, and tracks the last used input device.
  */
 UCLASS(abstract)
-class AProtagonistController : public APlayerController
+class AChickenPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
@@ -167,7 +167,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Input")
 	FInputDeviceChangedSignature OnInputDeviceChanged;
 
-	AProtagonistController();
+	AChickenPlayerController();
 
 	virtual void PlayerTick(float DeltaTime) override;
 
@@ -198,9 +198,9 @@ protected:
 	void SetLastInputDevice(EAcrpgInputDevice Device);
 
 	/** Points her at the cursor or along the right stick */
-	void UpdateAim(AProtagonistCharacter* Protagonist);
+	void UpdateAim(AChickenCharacter* Chicken);
 
-	void UpdateCamera(AProtagonistCharacter* Protagonist, float DeltaTime);
+	void UpdateCamera(AChickenCharacter* Chicken, float DeltaTime);
 
 	void CameraRotateStarted(const FInputActionValue& Value);
 	void CameraRotateTriggered(const FInputActionValue& Value);

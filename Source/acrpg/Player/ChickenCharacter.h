@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ProtagonistCharacter.generated.h"
+#include "ChickenCharacter.generated.h"
 
 class UCameraComponent;
 class USpringArmComponent;
@@ -13,11 +13,11 @@ struct FInputActionInstance;
 
 /**
  *  The Ambitious Chicken. Moves relative to the camera yaw (the control
- *  rotation set by AProtagonistController) and faces the aim point while
+ *  rotation set by AChickenPlayerController) and faces the aim point while
  *  one is set, otherwise her movement direction.
  */
 UCLASS(abstract)
-class AProtagonistCharacter : public ACharacter
+class AChickenCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -68,7 +68,7 @@ protected:
 
 public:
 
-	AProtagonistCharacter();
+	AChickenCharacter();
 
 	virtual void Tick(float DeltaSeconds) override;
 

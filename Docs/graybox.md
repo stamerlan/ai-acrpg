@@ -11,7 +11,7 @@ document (stop 0: [level0-border-town.md](level0-border-town.md#graybox)).
   car, container, fence side).
 * Materials are the `MI_GB_*` instances in `/Game/Materials/Graybox`.
   Walls and props use children of `M_Graybox` (screen-space cutout when
-  they hide the protagonist); roofs and awnings use children of
+  they hide the player); roofs and awnings use children of
   `MI_GrayboxRoof` (the whole mesh fades out).
 * Ground: a collision slab with its top at Z = 0, plus colored surface
   patches (road, paving, dirt) 1 cm above it with no collision.

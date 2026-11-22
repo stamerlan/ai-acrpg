@@ -39,7 +39,7 @@ fights - not about grinding, stats or loot.
 The sequel follows "Ambitions Chicken" (game 1), a short 2D DOS-style
 platformer. Things carried over from its ending:
 
-* The protagonist, her motto ("To co-co-cosmos I will fly - shawarma? Not
+* The Ambitious Chicken, her motto ("To co-co-cosmos I will fly - shawarma? Not
   this chick!") and catchphrases: "I'll be kudakh!" (her line as she
   drives off at the end of game 1) and "Now we talk, Shawarmen." (when
   she finds the shotgun).
@@ -59,7 +59,7 @@ platformer. Things carried over from its ending:
 
 1. **Out of the frying pan, into the oven.** Every place that looks safe
    turns out to have chicken on the menu. Being the main course on a
-   dinner table is the protagonist's core problem in every location.
+   dinner table is the chicken's core problem in every location.
 2. **Story and comedy first.** Dialogs, choices and jokes are the main
    content. Systems exist to support the story, not the other way
    around.
@@ -74,13 +74,13 @@ platformer. Things carried over from its ending:
 * Food puns in names, signs, dialogs and death screens.
 * Some Russian jokes (like "kudakh" = "cluck"); they should still be
   funny or at least readable for English-only players.
-* The protagonist is brave, stubborn and a bit naive: she often misreads
+* The chicken is brave, stubborn and a bit naive: she often misreads
   danger as an invitation, and the player sees the trap before she does.
 
-## The protagonist
+## The chicken
 
 * Name: to be decided (still "the Ambitious Chicken" for now).
-* Solo protagonist, no companions or party.
+* She plays solo: no companions or party.
 * No stats, levels or character build. Her whole arsenal is her beak,
   the farmer's shotgun and whatever she can throw. Progress comes from
   the story, not from power growth.
@@ -97,9 +97,9 @@ platformer. Things carried over from its ending:
 ## Camera
 
 * 3D world viewed from above at an isometric-style angle.
-* The player can rotate the camera around the protagonist and zoom in and
+* The player can rotate the camera around the chicken and zoom in and
   out within limits.
-* Walls, roofs and other objects between the camera and the protagonist
+* Walls, roofs and other objects between the camera and the chicken
   must fade or cut away so she is always visible.
 * (proposal) Rotation in fixed steps (for example 45 degrees) or free
   rotation - to be tested.
@@ -130,7 +130,7 @@ Notes:
 * Movement is relative to the camera, so rotating the camera does not
   flip the controls.
 * With a gamepad, aim follows the right stick; when the right stick is
-  released, the protagonist faces her movement direction. (proposal) Light
+  released, the chicken faces her movement direction. (proposal) Light
   aim assist toward the nearest enemy in the aim direction.
 * UE implementation: Enhanced Input with separate mapping contexts for
   gameplay, dialog and menus.
@@ -138,14 +138,14 @@ Notes:
 ## Combat
 
 Real-time, Diablo 2 style, but with direct WASD + aim control. The
-protagonist's tools are her beak, a dodge, things she can throw and the
+chicken's tools are her beak, a dodge, things she can throw and the
 shotgun. All numbers below are starting values for tuning;
 the first stop ([stop 0](level0-border-town.md)) is the test
 bed for all of them.
 
 ### Health and healing
 
-* The protagonist has 100 HP and no regeneration.
+* The chicken has 100 HP and no regeneration.
 * Healing is corn: a corn cob heals 35 HP instantly. She carries up to
   5 and eats one with a button (1 s cooldown). Corn was the score item
   of game 1; here it is only healing.
@@ -213,7 +213,7 @@ themed around who wants to eat her there. Shared rules for all of them:
   alerted. In the first pass an alerted enemy fights until it dies; no
   searching or returning to patrol.
 * **Sight:** a 70 degree cone in front of the enemy. Range 10 m when
-  the protagonist is lit, 5 m when she is in the dark (dark exists only in
+  the chicken is lit, 5 m when she is in the dark (dark exists only in
   night levels).
 * **Busy** enemies (eating, working) see only 3 m, still only in their
   front cone, so she can sneak up from behind or the side and peck.
@@ -288,7 +288,7 @@ Loot and inventory exist but are secondary to story and action.
 Very simple and direct, in the style of The Last of Us: no grid, no
 slots to manage, no weight, no sorting, no dropping, no crafting.
 
-* Opening the backpack does not pause the game. The protagonist kneels and
+* Opening the backpack does not pause the game. The chicken kneels and
   the panel slides in; the world keeps running, so opening it in a
   fight is a risk.
 * One panel with three fixed sections:
@@ -418,7 +418,7 @@ These are deliberately out of scope:
   see [graybox.md](graybox.md).
 * Images and assets in the repo go through Git LFS (already set up).
 * (proposal) Main building blocks: a health component shared by the
-  protagonist and enemies (with the "killed by" tag), a weapon component
+  player and enemies (with the "killed by" tag), a weapon component
   (peck, shotgun), an interactable component (talk, pick up, use), a
   throwable actor, a story state subsystem (quests, flags, stamps) used
   by dialogs, quests and saves, and lit zone volumes plus light cones
@@ -437,7 +437,7 @@ Story and world (first draft in `story-and-levels.md`: a road story
 from Berlin across Poland to Gdansk, heading for Kudakhstan; the cosmos
 is never reached; R. Fuchs does not return):
 
-* The protagonist's name.
+* The chicken's name.
 * Is the Lavash Baron a second villain besides bureaucracy?
 * How many endings, and which choices unlock them.
 
