@@ -36,6 +36,12 @@
 		"Description": "Talked to Kolya"
 	},
 	{
+		"Name": "f_first_fight",
+		"Kind": "Flag",
+		"Values": ["started", "done"],
+		"Description": "First fight in the gnome field: started, done"
+	},
+	{
 		"Name": "f_kolya_tip",
 		"Kind": "Flag",
 		"Values": [],
