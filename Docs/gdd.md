@@ -144,7 +144,8 @@ Real-time, Diablo 2 style, but with direct WASD + aim control. The
 chicken's tools are her beak, a dodge, things she can throw and the
 shotgun. All numbers below are starting values for tuning;
 the first stop ([stop 0](level0-border-town.md)) is the test
-bed for all of them.
+bed for all of them. How health, peck, flutter, death screens and
+checkpoints are built: [combat.md](combat.md).
 
 ### Health and healing
 

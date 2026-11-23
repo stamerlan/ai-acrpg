@@ -90,8 +90,8 @@ void AChickenCharacter::SetupPlayerInputComponent(
 	Input->BindAction(MoveAction, ETriggerEvent::Triggered, this,
 		&AChickenCharacter::Move);
 
-	for (UInputAction* Action : {FireAction.Get(), PeckAction.Get(),
-		FlutterAction.Get(), ReloadAction.Get(), EatCornAction.Get()})
+	// Fire, peck and flutter are bound in BP_Chicken (BPC_ChickenCombat)
+	for (UInputAction* Action : {ReloadAction.Get(), EatCornAction.Get()})
 	{
 		Input->BindAction(Action, ETriggerEvent::Started, this,
 			&AChickenCharacter::LogPendingAction);

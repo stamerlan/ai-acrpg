@@ -695,6 +695,9 @@ Callbacks for later stops:
 Each killer has its own picture and lines; one line is picked at
 random, mixed with the generic game 1 lines from the GDD. Lines marked
 (game 1) come from the first game.
+The "killed by" tags are the row names of `DT_DeathScreens`, see
+[combat.md](combat.md#death-screen-table). The hot coals use the
+`GrillSergeant` tag.
 
 * **Shawarman** - chicken shawarma wrap: "That's a wrap.", "One
   chicken wrap, to go." (game 1), "Extra garlic sauce, hold the
