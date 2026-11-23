@@ -4,121 +4,113 @@ Source models and animations made outside the editor, kept here so they
 can be re-imported. Nothing in this folder is loaded by the game; UE
 assets made from it live under `Content/`.
 
-The chicken and props were generated with Meshy (issues #12 and #14) and
-finished in Blender 5.3 on 2026-11-22. FBX files are in centimeters with
-the chicken 65 cm to the comb top and her feet at 0.
+The props were generated with Meshy (issues #12 and #14). The chicken was
+regenerated with Meshy on 2026-11-22/23 because the first one had huge
+open wing fans rigged as human arms: lowered, they reached her feet and
+swept across the belly and legs, and the clips were human mocap. FBX files
+are in centimeters with the chicken 60 cm to the comb top and her feet
+at 0.
 
 ## Chicken (`Chicken/`)
 
 | File | What |
 |---|---|
-| `Source/SK_Chicken.blend` | Working file: mesh, rig, all 15 actions |
+| `Source/SK_Chicken.blend` | Working file: mesh, glasses, rig, 21 actions |
 | `Mesh/SK_Chicken.fbx` | Skeletal mesh for UE, no animation |
-| `Mesh/T_Chicken_BaseColor.png` | Body texture |
+| `Mesh/T_Chicken_BaseColor.png` | Texture |
 | `Anims/A_Chicken_*.fbx` | One clip per file, skeleton only |
-| `Meshy/` | Raw Meshy output the .blend was built from |
+| `Meshy/SK_Chicken.glb` | Raw Meshy mesh |
+| `Meshy/SK_Chicken_Rigged.glb` | Raw Meshy auto-rig of that mesh |
+| `Reference/geometric-rooster-base.png` | Base model image (see below) |
 | `Reference/chicken-tpose-ref.png` | T-pose image the mesh was built from |
 
-Import `SK_Chicken.fbx` first, then the clips onto its skeleton. Every
-FBX in `Mesh/` and `Anims/` comes from the .blend, so they share one
-skeleton; re-export from there after changes.
+How it was made (Meshy, no hand animation):
 
-Both .blend files work in centimeters (unit scale 0.01), because UE
-ignores the FBX unit scale and reads values as centimeters. Export
-settings: Apply Scalings "All Local", scale 1.0, no leaf bones, all
-bones, Y primary / X secondary bone axis.
+* Base: "Geometric Rooster" by liorbendahan19 on Meshy (CC0,
+  https://www.meshy.ai/posts/01a1735c-2de0-75e6-8cfb-53926cd44158), a
+  low-poly rooster with a round back end and the tail built into the body.
+* Meshy image-to-image turned it into her: same faceted shape and tail,
+  recolored with the turnaround palette, T-pose, bigger wings ending in
+  three primary feathers she can grip with. Then image to 3D (meshy-t2.5
+  smart topology, 4.1k tris) and the humanoid auto-rig.
+* Clips are Meshy text-to-motion prompts written for a chicken (elbows
+  tucked, short quick steps, head bobs).
+* Blender, scripted, no keys edited by hand: meters to centimeters,
+  `root` bone added, the existing sunglasses fitted to the eyes on a
+  `Glasses` bone, loops cut where the pose repeats with a 0.25 s
+  crossfade into the start, locomotion made in place, right-side clips
+  mirrored from the left ones.
+* Two fixes to Meshy's output: the auto-rig skinned the tail about 80% to
+  the shoulders, so the tail (past a root at 31 cm height) now follows
+  `Tail_01`/`Tail_02` under `Hips`, blended into the body over 6 cm. The
+  texture came out beige, so low-saturation feather pixels are recolored
+  to the palette white #FBF8F0 with their shading kept; comb, wattles,
+  beak and legs are untouched.
+* The base's tall rooster comb is shrunk to a low hen comb: its height
+  scaled to 45% from its base on the skull (top from 65 to 60 cm), the
+  top shortened to 70% front to back.
 
-In UE the assets live in `/Game/Characters/Chicken`. `ABP_Chicken`
-blends Idle, Walk (from 0 to 90 cm/s) and Run (90 to 270 cm/s) by
-speed. Walk and run each have forward, back, left and right clips,
-picked by the movement direction relative to where she faces (that
-only differs while she aims). It has a `DefaultSlot` for montages;
-`BP_Chicken` (in `/Game/Player`) uses it with a 25 cm x 33 cm capsule.
-The MCP import tool cannot import a skeleton-only FBX, so clips are
-imported from a temporary FBX that holds the mesh and the actions.
+Export settings: unit scale 0.01, Apply Scalings "All Local", scale 1.0,
+no leaf bones, all bones, Y primary / X secondary bone axis. She faces -Y
+in Blender, so the mesh needs the usual -90 yaw in the character Blueprint.
 
-The mesh has two parts: the body (8423 tris, `M_Chicken`) and the
-sunglasses (622 tris, `M_Sunglasses`), skinned 100% to the `Glasses`
-bone. Her eyes are modeled under the lenses. She faces -Y in Blender,
-like the UE mannequin, so the mesh needs the usual -90 yaw in the
-character Blueprint.
+In UE the assets live in `/Game/Characters/Chicken` and were re-imported
+over the old ones, so `ABP_Chicken` and `BP_Chicken` keep their
+references. The mesh has two material slots: `M_Chicken` (body) and
+`M_Sunglasses`. The UE skeleton still lists the old helper bones (comb,
+beak, brows, primaries, ik_foot); the new mesh does not use them.
 
-Meshy put the tail fan on a thin stalk behind the body. In the .blend the
-fan was moved 13 cm forward and tilted 4 degrees up so it grows out of
-the rump as on the turnaround; the stalk now sits inside the body. The
-tail tip is at 63 cm, under the comb top. Meshy skinned the tips of the
-two outer feathers to the shoulders, so they broke off the fan whenever
-the wings moved; now every feather blends from `Tail_01` to `Tail_02` by
-distance from the rump (8 to 16 cm) and follows only the tail bones.
+### Skeleton (28 bones)
 
-### Skeleton (49 bones)
-
-The armature object is named `Armature`, which UE drops; `root` is the
-skeleton root. The Meshy humanoid bones (Hips to ToeBase) are kept, so
-wings are arms and work as hands.
+Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 
 | Bones | Parent | Use |
 |---|---|---|
 | `root` | - | Skeleton root at the feet |
-| `ik_foot_root`, `ik_foot_l/r` | `root` | Baked to the feet in all clips |
-| `Left/RightPrimary1..3` | `Left/RightHand` | 3 primary feathers = fingers |
-| `Tail_01`, `Tail_02` | `Hips` | Tail fan, jiggle |
-| `Comb_01`, `Comb_02` | `Head` | Comb, jiggle and flop |
-| `Wattle` | `Head` | Wattles, jiggle |
-| `Hackle` | `neck` | Neck cape, jiggle (40% weight) |
-| `BeakUpper`, `BeakLower` | `Head` | Hinged beak |
-| `Brow_L/R` | `Head` | Brow tufts, her eyebrows |
-| `Eye_L/R` | `Head` | Eyes under the lenses |
-| `Glasses` | `Head` | Glasses slide down the beak or push up |
-| `Left/RightToeBack` | `Left/RightFoot` | Back toe; `ToeBase` curls front |
+| `Glasses` | `Head` | Sunglasses ride it, can slide down the beak |
+| `Tail_01`, `Tail_02` | `Hips` | Tail, unkeyed, for jiggle later |
 
-Apart from the ik bones, the new bones have no keys in the clips (they
-stay at rest); jiggle is meant for AnimDynamics or Control Rig in UE.
+### Clips
 
-### Clips for #14
+24 fps. Loops start and end on the same pose.
 
-Lengths are as generated, at 24 fps; the GDD timings are set in UE (play
-rate, trimming, montage sections). The custom clips came from Meshy
-text-to-motion, the rest from the Meshy animation library.
-
-| #14 item | Clip | Length | Notes |
-|---|---|---|---|
-| Idle loop | `A_Chicken_Idle` | 4.0 s | GDD wants 2 s |
-| Walk | `A_Chicken_Walk` | 1.0 s | Loop |
-| Run | `A_Chicken_Run` | 0.6 s | Loop |
-| Peck windup and strike | `A_Chicken_Peck` | 2.0 s | Split in a montage |
-| Flutter dodge | `A_Chicken_Flutter` | 2.0 s | GDD: 0.25 s |
-| Carry gnome | `A_Chicken_CarryWalk` | 6.5 s | Loop, in place |
-| Throw | `A_Chicken_Throw` | 4.3 s | |
-| Shotgun aim | `A_Chicken_ShotgunAim` | 2.5 s | Loop |
-| Shotgun fire | `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
-| Shotgun pump | `A_Chicken_ShotgunPump` | 2.0 s | GDD: 0.7 s |
-| Reload loop | `A_Chicken_Reload` | 3.3 s | GDD: 0.5 s/shell |
-| Eat corn | `A_Chicken_EatCorn` | 2.0 s | GDD: 1 s |
-| Kneel at backpack | `A_Chicken_Kneel` | 9.5 s | Use the crouch part |
-| Hit react | `A_Chicken_HitReact` | 1.6 s | GDD: 0.2 s |
-| KO | `A_Chicken_KO` | 2.2 s | Ends on her back |
+| Clip | Length | Notes |
+|---|---|---|
+| `A_Chicken_Idle` | 3.25 s | Loop, head jerks side to side |
+| `A_Chicken_Walk` | 0.58 s | Loop, in place |
+| `A_Chicken_Run` | 0.38 s | Loop, in place, leaning sprint |
+| `A_Chicken_WalkBack`, `WalkLeft`, `WalkRight` | 0.58 s | Loops, in place |
+| `A_Chicken_RunBack`, `RunLeft`, `RunRight` | 0.38 s | Loops, in place |
+| `A_Chicken_CarryWalk` | 0.79 s | Loop, in place, object overhead |
+| `A_Chicken_ShotgunAim` | 1.2 s | Loop |
+| `A_Chicken_Peck` | 2.0 s | Wind-up and head strike |
+| `A_Chicken_Flutter` | 2.0 s | Flapping hop, has root motion |
+| `A_Chicken_Throw` | 2.5 s | Overhead two-wing throw |
+| `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
+| `A_Chicken_ShotgunPump` | 2.0 s | |
+| `A_Chicken_Reload` | 3.0 s | Shells one by one |
+| `A_Chicken_EatCorn` | 2.5 s | Pecks at a cob held in the wings |
+| `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
+| `A_Chicken_HitReact` | 2.0 s | |
+| `A_Chicken_KO` | 3.0 s | Ends on her back, feet up |
 
 ### Locomotion
 
-All locomotion clips are in place. Natural ground speed is measured from
-the planted foot (walk, run) or from the root drift that was removed
-from the generated clips. The back and side clips came from Meshy
-text-to-motion; their body yaw was turned back to face forward, a clean
-loop was cut, and the right-side clips are mirrors of the left ones.
+`ABP_Chicken` plays each clip at speed divided by its natural speed (the
+sequence player's play rate basis), so the feet match the ground.
 
-| Clip | Natural speed | Loop |
+| Clip | Natural speed | Basis |
 |---|---|---|
-| `A_Chicken_Walk` | 33 cm/s forward | 1.0 s |
-| `A_Chicken_Run` | 130 cm/s forward | 0.6 s |
-| `A_Chicken_WalkBack` | 21 cm/s back | 1.25 s |
-| `A_Chicken_WalkLeft`, `WalkRight` | 28 cm/s sideways | 1.1 s |
-| `A_Chicken_RunBack` | 85 cm/s back | 0.65 s |
-| `A_Chicken_RunLeft`, `RunRight` | 66 cm/s sideways | 0.75 s |
+| `A_Chicken_Walk` | 18 cm/s forward | 18 |
+| `A_Chicken_WalkBack` | 14.7 cm/s back | 14.7 |
+| `A_Chicken_WalkLeft`, `WalkRight` | 13 cm/s sideways | 13 |
+| `A_Chicken_Run` | 117 cm/s forward | 117.3 |
+| `A_Chicken_RunBack` | 37 cm/s back | 60 |
+| `A_Chicken_RunLeft`, `RunRight` | 29 cm/s sideways | 60 |
 
-The game keeps the GDD speed (3 m/s), so `ABP_Chicken` plays each clip
-at its speed divided by the clip's natural speed (the run plays about
-2.3 times faster at full speed).
+The back and side runs are short, quick steps; their basis is raised to 60
+so they play at most 4.5x at the 270 cm/s run speed (feet slide a little)
+instead of 7 to 9x.
 
 ## Props (`Props/`)
 
