@@ -48,11 +48,19 @@ functions: `Heal`, `RestoreHealth` (sets HP, used by reloads).
 scale). `BP_Chicken` binds the inputs: Peck and Fire call `Peck`
 (Fire only while `HasShotgun` is off), Flutter calls `Flutter`.
 
-* **Peck** faces the aim point (the facing direction without one) and
-  hits every pawn with `BPC_Health` in a 90 degree arc up to 0.9 m from
-  its collision edge. 10 damage, x3 on an unaware target, a small
-  knockback, a peck noise (3.6 m, AI perception) when it hits. One peck
-  per 0.4 s.
+* **Peck** picks the nearest living pawn with `BPC_Health` in a 90
+  degree arc toward the aim point (the facing direction without one), up
+  to 0.9 m from its collision edge. She turns to it and hops at it
+  (`LaunchCharacter`, flight time `PeckStrikeDelay` 0.2 s), stopping
+  with her center `PeckBeakReach` (35 cm) from its collision edge, at
+  most `PeckLungeMax` (80 cm). With no target she hops `PeckLungeIdle`
+  (25 cm) forward. Move input is ignored during the hop.
+* `PeckStrike` runs on a timer at the strike frame (0.2 s): she stops,
+  and every pawn in the same arc and reach takes 10 damage (x3 on an
+  unaware target) and is knocked back `KnockbackSpeed` (300) and up
+  `KnockbackLift` (250, about 30 cm). A hit makes a peck noise (3.6 m,
+  AI perception). One peck per 0.45 s (`PeckCooldown`), shorter than
+  the 0.5 s clip, so mashing still shows every strike.
 * **Flutter** goes 2.4 m in 0.25 s in the movement direction (the
   facing direction when standing still). She is invulnerable, ignores
   move input and can't walk off ledges during the hop. 0.8 s cooldown

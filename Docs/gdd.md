@@ -159,7 +159,11 @@ checkpoints are built: [combat.md](combat.md).
 ### Peck
 
 * Always available melee: a short frontal arc (0.9 m, 90 degrees),
-  10 damage, one peck per 0.4 s, small knockback.
+  10 damage, one peck per 0.45 s, small knockback.
+* She hops at the nearest enemy in the arc, up to 0.8 m, so the beak
+  visibly lands on him; with nobody in reach she hops 25 cm forward.
+  The hit lands 0.2 s after the press, on the strike frame, and pops
+  the enemy up a little.
 * **Surprise peck:** the first hit on an enemy that hasn't noticed her
   does triple damage. That kills a basic Shawarman in one peck and is
   the reward for sneaking.

@@ -83,7 +83,7 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_RunBack`, `RunLeft`, `RunRight` | 0.38 s | Loops, in place |
 | `A_Chicken_CarryWalk` | 0.79 s | Loop, in place, object overhead |
 | `A_Chicken_ShotgunAim` | 1.2 s | Loop |
-| `A_Chicken_Peck` | 2.0 s | Wind-up and head strike |
+| `A_Chicken_Peck` | 0.5 s | Hop-peck, keyed by script (see below) |
 | `A_Chicken_Flutter` | 2.0 s | Flapping hop, has root motion |
 | `A_Chicken_Throw` | 2.5 s | Overhead two-wing throw |
 | `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
@@ -93,6 +93,26 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
 | `A_Chicken_HitReact` | 2.0 s | |
 | `A_Chicken_KO` | 3.0 s | Ends on her back, feet up |
+
+### Peck clip
+
+`A_Chicken_Peck` is the one clip not made with Meshy: the Meshy peck
+was a 2 s bow to the ground (the head only went 15 cm forward, down to
+31 cm), too slow for a 0.45 s attack and hitting the floor at her feet.
+It was replaced by key poses set from a script on top of the
+`A_Chicken_Idle` first frame (24 fps, bezier between keys):
+
+| Frame | Pose |
+|---|---|
+| 0 | Idle |
+| 2 | Wind-up: body crouched 3 cm and leaning back, neck pulled back |
+| 5 | Strike: leaning in, neck stretched, wings flared, legs tucked |
+| 7 | Strike held at 85% |
+| 12 | Idle |
+
+At the strike the beak is 29 cm in front of the rest pose, at 45 cm
+height. The capsule hop comes from `BPC_ChickenCombat`; the clip has
+no root motion.
 
 ### Locomotion
 
