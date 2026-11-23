@@ -81,7 +81,15 @@ killer:
 
 The `Generic` row holds the game 1 lines that are mixed into every
 killer's pool, and is the screen for unknown tags. To add a killer, add
-a row named after its tag. Pictures are placeholders (no textures yet).
+a row named after its tag.
+
+Pictures are 16:9 textures in `/Game/Combat/UI/DeathScreens`
+(`T_Death_<Row>`, UI texture group, no mips), imported from
+`Art/DeathScreens`. Keep the lower third of a picture calm: the dish and
+the pun line sit there, with a dark outline and shadow so they read on
+bright pictures too. `PlateColor` is the picture's average tone. Spare
+pictures for new killers are in `Art/DeathScreens/Game1` (game 1
+screens redrawn) and `Art/DeathScreens/Ideas`.
 
 ## Checkpoints
 
