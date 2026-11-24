@@ -311,4 +311,4 @@ deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,
 random seed, so a run is repeatable.
 
 Still graybox: the booth, customs shed, office, grill shack, gate arch,
-Doner tower, the gnomes and the people. They are next for Meshy.
+Doner tower and the gnomes (issue #24), and the people (#25 and #18).

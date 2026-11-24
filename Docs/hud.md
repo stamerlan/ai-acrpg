@@ -63,7 +63,7 @@ game and the UI. Closing restores the previous cursor state.
   green ring of `PeckReach` plus 25 cm (her capsule) under the chicken.
 
 The overlays use debug lines, so they exist only in development builds;
-the panel itself is not stripped from shipping builds yet.
+the panel itself is not stripped from shipping builds yet (#26).
 
 ## Not done yet (#6)
 
