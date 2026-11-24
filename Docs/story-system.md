@@ -219,7 +219,7 @@ Dialog events broadcast these for later issues to pick up:
 | `border_done` | Kotlet | journal and checklist open, checkpoint |
 | `halina_call` | Halina | the kebab stand fight starts, checkpoint |
 | `hint_eat_corn` | corn lady | eat corn tutorial |
-| `wait_for_midnight` | Kolya | warning, then fade to night |
+| `wait_for_midnight` | Kolya, fence hole | fade to night (`BP_NightTransition`) |
 
 ## Console
 

@@ -132,6 +132,110 @@ The back and side runs are short, quick steps; their basis is raised to 60
 so they play at most 4.5x at the 270 cm/s run speed (feet slide a little)
 instead of 7 to 9x.
 
+## Cooks (enemies)
+
+The Shawarman (#13, #15) and the 0B variants Skewerman and Grill
+Sergeant (#16) live in `Enemies/<Name>/`, the props of all three in
+`Enemies/Source/EnemyProps.blend` and `Enemies/<Name>/Props/`. Same
+layout as the chicken:
+
+| Folder | What |
+|---|---|
+| `Reference/` | T-pose image the mesh was built from |
+| `Meshy/` | Raw Meshy mesh, auto-rig and animation GLBs |
+| `Source/SK_<Name>.blend` | Working file in centimeters (the Shawarman one holds every clip) |
+| `Mesh/` | `SK_<Name>.fbx` and the base color texture(s) |
+| `Anims/` | One clip per FBX, skeleton only |
+| `Props/` | Prop FBX files |
+
+How they were made (Meshy, no hand animation except one pose):
+
+* T-pose references made from the concept sheets
+  (`Docs/shawarman.png`, `Docs/shawarman-variants.png`) with an image
+  model, props left out. Image to 3D with meshy-t2.5 smart topology
+  (12k triangles) and the meshy-n1 texture, then the Meshy humanoid
+  auto-rig. Every rig was checked: each bone owns vertices near its
+  head.
+* Clips are Meshy library animations applied to the Shawarman rig only.
+  The three rigs have the same bone names, so in UE they share one
+  skeleton and the clips play on all three.
+* Blender, scripted (`Enemies/Scripts/`): `root` bone added at the feet,
+  Meshy's stray 2 m icosphere removed, clips trimmed, made in place where
+  they loop, crossfaded into their start, and the knife swing retimed.
+* Shawarman extras: a `Cap` bone under `Head` that owns the paper cap
+  (split from the head mesh, so it can fly off; `SM_ShawarmanCap` is the
+  same geometry as a static mesh) and `Apron_01`/`Apron_02` under `Hips`
+  that own 80% of the apron below the belly, so the legs don't drag the
+  apron. Three more textures (`_B` darker skin, `_C` fair skin and
+  ginger hair, `_D` olive skin and grey hair) recolor the skin and hair
+  pixels of the base one.
+* `A_GrillSergeant_ShieldWalk` and `ShieldIdle` are the walk and
+  look-around clips with the left arm keyed to one raised pose (the lid
+  hand in front of the chest).
+* Props are modelled by script from primitives with flat-color materials.
+
+Heights: Shawarman 175 cm, Skewerman 178 cm, Grill Sergeant 180 cm. They
+face -Y in Blender, so the mesh needs the usual -90 yaw in the Blueprint.
+
+### Shared skeleton
+
+UE: `/Game/Characters/Cooks`. All three meshes use
+`SK_Shawarman_Skeleton` (28 bones: Meshy's 24, `root`, `Cap`,
+`Apron_01`, `Apron_02`). Translation retargeting is Skeleton for every
+bone except `root` (Animation) and `Hips` (AnimationScaled), so the lanky
+Skewerman and the broad sergeant keep their own proportions on the
+Shawarman's clips.
+
+### Clips
+
+30 fps. "Source" is the Meshy library animation.
+
+| Clip | Source | Length | Use |
+|---|---|---|---|
+| `A_Cook_Walk` | rig walk | 1.0 s | Loop, 117 cm/s |
+| `A_Cook_Run` | rig run | 0.63 s | Loop, 450 cm/s |
+| `A_Cook_WalkBack` | Walk Backward | 0.87 s | Loop, 105 cm/s, Skewerman backing off |
+| `A_Shawarman_Idle` | Scheming Hand Rub | 3.3 s | Loop, honing the knife |
+| `A_Shawarman_Search` | Torch Look Around | 9.3 s | Loop, suspicious with the flashlight |
+| `A_Shawarman_Shout` | Angry Stomp | 2.0 s | Alerted shout |
+| `A_Shawarman_Swing` | Charged Slash | 1.2 s | Windup 0.6 s, strike 0.2 s, recovery 0.4 s |
+| `A_Shawarman_Eat` | Stand and Drink | 8.9 s | Loop, busy, left hand to the mouth |
+| `A_Shawarman_Sleep` | Sit and Doze Off | 17.3 s | Loop, sitting on the plastic chair |
+| `A_Shawarman_WakeUp` | Sit to Stand | 2.8 s | Waking up |
+| `A_Shawarman_HitReact` | Hit Reaction | 1.6 s | |
+| `A_Shawarman_Knockdown`, `GetUp` | Knock Down, Stand Up | 2.5 s, 5.3 s | Thrown gnome, played faster |
+| `A_Shawarman_Death` | Dying Backwards | 2.2 s | Flat on his back |
+| `A_Skewerman_Throw` | Crouch Charge and Throw (end) | 2.8 s | Windup and release |
+| `A_Skewerman_KneelThrow` | Crouch Charge and Throw (start) | 1.7 s | Throw from a container |
+| `A_Skewerman_Climb` | Climbing Up Wall | 2.0 s | Climbs about 90 cm |
+| `A_Skewerman_Death` | Shot and Blown Back | 2.7 s | Lands on his back, travel cut to 30% |
+| `A_GrillSergeant_Slam` | Charged Ground Slam | 3.0 s | Windup, slam at about 1.8 s |
+| `A_GrillSergeant_ShieldWalk`, `ShieldIdle` | walk, Torch Look Around | | Left arm holds the lid |
+
+The Grill Sergeant's death reuses `A_Shawarman_Death`. Montages
+(`AM_*`) wrap the one-shot clips; the death and knockdown ones hold their
+last pose.
+
+### Props
+
+| File | Size | Attach |
+|---|---|---|
+| `SM_DonerKnife` | 59 cm | `RightHand`, grip at the origin, blade +X |
+| `SM_SharpeningSteel` | 39 cm | `LeftHand` |
+| `SM_Flashlight` | 20 cm | `LeftHand`, lens +X |
+| `SM_MiniKebab` | 15 cm | `LeftHand` |
+| `SM_Flatbread` | 30 cm | `Head`, on the face after death |
+| `SM_PlasticChair` | 87 cm tall | Floor, under the sleeping cook |
+| `SM_ShawarmanCap` | | `Head`, thrown off on death |
+| `SM_Skewer` | 55 cm | `RightHand`, ring at the origin |
+| `SM_SkewerBucket` | 62 cm with skewers | Back strap at the origin |
+| `SM_GrillLid` | 56 cm | `LeftHand` (handle), dome forward |
+| `SM_CharcoalGrill` | 48 cm | Side handle at the origin; `M_Coals` is emissive |
+
+The Skewerman and Grill Sergeant have no Blueprints yet (#9). Their props
+attach the same way as the Shawarman's (see `SetupBody` in
+`BP_Shawarman` and [enemies.md](../Docs/enemies.md#body-and-animation)).
+
 ## Props (`Props/`)
 
 FBX at real size with their textures next to them. `Source/Props.blend`

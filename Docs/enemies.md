@@ -68,14 +68,22 @@ her invulnerable, so the hit does nothing). Recovery takes 0.5 s, then
 `BPC_Health.ApplyDamage(AttackDamage, KillerTag, enemy)`, with
 `KillerTag` `Shawarman` for the death screen.
 
-The knife, the glint and the body are placeholders (cylinder, cube,
-point light). The windup sound is not added yet.
+With `bAnimatedBody` on (the Shawarman) the attack plays `AttackMontage`
+instead of moving the placeholder knife: a 0.6 s windup, the strike, then
+the recovery. The glint is a point light at the blade. The windup sound
+is not added yet.
 
 ## Death
 
-`BPC_Health.OnDied` calls `Die`: it stops, loses collision, flattens
-like a pancake with "Well done!" over it and is destroyed after 4 s. It
-stays defeated across checkpoint reloads (`bRemembersDefeat`).
+`BPC_Health.OnDied` calls `Die`: it stops, loses collision and shows
+"Well done!" over it. An animated body plays `DeathMontage` (it holds the
+last pose) and is destroyed after 6 s; the placeholder flattens like a
+pancake and goes after 4 s. It stays defeated across checkpoint reloads
+(`bRemembersDefeat`).
+
+The Shawarman's cap flies off (the `Cap` bone is hidden and the
+`CapProp` mesh is thrown with physics) and a flatbread lands on his face
+1.1 s later.
 
 ## First fight (0A)
 
@@ -91,6 +99,41 @@ stays defeated across checkpoint reloads (`bRemembersDefeat`).
 After a reload with the flag at `started` the fight resumes: defeated
 enemies are gone, the others wake up again. Test it with
 `Story.Event halina_call`.
+
+## Body and animation
+
+The cooks are skinned meshes in `/Game/Characters/Cooks` (see
+[Art/README.md](../Art/README.md#cooks-enemies)). They share one skeleton,
+`SK_Shawarman_Skeleton`, and `ABP_Cook`: idle, look-around
+(suspicious), eat (busy) and sleep loops picked from `State` and
+`UnawareMode`, walk and run blended by speed, and a `DefaultSlot` for the
+montages. `ABP_GrillSergeant` is a copy with the shield idle and walk.
+
+Montage variables on `BP_EnemyBase` (category Animation), used when
+`bAnimatedBody` is on:
+
+| Variable | When |
+|---|---|
+| `AttackMontage` | `StartAttack` |
+| `ShoutMontage` | Becoming alerted, `Activate` (played at 1.6x) |
+| `WakeUpMontage` | Becoming alerted while `Sleeping` (then `Idle`) |
+| `HitMontage` | Damaged while alerted and not attacking |
+| `DeathMontage` | `Die` |
+| `KnockdownMontage`, `GetUpMontage` | `Knockdown`, for the thrown gnome (not called yet): 1.5 s down, then up |
+
+While a montage other than the attack plays, an alerted enemy stands
+still. The capsule is 78 cm half height (the nav mesh allows agents up to
+160 cm) and the head sticks out of it.
+
+`BP_Shawarman` attaches its props on BeginPlay (`SetupBody`): the knife
+in the right hand, the flashlight (with a spot light) in the left hand on
+`Patrol`, the sharpening steel on `Idle`, a mini kebab on `Busy`, the
+plastic chair under him on `Sleeping` (left behind when he wakes). It
+picks one of four skin and hair variants (`SkinVariants`) and a random
+size of 95 to 105%.
+
+Enemy body parts must not affect navigation: with the dynamic nav mesh a
+colliding part carves a hole around the enemy and it can't find a path.
 
 ## Placing an enemy
 

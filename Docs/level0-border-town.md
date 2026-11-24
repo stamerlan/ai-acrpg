@@ -68,9 +68,23 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
 * World axes: +X is north (river side), +Y is east. The lot fence runs
   along X = 0; the bazaar is north of it, the lot south. One unit of
   the layout is 1 m.
-* To play the night, set `DL_Day` to Unloaded and `DL_Night` to
-  Activated (initial runtime state in the Data Layers outliner) and
-  start at `MK_Checkpoint_NightStart`. Set them back before saving.
+* `NightTransition` (`BP_NightTransition`, `Shared/Story`) does the
+  transition on the story event `wait_for_midnight`: a 1.2 s fade, the
+  layer swap, the teleport to `MK_Checkpoint_NightStart`, quest
+  `q_car_trouble` to `night` and a `NightStart` checkpoint with the
+  phase `Night`. On BeginPlay it applies the night without a teleport
+  when `q_car_trouble` is `night` or later, so checkpoint reloads come
+  back at night. It also shows the actors tagged `ShownAfterFirstFight`
+  (the "BACK AT MIDNIGHT" sign) once `f_first_fight` is `done`.
+* The event comes from Kolya ("Wake me at midnight") or from the hole
+  (`MK_Interact_FenceHole`, Use "Wait for midnight", shown while
+  `q_car_trouble` is `office`). The hole has no dialog yet, so the
+  "too bright" line and the no-way-back warning are still missing.
+* To play the night in the editor: `Story.Set q_car_trouble office`, then
+  `Story.Event wait_for_midnight`. Or set `DL_Day` to Unloaded and
+  `DL_Night` to Activated (initial runtime state in the Data Layers
+  outliner) and start at `MK_Checkpoint_NightStart`; set them back
+  before saving.
 * The searchlight (`DonerEye_Rig`) turns at a constant 45 deg/s; the
   pauses and the lookout awareness come with the Doner system.
 * These markers carry a `BPC_Interactable` and work in Play: the NPCs
