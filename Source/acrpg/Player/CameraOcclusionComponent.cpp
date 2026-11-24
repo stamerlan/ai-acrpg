@@ -95,46 +95,61 @@ void UCameraOcclusionComponent::FindOccluders(
 	const FVector& CameraLocation,
 	TSet<UPrimitiveComponent*>& OutOccluders) const
 {
-	const AActor* Owner = GetOwner();
+	const FVector OwnerLocation = GetOwner()->GetActorLocation();
 	const FCollisionShape Sphere = FCollisionShape::MakeSphere(ProbeRadius);
-
 	for (const FVector& Offset : ProbeOffsets)
 	{
-		const FVector Target = Owner->GetActorLocation() + Offset;
-		const FVector Direction = (Target - CameraLocation).GetSafeNormal();
-		const float TargetDistance = FVector::Dist(CameraLocation, Target);
-		FCollisionQueryParams Params(SCENE_QUERY_STAT(CameraOcclusion));
-		Params.AddIgnoredActor(Owner);
+		SweepOccluders(CameraLocation, OwnerLocation + Offset, Sphere,
+			OutOccluders);
+	}
 
-		// Single sweeps stop at the first blocker, so ignore each hit and
-		// sweep again to find the occluders behind it
-		for (int32 Index = 0; Index < MaxOccludersPerProbe; ++Index)
+	// A steep camera ray passes under the edge of the roof she stands
+	// under and only cuts a hole in the wall, so look straight up too
+	if (RoofCheckHeight > 0.f)
+	{
+		SweepOccluders(OwnerLocation,
+			OwnerLocation + FVector(0.f, 0.f, RoofCheckHeight),
+			FCollisionShape::MakeSphere(0.f), OutOccluders);
+	}
+}
+
+void UCameraOcclusionComponent::SweepOccluders(const FVector& Start,
+	const FVector& Target, const FCollisionShape& Shape,
+	TSet<UPrimitiveComponent*>& OutOccluders) const
+{
+	const FVector Direction = (Target - Start).GetSafeNormal();
+	const float TargetDistance = FVector::Dist(Start, Target);
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(CameraOcclusion));
+	Params.AddIgnoredActor(GetOwner());
+
+	// Single sweeps stop at the first blocker, so ignore each hit and
+	// sweep again to find the occluders behind it
+	for (int32 Index = 0; Index < MaxOccludersPerProbe; ++Index)
+	{
+		FHitResult Hit;
+		if (!GetWorld()->SweepSingleByChannel(Hit, Start, Target,
+			FQuat::Identity, TraceChannel, Shape, Params))
 		{
-			FHitResult Hit;
-			if (!GetWorld()->SweepSingleByChannel(Hit, CameraLocation,
-				Target, FQuat::Identity, TraceChannel, Sphere, Params))
-			{
-				break;
-			}
+			break;
+		}
 
-			UPrimitiveComponent* Component = Hit.GetComponent();
-			const AActor* HitActor = Hit.GetActor();
-			if (!Component)
-			{
-				break;
-			}
-			Params.AddIgnoredComponent(Component);
+		UPrimitiveComponent* Component = Hit.GetComponent();
+		const AActor* HitActor = Hit.GetActor();
+		if (!Component)
+		{
+			break;
+		}
+		Params.AddIgnoredComponent(Component);
 
-			// The sphere also touches a wall the owner stands against with
-			// the camera in front of her, so cut only surfaces in front of
-			// the probe point along the camera ray
-			const bool bInFront = FVector::DotProduct(
-				Hit.ImpactPoint - CameraLocation, Direction) < TargetDistance;
-			if (bInFront && !Cast<APawn>(HitActor) &&
-				!(HitActor && HitActor->ActorHasTag(NoOcclusionCutoutTag)))
-			{
-				OutOccluders.Add(Component);
-			}
+		// The sphere also touches a wall the owner stands against with the
+		// camera in front of her, so cut only surfaces in front of the
+		// probe point along the ray
+		const bool bInFront = FVector::DotProduct(
+			Hit.ImpactPoint - Start, Direction) < TargetDistance;
+		if (bInFront && !Cast<APawn>(HitActor) &&
+			!(HitActor && HitActor->ActorHasTag(NoOcclusionCutoutTag)))
+		{
+			OutOccluders.Add(Component);
 		}
 	}
 }

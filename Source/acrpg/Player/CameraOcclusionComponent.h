@@ -13,6 +13,7 @@ class UPrimitiveComponent;
  *   - FadeDataIndex: cutout amount, 0 (none) to 1 (full)
  *   - FadeDataIndex + 1, + 2: owner position in viewport UV
  *   - FadeDataIndex + 3: owner view depth
+ *  Primitives right above the owner (roofs) count as occluders too.
  *  Actors tagged NoOcclusionCutout are never cut.
  */
 UCLASS(ClassGroup = (Camera), meta = (BlueprintSpawnableComponent))
@@ -40,6 +41,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Occlusion", meta = (ClampMin = 1))
 	int32 MaxOccludersPerProbe = 8;
 
+	/**
+	 *  Height above the owner searched for roofs. A roof right above her
+	 *  fades even when the camera ray passes under its edge, so the whole
+	 *  room she is in shows. 0 turns the check off.
+	 */
+	UPROPERTY(EditAnywhere, Category = "Occlusion",
+		meta = (ClampMin = 0, Units = "cm"))
+	float RoofCheckHeight = 1000.f;
+
 	/** Time for the cutout to fully open or close */
 	UPROPERTY(EditAnywhere, Category = "Occlusion",
 		meta = (ClampMin = 0.01, Units = "s"))
@@ -63,7 +73,15 @@ public:
 
 protected:
 
-	/** Adds every primitive between the camera and the probe points */
+	/**
+	 *  Adds every primitive between the camera and the probe points, and
+	 *  every one above the owner (roofs)
+	 */
 	void FindOccluders(const FVector& CameraLocation,
+		TSet<UPrimitiveComponent*>& OutOccluders) const;
+
+	/** Adds every primitive the shape touches from Start to Target */
+	void SweepOccluders(const FVector& Start, const FVector& Target,
+		const FCollisionShape& Shape,
 		TSet<UPrimitiveComponent*>& OutOccluders) const;
 };

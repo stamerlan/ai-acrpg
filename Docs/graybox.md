@@ -12,7 +12,12 @@ document (stop 0: [level0-border-town.md](level0-border-town.md#graybox)).
 * Materials are the `MI_GB_*` instances in `/Game/Materials/Graybox`.
   Walls and props use children of `M_Graybox` (screen-space cutout when
   they hide the player); roofs and awnings use children of
-  `MI_GrayboxRoof` (the whole mesh fades out).
+  `MI_GrayboxRoof` (the whole mesh fades out). A roof right above the
+  player fades too, even when the camera looks under its edge, so the
+  whole room shows from inside (`RoofCheckHeight` on the chicken's
+  `CameraOcclusion`). Give a roof its own component with a roof
+  material, as the guard office and the open container
+  (`MI_GB_ContainerBlueRoof`) have.
 * Ground: a collision slab with its top at Z = 0, plus colored surface
   patches (road, paving, dirt) 1 cm above it with no collision.
 * Level bounds and fence collision are invisible components with
