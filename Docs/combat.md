@@ -95,10 +95,15 @@ cabbage) can be a child Blueprint with other meshes and numbers.
 
 * **Pick up:** its `Interactable` (`BPC_Interactable`, type `Carry`,
   prompt "Pick up", 90 cm) calls `BPC_Carry.PickUp` on the chicken. The
-  gnome turns off its collision and sits above her head (`CarryOffset`,
-  58 cm over the capsule center), her walk speed drops to `SpeedFactor`
-  (0.7) of `NormalSpeed`, and `ABP_Chicken` blends `A_Chicken_CarryWalk`
-  onto her upper body (from `Spine02`, weight `CarryAlpha`).
+  gnome turns off its collision and appears above her head
+  (`CarryOffset`, 40 cm over the capsule center), her walk speed drops
+  to `SpeedFactor` (0.7) of `NormalSpeed`, and `ABP_Chicken` blends
+  `A_Chicken_CarryWalk` onto her upper body (from `Spine02`, weight
+  `CarryAlpha`).
+* **Held in the wings:** every tick `HoldCarried` moves the gnome from
+  `CarryOffset` toward the midpoint of her wing tips (`LeftHand` and
+  `RightHand` bones) by `CarryAlpha`, so it settles between the wings as
+  they rise and then bobs with them on the walk and the throw windup.
 * **Carrying:** no interaction prompts show, and Interact puts the
   gnome down in front of her. A flutter or her death drops it at her
   feet.
