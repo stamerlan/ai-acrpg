@@ -28,9 +28,10 @@ void UCameraOcclusionComponent::TickComponent(float DeltaTime,
 
 	const FVector CameraLocation =
 		PC->PlayerCameraManager->GetCameraLocation();
+	TSet<UPrimitiveComponent*> Hits;
+	FindOccluders(CameraLocation, Hits);
 	TSet<UPrimitiveComponent*> Current;
-	FindOccluders(CameraLocation, Current);
-	UpdateRoofs(Current);
+	UpdateRoofs(Hits, Current);
 	for (UPrimitiveComponent* Component : Current)
 	{
 		Occluders.FindOrAdd(Component, 0.f);
@@ -113,31 +114,31 @@ void UCameraOcclusionComponent::FindOccluders(
 		SweepOccluders(CameraLocation, OwnerLocation + Offset, Sphere,
 			OutOccluders);
 	}
-}
 
-void UCameraOcclusionComponent::UpdateRoofs(
-	TSet<UPrimitiveComponent*>& OutOccluders)
-{
 	// A steep camera ray passes under the edge of the roof she stands
-	// under and only cuts a hole in the wall, so look straight up
-	const FVector OwnerLocation = GetOwner()->GetActorLocation();
-	TSet<UPrimitiveComponent*> Above;
+	// under and only cuts a hole in the wall, so look straight up too
 	if (RoofCheckHeight > 0.f)
 	{
 		SweepOccluders(OwnerLocation,
 			OwnerLocation + FVector(0.f, 0.f, RoofCheckHeight),
-			FCollisionShape::MakeSphere(0.f), Above);
+			FCollisionShape::MakeSphere(0.f), OutOccluders);
 	}
+}
 
-	// A roof is every part of the hit actor over the hit primitive that
+void UCameraOcclusionComponent::UpdateRoofs(
+	const TSet<UPrimitiveComponent*>& Hits,
+	TSet<UPrimitiveComponent*>& OutOccluders)
+{
+	// A roof is every part of a hit actor over the hit primitive that
 	// stays above her: an art tarp, a graybox roof, the signs on a stall's
 	// hidden graybox awning. Walls and posts reach the ground and stay.
 	TSet<UPrimitiveComponent*> Roofs;
-	const float MinZ = OwnerLocation.Z + RoofMinHeight;
-	for (UPrimitiveComponent* Hit : Above)
+	const float MinZ = GetOwner()->GetActorLocation().Z + RoofMinHeight;
+	for (UPrimitiveComponent* Hit : Hits)
 	{
 		if (!Hit->GetOwner())
 		{
+			OutOccluders.Add(Hit);
 			continue;
 		}
 		const FBox HitBox = Hit->Bounds.GetBox();

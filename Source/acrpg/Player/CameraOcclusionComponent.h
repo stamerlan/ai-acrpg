@@ -14,7 +14,8 @@ class UPrimitiveComponent;
  *   - FadeDataIndex + 1, + 2: owner position in viewport UV
  *   - FadeDataIndex + 3: owner view depth
  *  Actors tagged NoOcclusionCutout are never cut.
- *  Roofs right above the owner are hidden (see RoofCheckHeight).
+ *  Roofs that hide the owner or are right above her are hidden whole
+ *  instead (see RoofCheckHeight and RoofMinHeight).
  */
 UCLASS(ClassGroup = (Camera), meta = (BlueprintSpawnableComponent))
 class UCameraOcclusionComponent : public UActorComponent
@@ -42,10 +43,11 @@ protected:
 	int32 MaxOccludersPerProbe = 8;
 
 	/**
-	 *  Height above the owner searched for roofs. Every part of a roof's
-	 *  actor over it that is at least RoofMinHeight above her (the roof,
-	 *  signs on it) is hidden, so the whole room or stall she is in shows.
-	 *  Hidden parts keep their shadow. 0 turns the check off.
+	 *  Height above the owner searched for roofs, 0 turns this check off.
+	 *  For a primitive found here or between the camera and her, every
+	 *  part of its actor over it that is at least RoofMinHeight above her
+	 *  (a roof, a tarp, signs on it) is hidden, so the whole room or stall
+	 *  shows. Hidden parts keep their shadow.
 	 */
 	UPROPERTY(EditAnywhere, Category = "Occlusion",
 		meta = (ClampMin = 0, Units = "cm"))
@@ -82,16 +84,20 @@ public:
 
 protected:
 
-	/** Adds every primitive between the camera and the probe points */
+	/**
+	 *  Adds every primitive between the camera and the probe points, and
+	 *  every one right above the owner
+	 */
 	void FindOccluders(const FVector& CameraLocation,
 		TSet<UPrimitiveComponent*>& OutOccluders) const;
 
 	/**
-	 *  Hides the roof parts above the owner and shows the ones she left.
-	 *  Primitives above her that are not roofs (tree tops) are added to
-	 *  OutOccluders to get the cutout.
+	 *  Hides the roof parts of the hit actors and shows the ones that no
+	 *  longer cover the owner. Hits that are not roofs (walls, tree tops)
+	 *  are added to OutOccluders to get the cutout.
 	 */
-	void UpdateRoofs(TSet<UPrimitiveComponent*>& OutOccluders);
+	void UpdateRoofs(const TSet<UPrimitiveComponent*>& Hits,
+		TSet<UPrimitiveComponent*>& OutOccluders);
 
 	/** Adds every primitive the shape touches from Start to Target */
 	void SweepOccluders(const FVector& Start, const FVector& Target,
