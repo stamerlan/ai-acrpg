@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect x="8" y="8" width="240" height="240" rx="28" fill="#3b2f24"/><rect x="8" y="8" width="240" height="240" rx="28" fill="none" stroke="#6b5640" stroke-width="6"/><circle cx="88" cy="84" r="26" fill="none" stroke="#1e1610"
+stroke-width="16"/>
+<circle cx="88" cy="84" r="26" fill="none" stroke="#c9ccd1" stroke-width="9"/>
+<g transform="rotate(35 108 126)">
+<rect x="86" y="96" width="44" height="60" rx="10" fill="#222" stroke="#1e1610" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M100 156 L100 220 L110 220 L110 210 L120 210 L120 200 L112 200 L112
+190
+L118 190 L118 180 L112 180 L112 156 Z" fill="#c9ccd1" stroke="#1e1610" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="108" cy="118" r="6" fill="#c9ccd1"/></g>
+<line x1="104" y1="96" x2="150" y2="128" stroke="#9a8a70" stroke-width="4"/>
+<g transform="rotate(-18 176 150)">
+<path d="M136 120 L204 120 L216 150 L204 180 L136 180 Z" fill="#f3e1a0" stroke="#1e1610" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="202" cy="150" r="5" fill="#3b2f24"/>
+<text x="168" y="147" font-family="Arial Black, Arial" font-weight="900" text-anchor="middle" font-size="14" fill="#1e1610">CIVIC</text>
+<text x="168" y="166" font-family="Arial Black, Arial" font-weight="900" text-anchor="middle" font-size="12" fill="#c0392b">+1 HEN</text></g></svg>

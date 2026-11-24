@@ -1,5 +1,6 @@
 #include "StoryStateSubsystem.h"
 #include "StorySettings.h"
+#include "ItemDefinition.h"
 #include "Engine/DataTable.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -171,7 +172,16 @@ int32 UStoryStateSubsystem::GetItemCount(FName Id) const
 void UStoryStateSubsystem::AddItem(FName Id, int32 Count)
 {
 	Validate(EStoryIdKind::Item, Id, NAME_None);
-	const int32 NewCount = FMath::Max(0, GetItemCount(Id) + Count);
+	int32 NewCount = FMath::Max(0, GetItemCount(Id) + Count);
+
+	// Gifts past the limit are lost, a count already above it stays
+	const UItemDefinition* Item =
+		Count > 0 ? UItemDefinition::FindItem(Id) : nullptr;
+	if (Item && Item->MaxCount > 0)
+	{
+		NewCount = FMath::Min(NewCount,
+			FMath::Max(Item->MaxCount, GetItemCount(Id)));
+	}
 	if (NewCount == GetItemCount(Id))
 	{
 		return;

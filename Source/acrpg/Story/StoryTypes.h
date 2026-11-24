@@ -61,7 +61,9 @@ enum class EInteractType : uint8
 	/** Runs the actions and removes the object */
 	PickUp,
 	/** Runs the actions, the object stays */
-	Use
+	Use,
+	/** She picks the object up to carry and throw it (BPC_Carry) */
+	Carry
 };
 
 USTRUCT(BlueprintType)

@@ -128,7 +128,7 @@ Montage variables on `BP_EnemyBase` (category Animation), used when
 | `WakeUpMontage` | Becoming alerted while `Sleeping` (then `Idle`) |
 | `HitMontage` | Damaged and still alive (cancels the attack) |
 | `DeathMontage` | `Die` |
-| `KnockdownMontage`, `GetUpMontage` | `Knockdown`, for the thrown gnome (not called yet): 1.5 s down, then up |
+| `KnockdownMontage`, `GetUpMontage` | `Knockdown`, called by a thrown gnome: 1.5 s down, then up |
 
 While a montage other than the attack plays, an alerted enemy stands
 still. The capsule is 78 cm half height (the nav mesh allows agents up to

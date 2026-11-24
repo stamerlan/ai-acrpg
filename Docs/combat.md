@@ -11,6 +11,8 @@ how to set them up. Design and numbers are in the
 |---|---|---|
 | Health | `BPC_Health` (BP) | HP, "killed by" tag, invulnerable and unaware flags, death |
 | Chicken combat | `BPC_ChickenCombat` (BP) on `BP_Chicken` | Peck, surprise peck, flutter, death flow |
+| Carry | `BPC_Carry` (BP) on `BP_Chicken` | Picking up, carrying and throwing throwables |
+| Throwable | `/Game/Throwables/BP_Throwable` | The garden gnome: carried, thrown, shatters |
 | Death screen | `WBP_DeathScreen`, `DT_DeathScreens` | Food plate, dish, pun line, "Try again" |
 | Checkpoint | `BP_Checkpoint` (BP) | Saves on overlap or on a story event |
 | Checkpoint state | `UCheckpointSubsystem` (C++) | The last snapshot in memory, reload, defeated actors |
@@ -45,8 +47,10 @@ functions: `Heal`, `RestoreHealth` (sets HP, used by reloads).
 ## Peck and flutter
 
 `BPC_ChickenCombat` holds the numbers as defaults (GDD values, 3 m/s
-scale). `BP_Chicken` binds the inputs: Peck and Fire call `Peck`
-(Fire only while `HasShotgun` is off), Flutter calls `Flutter`.
+scale). `BP_Chicken` binds the inputs: Peck calls `Peck`, Fire calls
+`Fire` (throws while carrying, otherwise pecks while `HasShotgun` is
+off), Flutter calls `Flutter`. While she carries something
+(`Carrying`) the peck does nothing.
 
 * **Peck** is a jump at the enemy and back. It picks the nearest living,
   visible pawn with `BPC_Health` whose capsule is at most `PeckReach`
@@ -77,8 +81,44 @@ scale). `BP_Chicken` binds the inputs: Peck and Fire call `Peck`
 * **Flutter** goes 2.4 m in 0.25 s in the movement direction (the
   facing direction when standing still). She is invulnerable, ignores
   move input and can't walk off ledges during the hop. 0.8 s cooldown
-  after it ends. `OnFlutterStarted` is for the carry system (#6) to
-  drop the carried object.
+  after it ends. A flutter drops a carried object (see below).
+
+## Throwables
+
+Garden gnomes are the stop 0 throwables (GDD: one at a time, 30%
+slower, no peck, up to 6 m, 25 damage, 1.5 s knockdown, shatters, 6 m
+noise). `BP_Throwable` is the gnome; a later throwable (paper stack,
+cabbage) can be a child Blueprint with other meshes and numbers.
+
+* **Pick up:** its `Interactable` (`BPC_Interactable`, type `Carry`,
+  prompt "Pick up", 90 cm) calls `BPC_Carry.PickUp` on the chicken. The
+  gnome turns off its collision and sits above her head (`CarryOffset`,
+  58 cm over the capsule center), her walk speed drops to `SpeedFactor`
+  (0.7) of `NormalSpeed`, and `ABP_Chicken` blends `A_Chicken_CarryWalk`
+  onto her upper body (from `Spine02`, weight `CarryAlpha`).
+* **Carrying:** no interaction prompts show, and Interact puts the
+  gnome down in front of her. A flutter or her death drops it at her
+  feet.
+* **Throw:** Fire. She turns to the aim point (the facing direction
+  without one) and plays `A_Chicken_Throw` from `ThrowStartTime` (1.2 s)
+  at `ThrowRate` (1.5). After `ReleaseDelay` (0.27 s, the release frame)
+  the gnome flies in an arc (`ThrowArc` 0.5) to the aim point on the
+  ground, at least 1.5 m and at most `ThrowRange` (6 m) away.
+* **Hit:** it flies with its `Projectile` movement and stops at the
+  first thing it hits (never her). Then it shatters (`Shatter`): every
+  living pawn with `BPC_Health` within `HitRadius` (1 m, center to
+  center, flat) takes `Damage` (25, killer tag `Chicken`), enemies play
+  `Knockdown` (1.5 s down, then up), and a noise event of `NoiseRange`
+  (6 m, tag `Shatter`) goes off for the hearing in #8. The broken gnome
+  (`BrokenMesh`) lies on the ground for `LieTime` (10 s).
+
+The gnome's collision (a 14 by 20 cm capsule) blocks pawns, so gnome
+rows are low cover, and it carves the dynamic nav mesh.
+
+Placed in `L0_BorderBazaar`: two gnomes at each day gnome marker of the
+gnome field (`Day/Throwables`, 12) and three at each night source (the
+fence corner crates and next to the Trabant, `Night/Throwables`). The
+markers stay in the editor and are hidden in game.
 
 ## Death
 
@@ -152,8 +192,9 @@ markers are in `Night/Markers/Checkpoint`.
 
 `Lvl_Dev_Movement` has a `CombatTest` folder: two dummies (30 HP, one
 unaware), a Shawarman (`Shawarman_Test`, busy, so he only sees her up
-close), a damage zone per stop 0 killer (40 HP per second) and two
-checkpoints. `BP_DamageZone` can also serve as hot coals.
+close), a damage zone per stop 0 killer (40 HP per second), two
+checkpoints, three gnomes in front of the Shawarman and two corn
+pickups. `BP_DamageZone` can also serve as hot coals.
 
 | Command | Does |
 |---|---|

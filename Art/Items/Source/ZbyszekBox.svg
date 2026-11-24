@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect x="8" y="8" width="240" height="240" rx="28" fill="#3b2f24"/><rect x="8" y="8" width="240" height="240" rx="28" fill="none" stroke="#6b5640" stroke-width="6"/><path d="M44 96 L128 66 L212 96 L212 194 L128 224 L44 194 Z"
+fill="#c8955a" stroke="#1e1610" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M44 96 L128 126 L212 96 L128 66 Z" fill="#dcaa6e" stroke="#1e1610" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M128 126 L128 224" fill="none" stroke="#1e1610" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<g transform="rotate(18 86 162)">
+<rect x="38" y="148" width="98" height="26" fill="#f2d21b" stroke="#1e1610"
+stroke-width="4"/>
+<text x="87" y="167" font-family="Arial Black, Arial" font-weight="900" text-anchor="middle" font-size="14" fill="#1e1610">EVIDENCE</text></g>
+<text x="170" y="182" font-family="Arial Black, Arial" font-weight="900" text-anchor="middle" font-size="44" fill="#7a4a22"
+transform="rotate(-18 170 166)">?</text></svg>

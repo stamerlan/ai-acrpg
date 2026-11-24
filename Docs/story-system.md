@@ -45,8 +45,9 @@ reload overwrites it.
 * **Flag:** a value from the table's list, or a bool (empty list, value
   `true`). None means not set.
 * **Stamp:** a checklist stamp, set or not.
-* **Item:** a count. Item definitions with pictures come with the
-  backpack (#6); the story state only counts them.
+* **Item:** a count. The name, picture and description shown in the
+  backpack are in an item definition asset, and its `MaxCount` caps the
+  count, see [hud.md](hud.md#items).
 
 Id prefixes: `q_` quest, `f_` flag, `stamp_` stamp, `item_` item.
 
@@ -173,7 +174,7 @@ Output Log.
 
 | Property | Meaning |
 |---|---|
-| Type | Talk (start the dialog), PickUp (run the actions, remove the actor), Use (run the actions) |
+| Type | Talk (start the dialog), PickUp (run the actions, remove the actor), Use (run the actions), Carry (she picks the actor up to throw it, see [combat.md](combat.md#throwables)) |
 | Prompt | the verb next to the key, for example "Talk" |
 | Dialogue, Entry | Talk: the dialog and its [entry](#entries) (None: the default start) |
 | ParticipantName, DisplayName | Talk: the NPC's participant name in the dialog and the speaker name shown |
@@ -184,7 +185,9 @@ Output Log.
 Its `OnInteracted` event lets level scripts react to Use.
 
 The prompt shows over the closest interactable in range with the key of
-the last used device: `[F]` or `(A)`. Interact is F / A. In a dialog:
+the last used device: `[F]` or `(A)`. Interact is F / A. While she
+carries a throwable no prompt shows and Interact puts it down. In a
+dialog:
 
 * W / S, the arrows, the D-pad, the left stick or the mouse (hover)
   select a choice.

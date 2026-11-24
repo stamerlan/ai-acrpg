@@ -268,6 +268,22 @@ were built from.
 
 The backpack flap is closed; the poses sheet shows it open.
 
+`Scripts/ue_props_import.py` (run in the editor with `py "<path>"`)
+imports the gnome, the broken gnome and the corn cob to
+`/Game/Props/<Name>` with an `M_Env` instance each (`MI_<Mesh>`, base
+color texture `T_<Mesh>_D`), without collision: `BP_Throwable` and
+`BP_CornPickup` bring their own.
+
+## Item icons (`Items/`)
+
+Flat 256 px backpack pictures of the stop 0 items, drawn as SVG
+(`Source/<Name>.svg`) and rendered to `T_Item_<Name>.png` by
+`Scripts/make_icons.js` (`node make_icons.js`, needs Microsoft Edge for
+the headless render). `Scripts/ue_items_import.py` imports them to
+`/Game/Items/Textures` (UI group, no mips) and sets each as the picture
+of `DA_Item_<Name>`. To change an icon, edit its SVG in the script and
+run both.
+
 ## Environment (`Environment/`)
 
 Level art for stop 0, placed over the graybox (see
@@ -311,4 +327,5 @@ deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,
 random seed, so a run is repeatable.
 
 Still graybox: the booth, customs shed, office, grill shack, gate arch,
-Doner tower and the gnomes (issue #24), and the people (#25 and #18).
+Doner tower and the gnome rows and crates of the gnome field (issue #24;
+the throwable gnomes use `SM_Gnome`), and the people (#25 and #18).

@@ -43,7 +43,7 @@ has a label with its name.
 | Enemy | red | cylinder | Enemy start, spawn point or climb point |
 | Patrol | purple | flat disc | Patrol route point, numbered in order |
 | Pickup | green | cube | Item or crate she can pick up |
-| Throwable | orange | sphere | Throwable source (gnome, crate) |
+| Throwable | orange | sphere | Throwable source (gnome, crate); hidden in game where real gnomes stand |
 | Checkpoint | blue | ring and pole | Checkpoint save spot |
 | Interact | cyan | diamond on a pole | Object she can use |
 | Lit | pale yellow | flat disc | Lit zone, the disc radius is the zone |
