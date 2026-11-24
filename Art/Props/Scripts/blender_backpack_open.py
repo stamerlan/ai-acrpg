@@ -25,7 +25,7 @@ import bpy
 from mathutils import Matrix, Vector
 
 ART = r"C:\Users\vvovchenko\repo\acrpg\Art\Props"
-CUT_Z = 22.0
+CUT_Z = 17.0
 FLAP_DEG = 150.0
 INNER = 4.0
 DARK_UV = (0.441, 0.598)
@@ -149,9 +149,9 @@ def build():
     back = max(v.co.y for v in body)
     side = max(abs(v.co.x) for v in body)
     junk = [v for p in parts
-            if len(p) < SLIVER or (max(v.co.y for v in p) > back + 3 and
-                                   max(v.co.z for v in p) < CUT_Z) or
-            min(abs(v.co.x) for v in p) > side
+            if p is not body and (len(p) < SLIVER or
+                                  max(v.co.y for v in p) > back + 3 or
+                                  min(abs(v.co.x) for v in p) > side)
             for v in p]
     bmesh.ops.delete(bm, geom=junk, context='VERTS')
     top_verts = {v for v in top_verts if v.is_valid}

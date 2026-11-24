@@ -2,7 +2,8 @@
 
 Run inside Blender with the matching file open:
   SK_Chicken.blend:   build_peck_jump(), build_chicken_hit(),
-                      build_eat_corn(), build_shotgun_fire()
+                      build_eat_corn(), build_shotgun_fire(),
+                      build_kneel_dig()
   SK_Shawarman.blend: build_chop(), build_flinch()
 
 Poses are built from frames of existing clips plus edits in armature
@@ -27,6 +28,9 @@ LEG_BONES = ["LeftUpLeg", "LeftLeg", "LeftFoot", "LeftToeBase",
 # half the distance between the wing tips
 COB = Vector((0, -22, 37))
 COB_GRIP = 8.5
+# Middle of the open backpack's mouth for A_Chicken_Kneel, armature space
+# (cm): BP_AcrpgHUD puts the bag BAG_MOUTH.y in front of her
+BAG_MOUTH = Vector((0, -31, 15))
 
 
 def armature():
@@ -223,6 +227,20 @@ def reach(arm, pose, chain, tip, target, steps=20):
                       pb.scale.copy()) for pb in arm.pose.bones}
 
 
+def wing_tips(arm):
+    """{"Left"/"Right": the outermost wing vertex as a reach() tip}."""
+    mesh = next(o for o in bpy.data.objects if o.type == 'MESH' and
+                o.find_armature() == arm and o.vertex_groups.get("Head"))
+    tips = {}
+    for side, pick in (("Left", max), ("Right", min)):
+        v = pick(mesh.data.vertices, key=lambda v: v.co.x)
+        total = sum(g.weight for g in v.groups)
+        tips[side] = (arm.matrix_world.inverted() @ mesh.matrix_world @ v.co,
+                      [(mesh.vertex_groups[g.group].name, g.weight / total)
+                       for g in v.groups if g.weight > 0])
+    return tips
+
+
 def build_eat_corn():
     """A_Chicken_EatCorn: three quick pecks at a cob held in the wings.
 
@@ -238,16 +256,7 @@ def build_eat_corn():
     if "A_Chicken_EatCornOld" not in acts:
         acts["A_Chicken_EatCorn"].name = "A_Chicken_EatCornOld"
     idle = sample(arm, acts["A_Chicken_Idle"], 0)
-    mesh = next(o for o in bpy.data.objects if o.type == 'MESH' and
-                o.find_armature() == arm and o.vertex_groups.get("Head"))
-    verts = mesh.data.vertices
-    tips = {}
-    for side, pick in (("Left", max), ("Right", min)):
-        v = pick(verts, key=lambda v: v.co.x)
-        total = sum(g.weight for g in v.groups)
-        tips[side] = (arm.matrix_world.inverted() @ mesh.matrix_world @ v.co,
-                      [(mesh.vertex_groups[g.group].name, g.weight / total)
-                       for g in v.groups if g.weight > 0])
+    tips = wing_tips(arm)
 
     def hold(pose, edits, dip=0.0):
         out = pose_with_edits(arm, pose, edits)
@@ -310,6 +319,47 @@ def build_shotgun_fire(kick=0.8):
             (4, recoil(0.45)), (6, recoil(0.1)), (8, recoil(-0.06)),
             (10, aim), (16, aim)]
     return write_action(arm, "A_Chicken_ShotgunFire", keys)
+
+
+def build_kneel_dig():
+    """A_Chicken_Kneel: crouch, rummage in the open backpack, stand up.
+
+    24 fps, 120 frames (5 s) like the Meshy clip it is made from (kept as
+    A_Chicken_KneelOld), whose crouch (frames 0-20) and stand-up (96-119)
+    stay. In between she digs at the ground short of the bag, so frames
+    28-86 are re-keyed: from the frame 75 crouch the upper body leans back
+    up (Spine02 and neck) so the beak hangs over the bag opening (BAG_MOUTH,
+    30 cm ahead, under the 15 cm rim), and the wing tips reach into the
+    opening, one up while the other digs. BP_AcrpgHUD pauses the clip on
+    frame 75 (2.6 s at 1.2x) while the panel is open and plays the
+    stand-up from frame 86 (3.6 s) when it closes; both are the dig pose.
+    """
+    arm = armature()
+    acts = bpy.data.actions
+    if "A_Chicken_KneelOld" not in acts:
+        acts["A_Chicken_Kneel"].name = "A_Chicken_KneelOld"
+    old = acts["A_Chicken_KneelOld"]
+    tips = wing_tips(arm)
+    crouch = sample(arm, old, 75)
+
+    def dig(left, right, nod):
+        out = pose_with_edits(arm, crouch, [
+            ("rot", "Spine02", X, -22), ("rot", "neck", X, -20),
+            ("rot", "Head", X, nod)])
+        for side, sx, dz in (("Left", 1, left), ("Right", -1, right)):
+            out = reach(arm, out, [side + "Arm", side + "ForeArm",
+                                   side + "Hand"], tips[side],
+                        BAG_MOUTH + Vector((sx * 6, 0, dz)))
+        return out
+
+    a = dig(-6, -6, 4)
+    keys = [(f, sample(arm, old, f)) for f in range(0, 21, 4)]
+    keys += [(28, a), (36, dig(-2, -9, 8)), (44, dig(-9, -2, 0)),
+             (52, dig(-2, -9, 8)), (60, dig(-9, -2, 0)), (68, a), (75, a),
+             (86, a)]
+    keys += [(f, sample(arm, old, f)) for f in range(96, 120, 4)]
+    keys.append((119, sample(arm, old, 119)))
+    return write_action(arm, "A_Chicken_Kneel", keys)
 
 
 def build_chop():

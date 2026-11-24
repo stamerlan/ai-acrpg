@@ -78,12 +78,12 @@ def import_all():
 
 def make_mi(dst, name, tex):
     gain, rough = MI_LOOK.get(name, (1.0, 0.8))
+    # Update an existing instance: deleting it makes the editor's git
+    # plugin pop a modal error that blocks the script
     p = "%s/MI_%s" % (dst, name)
-    if eal.does_asset_exist(p):
-        eal.delete_asset(p)
-    mi = tools.create_asset("MI_" + name, dst,
-                            unreal.MaterialInstanceConstant,
-                            unreal.MaterialInstanceConstantFactoryNew())
+    mi = eal.load_asset(p) if eal.does_asset_exist(p) else tools.create_asset(
+        "MI_" + name, dst, unreal.MaterialInstanceConstant,
+        unreal.MaterialInstanceConstantFactoryNew())
     mel.set_material_instance_parent(
         mi, eal.load_asset("/Game/Environment/Materials/M_Env"))
     mel.set_material_instance_texture_parameter_value(mi, "BaseTex", tex)

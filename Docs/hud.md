@@ -141,8 +141,8 @@ or reels from a hit.
   again.
 * The bag: `BackpackProp` on `BP_Chicken` (`SM_BackpackOpen`, an open
   backpack with a cob sticking out, hidden). 0.5 s after opening
-  `PutBagOut` places it on the ground 40 cm in front of her, where her
-  wings dig in the kneel clip, detaches it so it stays in the world, and
+  `PutBagOut` places it on the ground 31 cm in front of her, under her
+  beak and wings in the dig pose of the kneel clip, detaches it so it stays in the world, and
   `UpdateBag` pops it in (scale 0 to 1 in about 0.17 s with a small
   overshoot). `PutBagAway` shrinks it away 0.1 s after closing, 0.15 s
   after a hit or death closes it; the bag stays where it was meanwhile.

@@ -91,7 +91,7 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_ShotgunPump` | 2.0 s | |
 | `A_Chicken_Reload` | 3.0 s | Shells one by one, gun lowered at her right side |
 | `A_Chicken_EatCorn` | 1.17 s | Three pecks at a cob held in the wing tips, keyed by script (see below) |
-| `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
+| `A_Chicken_Kneel` | 4.96 s | Crouch, rummage in the open backpack, stand; keyed by script (see below) |
 | `A_Chicken_HitReact` | 1.08 s | First recoil of the Meshy clip (see below) |
 | `A_Chicken_KO` | 3.0 s | Ends on her back, feet up |
 | `A_Chicken_TrunkOpen` | 0.75 s | Wings flung up, landing squash (see below) |
@@ -155,6 +155,15 @@ the beak 15 cm lower, biting the top of the cob, which dips 1.5 cm);
 frames 9 and 14 throw the head back; 19-23 chew with head turns. In UE
 the cob is `HeldCorn` on `BP_Chicken`, on the `Hips` bone at the
 offset of `COB` (see [hud.md](../Docs/hud.md#eating-corn)).
+
+`A_Chicken_Kneel` (`build_kneel_dig`, the Meshy clip kept as
+`A_Chicken_KneelOld`): in the Meshy clip she dug at the ground 22 cm in
+front of her, short of the bag. The crouch (frames 0-20) and stand-up
+(96-119) stay; frames 28-86 lift her upper body out of the frame 75
+crouch (Spine02 and neck turned back) so the beak hangs over the bag
+mouth (`BAG_MOUTH`, 31 cm ahead, under the 15 cm rim) and the wing tips
+reach into it, one up while the other digs. The HUD pauses on frame 75
+and closes from frame 86, both that dig pose.
 
 `A_Chicken_ShotgunFire` is keyed by the same script
 (`build_shotgun_fire`), 24 fps, 16 frames (0.67 s, under the 0.7 s
@@ -320,13 +329,13 @@ were built from.
 | `Gnome/SM_GnomeBroken.fbx` | 0.40 m long | 2576 | Bottom |
 | `Corn/SM_CornCob.fbx` | 0.20 m long | 1523 | Center |
 | `Backpack/SM_Backpack.fbx` | 0.30 m tall | 2113 | Bottom |
-| `Backpack/SM_BackpackOpen.fbx` | 0.24 m tall | 3367 | Bottom, pocket toward -Y |
+| `Backpack/SM_BackpackOpen.fbx` | 0.15 m rim, 0.24 m with the flap | 3309 | Bottom, pocket toward -Y |
 | `Sunglasses/SM_Sunglasses.fbx` | 0.15 m wide | 622 | `Glasses` bone |
 
 The backpack flap is closed; the poses sheet shows it open.
 `SM_BackpackOpen` is the bag she digs in while the backpack panel is
 open, made from it by `Scripts/blender_backpack_open.py` (`build()` in
-`Props.blend`): the top cut off at 22 cm and swung back 150 degrees on
+`Props.blend`): the top cut off at 17 cm and swung back 150 degrees on
 the back edge, the opening and the flap underside closed with dark and
 leather faces, shoulder straps and cut slivers removed, a corn cob in the
 opening (second material slot), scaled 0.9.
