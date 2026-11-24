@@ -374,6 +374,8 @@ slots to manage, no weight, no sorting, no dropping, no crafting.
 
 ## UI
 
+How the HUD and the debug panel are built: [hud.md](hud.md).
+
 * HUD, minimal and contextual like The Last of Us:
   * One cluster in the bottom-right corner: the HP bar, the shotgun
     icon with loaded shells (as shell pips) and reserve count, and the
