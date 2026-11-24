@@ -139,6 +139,17 @@ or reels from a hit.
   `AChickenCharacter`): she neither turns to the mouse or right stick
   nor to her movement. Closing unlocks it and she turns to the aim
   again.
+* The camera moves in while it is open (`SetCameraFocus` on
+  `AChickenPlayerController`, values under Camera > Focus on
+  `BP_ChickenPlayerController`): the boom eases from the player's zoom
+  to `FocusArmLength` (850 cm, or the player's zoom if that is closer)
+  over `FocusInTime` (0.45 s) and the camera shifts `FocusSideOffset`
+  (250 cm) to the right, so she sits in the middle of the screen left of
+  the panel. Closing eases back over `FocusOutTime` (0.4 s); a hit or
+  death that closes it snaps back in `FocusSnapOutTime` (0.2 s), so the
+  threat is in view. Motion blur is off while the camera moves in or
+  out. Zoom input is ignored meanwhile and the player's
+  own zoom comes back as it was.
 * The bag: `BackpackProp` on `BP_Chicken` (`SM_BackpackOpen`, an open
   backpack with a cob sticking out, hidden). 0.5 s after opening
   `PutBagOut` places it on the ground 31 cm in front of her, under her

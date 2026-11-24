@@ -3,6 +3,7 @@
 #include "ChickenCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InputAction.h"
@@ -82,7 +83,10 @@ void AChickenPlayerController::OnPossess(APawn* InPawn)
 		TargetArmLength = FMath::Clamp(
 			Chicken->GetCameraBoom()->TargetArmLength,
 			MinArmLength, MaxArmLength);
+		PlayerArmLength = TargetArmLength;
 	}
+	bCameraFocus = false;
+	FocusAlpha = 0.f;
 }
 
 void AChickenPlayerController::PlayerTick(float DeltaTime)
@@ -243,9 +247,30 @@ void AChickenPlayerController::UpdateCamera(
 		: FRotator::NormalizeAxis(CameraYaw + Delta * Alpha);
 	SetControlRotation(FRotator(0.f, CameraYaw, 0.f));
 
+	// The focus blends over the player's own zoom, which comes back as it
+	// was once the focus ends
+	PlayerArmLength = FMath::FInterpTo(PlayerArmLength, TargetArmLength,
+		DeltaTime, ZoomInterpSpeed);
+	FocusAlpha = FMath::FInterpConstantTo(FocusAlpha, bCameraFocus ? 1.f : 0.f,
+		DeltaTime, 1.f / (bCameraFocus ? FocusInTime : FocusBlendOutTime));
+	const float Focus = FMath::SmoothStep(0.f, 1.f, FocusAlpha);
+
 	USpringArmComponent* Boom = Chicken->GetCameraBoom();
-	Boom->TargetArmLength = FMath::FInterpTo(Boom->TargetArmLength,
-		TargetArmLength, DeltaTime, ZoomInterpSpeed);
+	Boom->TargetArmLength = FMath::Lerp(PlayerArmLength,
+		FMath::Min(FocusArmLength, PlayerArmLength), Focus);
+	Boom->SocketOffset.Y = FocusSideOffset * Focus;
+
+	// Motion blur smears the whole frame while the focus moves the camera
+	// (worst on the snap out after a hit, when she must see the threat)
+	FPostProcessSettings& Post = Chicken->GetCamera()->PostProcessSettings;
+	Post.bOverride_MotionBlurAmount = FocusAlpha > 0.f && FocusAlpha < 1.f;
+	Post.MotionBlurAmount = 0.f;
+}
+
+void AChickenPlayerController::SetCameraFocus(bool bFocus, bool bSnapOut)
+{
+	bCameraFocus = bFocus;
+	FocusBlendOutTime = bSnapOut ? FocusSnapOutTime : FocusOutTime;
 }
 
 void AChickenPlayerController::CameraRotateStarted(
@@ -293,6 +318,10 @@ void AChickenPlayerController::CameraDragDelta(const FInputActionValue& Value)
 
 void AChickenPlayerController::Zoom(const FInputActionValue& Value)
 {
+	if (bCameraFocus)
+	{
+		return;
+	}
 	TargetArmLength = FMath::Clamp(
 		TargetArmLength - Value.Get<float>() * ZoomStep,
 		MinArmLength, MaxArmLength);

@@ -137,6 +137,34 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Camera", meta = (ClampMin = 0))
 	float ZoomInterpSpeed = 8.f;
 
+	/**
+	 *  Camera focus (the backpack panel): arm length while focused, unless
+	 *  the player's zoom is already closer
+	 */
+	UPROPERTY(EditAnywhere, Category = "Camera|Focus",
+		meta = (ClampMin = 0, Units = "cm"))
+	float FocusArmLength = 850.f;
+
+	/**
+	 *  Camera focus: sideways camera shift at the end of the arm, so she
+	 *  sits in the middle of the screen left of the panel
+	 */
+	UPROPERTY(EditAnywhere, Category = "Camera|Focus", meta = (Units = "cm"))
+	float FocusSideOffset = 250.f;
+
+	UPROPERTY(EditAnywhere, Category = "Camera|Focus",
+		meta = (ClampMin = 0.01, Units = "s"))
+	float FocusInTime = 0.45f;
+
+	UPROPERTY(EditAnywhere, Category = "Camera|Focus",
+		meta = (ClampMin = 0.01, Units = "s"))
+	float FocusOutTime = 0.4f;
+
+	/** Camera focus: blend out after a hit or death ends it */
+	UPROPERTY(EditAnywhere, Category = "Camera|Focus",
+		meta = (ClampMin = 0.01, Units = "s"))
+	float FocusSnapOutTime = 0.2f;
+
 	/** Right stick deflection needed to aim with it */
 	UPROPERTY(EditAnywhere, Category = "Aim",
 		meta = (ClampMin = 0, ClampMax = 1))
@@ -158,6 +186,12 @@ protected:
 	float CameraYaw = 0.f;
 	float TargetCameraYaw = 0.f;
 	float TargetArmLength = 0.f;
+	/** Arm length of the player's zoom, eased toward TargetArmLength */
+	float PlayerArmLength = 0.f;
+	bool bCameraFocus = false;
+	/** 0 = the player's camera, 1 = fully focused */
+	float FocusAlpha = 0.f;
+	float FocusBlendOutTime = 0.4f;
 	bool bDraggingCamera = false;
 	FVector2D StickAim = FVector2D::ZeroVector;
 
@@ -182,6 +216,14 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Input")
 	EAcrpgInputDevice GetLastInputDevice() const { return LastInputDevice; }
+
+	/**
+	 *  Moves the camera in on her and shifts her left of the backpack
+	 *  panel, or back to the player's zoom. Zoom input waits meanwhile.
+	 *  bSnapOut: leave faster (FocusSnapOutTime), after a hit or death.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Camera")
+	void SetCameraFocus(bool bFocus, bool bSnapOut = false);
 
 	/** Console: switches between stepped and free camera rotation */
 	UFUNCTION(Exec, BlueprintCallable, Category = "Camera")

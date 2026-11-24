@@ -35,8 +35,8 @@ namespace
 				}
 				Skeleton->Modify();
 				Skeleton->SetSlotGroupName(FName(*Args[1]), FName(*Args[2]));
-				Ar.Logf(TEXT("%s: slot %s is in group %s"), *Skeleton->GetName(),
-					*Args[1],
+				Ar.Logf(TEXT("%s: slot %s is in group %s"),
+					*Skeleton->GetName(), *Args[1],
 					*Skeleton->GetSlotGroupName(FName(*Args[1])).ToString());
 			}));
 }
