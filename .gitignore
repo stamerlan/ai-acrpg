@@ -49,4 +49,4 @@ Thumbs.db
 *.blend1
 
 # Result files of the art scripts
-Art/Environment/Scripts/out.json
+Art/*/Scripts/out.json

@@ -1,7 +1,8 @@
 """Combat clips keyed by script (issue #22).
 
 Run inside Blender with the matching file open:
-  SK_Chicken.blend:   build_peck_jump(), build_chicken_hit()
+  SK_Chicken.blend:   build_peck_jump(), build_chicken_hit(),
+                      build_eat_corn()
   SK_Shawarman.blend: build_chop(), build_flinch()
 
 Poses are built from frames of existing clips plus edits in armature
@@ -22,6 +23,10 @@ WING_BONES = ["LeftShoulder", "LeftArm", "LeftForeArm", "LeftHand",
               "RightShoulder", "RightArm", "RightForeArm", "RightHand"]
 LEG_BONES = ["LeftUpLeg", "LeftLeg", "LeftFoot", "LeftToeBase",
              "RightUpLeg", "RightLeg", "RightFoot", "RightToeBase"]
+# Corn cob held for A_Chicken_EatCorn, armature space (cm): center and
+# half the distance between the wing tips
+COB = Vector((0, -22, 37))
+COB_GRIP = 8.5
 
 
 def armature():
@@ -186,6 +191,94 @@ def build_chicken_hit():
     keys.append((23, mix(sample(arm, old, 21), idle, 0.6)))
     keys.append((26, idle))
     return write_action(arm, "A_Chicken_HitReact", keys)
+
+
+def reach(arm, pose, chain, tip, target, steps=20):
+    """Turn the chain (root bone first) so the tip lands on the target.
+
+    tip is a skinned vertex: (rest position, [(bone, weight)]), so the
+    point is where the mesh really is, not where one bone puts it. Cyclic
+    coordinate descent in armature space, each bone turned the least
+    angle.
+    """
+    pose_with_edits(arm, pose, [])
+    bones = [arm.pose.bones[n] for n in chain]
+    co, weights = tip
+    skin = [(arm.pose.bones[b], arm.data.bones[b].matrix_local.inverted()
+             @ co, w) for b, w in weights]
+    for _ in range(steps):
+        for pb in reversed(bones):
+            bpy.context.view_layer.update()
+            end = sum((p.matrix @ local * w for p, local, w in skin),
+                      Vector())
+            head = pb.matrix.translation
+            a, b = end - head, target - head
+            if a.length < 1e-4 or b.length < 1e-4:
+                continue
+            r = a.rotation_difference(b).to_matrix().to_4x4()
+            pb.matrix = (Matrix.Translation(head) @ r @
+                         Matrix.Translation(-head) @ pb.matrix)
+    bpy.context.view_layer.update()
+    return {pb.name: (pb.location.copy(), pb.rotation_quaternion.copy(),
+                      pb.scale.copy()) for pb in arm.pose.bones}
+
+
+def build_eat_corn():
+    """A_Chicken_EatCorn: three quick pecks at a cob held in the wings.
+
+    24 fps, 28 frames (1.17 s), played on the UpperBody slot. The wing
+    tips grip the ends of a cob lying across in front of her chest
+    (center COB, along X), the cob mesh rides `Hips` in UE. The pecks
+    bend Spine02, neck and Head so the beak tip bites into the top of
+    the cob on frames 7, 12 and 17 (the cob dips 1.5 cm on each); between
+    them she throws the head back, then chews with head turns on 19-23.
+    """
+    arm = armature()
+    acts = bpy.data.actions
+    if "A_Chicken_EatCornOld" not in acts:
+        acts["A_Chicken_EatCorn"].name = "A_Chicken_EatCornOld"
+    idle = sample(arm, acts["A_Chicken_Idle"], 0)
+    mesh = next(o for o in bpy.data.objects if o.type == 'MESH' and
+                o.find_armature() == arm and o.vertex_groups.get("Head"))
+    verts = mesh.data.vertices
+    tips = {}
+    for side, pick in (("Left", max), ("Right", min)):
+        v = pick(verts, key=lambda v: v.co.x)
+        total = sum(g.weight for g in v.groups)
+        tips[side] = (arm.matrix_world.inverted() @ mesh.matrix_world @ v.co,
+                      [(mesh.vertex_groups[g.group].name, g.weight / total)
+                       for g in v.groups if g.weight > 0])
+
+    def hold(pose, edits, dip=0.0):
+        out = pose_with_edits(arm, pose, edits)
+        for side, sx in (("Left", 1), ("Right", -1)):
+            out = reach(arm, out, [side + "Arm", side + "ForeArm",
+                                   side + "Hand"], tips[side],
+                        COB + Vector((sx * COB_GRIP, 0, -dip)))
+        return out
+
+    def bend(spine, neck, head, turn=0):
+        return [("rot", "Spine02", X, spine), ("rot", "neck", X, neck),
+                ("rot", "Head", X, head), ("rot", "Head", Z, turn)]
+
+    up = hold(idle, bend(4, 0, 10))
+    peck = hold(idle, bend(18, 15, 10), 1.5)
+    rise = hold(idle, bend(2, -5, -8))
+    keys = [
+        (0, idle),
+        (4, up),
+        (7, peck),
+        (9, rise),
+        (12, peck),
+        (14, rise),
+        (17, peck),
+        (19, hold(idle, bend(5, 0, 6, 10))),
+        (21, hold(idle, bend(5, 0, 6, -10))),
+        (23, hold(idle, bend(5, 0, 8, 6))),
+        (25, mix(up, idle, 0.5)),
+        (28, idle),
+    ]
+    return write_action(arm, "A_Chicken_EatCorn", keys)
 
 
 def build_chop():

@@ -54,14 +54,28 @@ it in. The ammo itself is described in [combat.md](combat.md#shotgun).
 `IA_EatCorn` (Started) calls `BP_AcrpgHUD.EatCorn`: with at least one
 `item_corn_cob`, HP below max, not dead and 1 s since the last bite, it
 takes one cob and calls `Heal(35)` on the chicken. At full HP it does
-nothing, so a cob is never wasted. She plays `A_Chicken_EatCorn` at 2.2x
-(about 1 s) in the `UpperBody` slot of `ABP_Chicken`, so she can keep
-running while she eats. The backpack's Eat button calls the same
-function.
+nothing, so a cob is never wasted. She plays `A_Chicken_EatCorn`
+(1.17 s, three pecks at a cob held across her chest) in the `UpperBody`
+slot of `ABP_Chicken`, so she can keep running while she eats. The cob
+is `HeldCorn` on `BP_Chicken` (`SM_CornCob`, hidden): `EatCorn` attaches
+it to the `Hips` bone, where it sits between her wing tips in that clip,
+and shows it; `UpdateHeldCorn` (every 0.05 s) hides it once the clip
+passes 1.0 s or stops. The backpack's Eat button calls the same
+function, so she eats kneeling at the bag.
 
-`UpperBody` is a second `Slot` node blended over the spine and up
-(`Layered blend per bone` from `Spine02`, weight = the slot's montage
-weight). One-shot clips that should leave the legs alone go there;
+`UpperBody` is a second `Slot` node layered over the spine and up
+(`Layered blend per bone` from `Spine02`, weight 1). Its source and
+the base pose are the same cached pose (`BodyPose`, the output of
+`DefaultSlot`), so with no montage on `UpperBody` the layer changes
+nothing. Do not drive that weight with `GetSlotLocalWeight`: a layer
+at weight 0 is not updated, so the slot weight never rises above 0 and
+the clip never shows (that was the case until the eating fix). The
+slot is in its own group, `UpperBodyGroup`, on `SK_Chicken_Skeleton`,
+so its montages (eating, shotgun fire and reload) do not stop the
+`DefaultSlot` ones (the kneel) and the other way round. The Anim Slot
+Manager can't be scripted; `Acrpg.SetSlotGroup <skeleton> <slot>
+<group>` (editor console) does it, save the skeleton after. One-shot
+clips that should leave the legs alone go to `UpperBody`;
 `DefaultSlot` is the full body.
 
 ## Items
@@ -118,8 +132,20 @@ dialog or a menu) and not while she carries something, pecks, flutters
 or reels from a hit.
 
 * The game is not paused. She stops, ignores move input and kneels
-  (`A_Chicken_Kneel` at 1.2x, paused once she is down); the panel slides
-  in from the right. Closing plays the stand-up part of the clip.
+  (`A_Chicken_Kneel` at 1.2x; `HoldKneel` pauses that montage, and only
+  that one, once she is down); the panel slides in from the right.
+  Closing plays the stand-up part of the clip.
+* Her facing is locked while it is open (`bFacingLocked` on
+  `AChickenCharacter`): she neither turns to the mouse or right stick
+  nor to her movement. Closing unlocks it and she turns to the aim
+  again.
+* The bag: `BackpackProp` on `BP_Chicken` (`SM_BackpackOpen`, an open
+  backpack with a cob sticking out, hidden). 0.5 s after opening
+  `PutBagOut` places it on the ground 40 cm in front of her, where her
+  wings dig in the kneel clip, detaches it so it stays in the world, and
+  `UpdateBag` pops it in (scale 0 to 1 in about 0.17 s with a small
+  overshoot). `PutBagAway` shrinks it away 0.1 s after closing, 0.15 s
+  after a hit or death closes it; the bag stays where it was meanwhile.
 * A peck, a flutter, a hit or her death closes it at once (checked every
   0.05 s while it is open), so opening it in a fight is a risk.
 * Three fixed sections: Gear, Key items and Joke items. Each owned item

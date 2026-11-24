@@ -68,6 +68,13 @@ protected:
 
 public:
 
+	/**
+	 *  Keeps her facing as it is: she neither turns to the aim point nor
+	 *  to her movement (set while the backpack panel is open)
+	 */
+	UPROPERTY(BlueprintReadWrite, Category = "Aim")
+	bool bFacingLocked = false;
+
 	AChickenCharacter();
 
 	virtual void Tick(float DeltaSeconds) override;

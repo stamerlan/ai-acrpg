@@ -90,7 +90,7 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
 | `A_Chicken_ShotgunPump` | 2.0 s | |
 | `A_Chicken_Reload` | 3.0 s | Shells one by one |
-| `A_Chicken_EatCorn` | 2.5 s | Pecks at a cob held in the wings |
+| `A_Chicken_EatCorn` | 1.17 s | Three pecks at a cob held in the wing tips, keyed by script (see below) |
 | `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
 | `A_Chicken_HitReact` | 1.08 s | First recoil of the Meshy clip (see below) |
 | `A_Chicken_KO` | 3.0 s | Ends on her back, feet up |
@@ -142,6 +142,19 @@ frames 8-13 (see [combat.md](../Docs/combat.md#peck-and-flutter)).
 `A_Chicken_HitReactOld`): frames 0-20, head and body thrown back, wings
 flared, then back to the idle pose by frame 26 (1.08 s), same script
 (`build_chicken_hit`).
+
+`A_Chicken_EatCorn` is keyed by the same script (`build_eat_corn`), 24
+fps, 28 frames (1.17 s), for the `UpperBody` slot. The Meshy clip (kept
+as `A_Chicken_EatCornOld`) barely moved the head and held nothing. The
+wing tips grip the ends of a cob lying across her chest (center `COB`,
+0 / -22 / 37 cm, tips 8.5 cm apart either side); the wing chains are
+turned onto those points by `reach`, which follows the skinned tip
+vertex, not the hand bone (the tip is 12 cm past it and split between
+two bones). Frames 7, 12 and 17 are pecks (Spine02, neck and Head bent,
+the beak 15 cm lower, biting the top of the cob, which dips 1.5 cm);
+frames 9 and 14 throw the head back; 19-23 chew with head turns. In UE
+the cob is `HeldCorn` on `BP_Chicken`, on the `Hips` bone at the
+offset of `COB` (see [hud.md](../Docs/hud.md#eating-corn)).
 
 ### Locomotion
 
@@ -285,15 +298,25 @@ were built from.
 | `Gnome/SM_GnomeBroken.fbx` | 0.40 m long | 2576 | Bottom |
 | `Corn/SM_CornCob.fbx` | 0.20 m long | 1523 | Center |
 | `Backpack/SM_Backpack.fbx` | 0.30 m tall | 2113 | Bottom |
+| `Backpack/SM_BackpackOpen.fbx` | 0.24 m tall | 3367 | Bottom, pocket toward -Y |
 | `Sunglasses/SM_Sunglasses.fbx` | 0.15 m wide | 622 | `Glasses` bone |
 
 The backpack flap is closed; the poses sheet shows it open.
+`SM_BackpackOpen` is the bag she digs in while the backpack panel is
+open, made from it by `Scripts/blender_backpack_open.py` (`build()` in
+`Props.blend`): the top cut off at 22 cm and swung back 150 degrees on
+the back edge, the opening and the flap underside closed with dark and
+leather faces, shoulder straps and cut slivers removed, a corn cob in the
+opening (second material slot), scaled 0.9.
 
 `Scripts/ue_props_import.py` (run in the editor with `py "<path>"`)
-imports the gnome, the broken gnome, the corn cob and the shotgun to
-`/Game/Props/<Name>` with an `M_Env` instance each (`MI_<Mesh>`, base
-color texture `T_<Mesh>_D`), without collision: `BP_Throwable` and
-`BP_CornPickup` bring their own, `BPC_Shotgun` needs none. Mesh names
+imports the gnome, the broken gnome, the corn cob, the shotgun and the
+open backpack to `/Game/Props/<Name>` with an `M_Env` instance each
+(`MI_<Mesh>`, base color texture `T_<Mesh>_D`), without collision:
+`BP_Throwable` and `BP_CornPickup` bring their own, `BPC_Shotgun` and
+the backpack need none. The open backpack's cob slot uses `MI_CornCob`
+and its instance is 1.8x brighter and matte (`MI_LOOK`): the source
+texture is dark and glossy and vanished from the gameplay camera. Mesh names
 after the path (`py "<path>" SM_Shotgun`) import only those.
 
 ## Item icons (`Items/`)

@@ -54,8 +54,8 @@ void AChickenCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->bOrientRotationToMovement = !bHasAimPoint;
-	if (!bHasAimPoint)
+	Movement->bOrientRotationToMovement = !bHasAimPoint && !bFacingLocked;
+	if (!bHasAimPoint || bFacingLocked)
 	{
 		return;
 	}
