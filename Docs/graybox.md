@@ -54,3 +54,30 @@ When a map holds more than one level phase (stop 0: day and night),
 each phase has a Runtime data layer, and its actors sit in an outliner
 folder of the same name (`Day/`, `Night/`). Geometry that exists in
 every phase is always loaded and sits in `Shared/`.
+
+## Art over the graybox
+
+Art replaces the look of the graybox, not its collision. An art pass
+hides a graybox mesh (`Visible` and `Hidden in Game` off) and keeps it as
+the blocking collision, then places the art mesh over it in an `Art/`
+outliner folder that mirrors the graybox folder (`Art/Shared/Lot/...`).
+So the layout, the navigation and the camera stay the same as the
+graybox that was playtested.
+
+* Art meshes block only the `Camera` channel (query only, every other
+  channel ignored, no navigation), so the camera occlusion still finds
+  them and they never change the walkable space. Small props have no
+  collision at all.
+* Art materials are instances of `M_Env` (`Content/Environment/
+  Materials`), which keeps the occlusion cutout of `M_Graybox`. A mesh
+  with another material does not fade when it hides the player.
+* Ground is a thin cube per zone with an `MI_Ground_*` instance of
+  `M_Ground`: world-aligned photo texture (`TileSize` cm), pulled toward
+  a flat color (`Flat`, `Detail`) so it sits under flat-shaded props.
+* Repeated meshes (trees, wall panels, container stacks) go into one
+  holder actor per zone with an instanced static mesh component per
+  mesh.
+* The art is placed by scripts (`Art/Environment/Scripts/ue_dress_*.py`,
+  see [Art/README.md](../Art/README.md#environment-environment)). Hand
+  edits are lost when a script runs again: change the script instead.
+* Labels, markers and trigger volumes stay visible as before.

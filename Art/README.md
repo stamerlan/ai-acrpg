@@ -267,3 +267,48 @@ were built from.
 | `Sunglasses/SM_Sunglasses.fbx` | 0.15 m wide | 622 | `Glasses` bone |
 
 The backpack flap is closed; the poses sheet shows it open.
+
+## Environment (`Environment/`)
+
+Level art for stop 0, placed over the graybox (see
+[graybox.md](../Docs/graybox.md#art-over-the-graybox)). Everything here is
+CC0; no Meshy models are used yet.
+
+| Folder | What | Source |
+|---|---|---|
+| `Kenney/<kit>/*.glb` | Car, city (industrial, roads, commercial, suburban), survival, furniture, food and nature kits | [Kenney](https://kenney.nl/assets), CC0, `License.txt` in each kit |
+| `Kenney/_fbx/` | The GLBs as FBX, one joined mesh each | `blender_kenney_to_fbx.py` |
+| `Kenney/_textures/` | Kit colormaps; `T_car_kit_colormap_<paint>.png` repaint the car body swatch | Kenney, repaints by hand |
+| `Textures/T_*_D.jpg`, `_N.jpg` | Ground: grass, asphalt, pavers, dirt, gravel, concrete (1k) | [Poly Haven](https://polyhaven.com/textures), CC0 |
+| `Stall/` | Market stall: pipe frame and sloped tarp with a valance, stripe texture | `blender_stall_kit.py` |
+| `Source/StallKit.blend` | Working file of the stall | |
+
+Kenney models are tiny and not to one scale; the dressing scripts scale
+each placement. The Kenney meshes get `MI_Env_<kit>` (colormap, nearest
+filter, no mips) or, for the flat-color kits, one `MI_Env_<kit>_<slot>`
+per material slot. Leaves and grass are tinted away from Kenney's mint.
+
+### Scripts (`Environment/Scripts/`)
+
+Blender scripts run in Blender 5.3; the `ue_*` scripts run in the editor
+with `py "<path>"` in the Cmd box, with the map open and Play stopped.
+Each writes `out.json` next to itself. Run order for a clean pass:
+
+| Script | Does |
+|---|---|
+| `blender_kenney_to_fbx.py` | GLB to FBX (`convert()`) |
+| `blender_stall_kit.py` | Builds and exports the stall (`build()`) |
+| `ue_kenney_import.py` | Imports the FBX and colormaps, makes the `MI_Env_*` |
+| `ue_dress_polish.py` | `M_Ground` parameters, ground palette, car liveries, sun direction |
+| `ue_dress_nature.py` | Trees, bushes, grass, rocks by region; far bank ground |
+| `ue_dress_lot.py` | Cars, trucks, containers fitted to their graybox boxes |
+| `ue_dress_stalls.py` | Stall frames, tarps and counter goods |
+| `ue_dress_props.py` | Bazaar wall panels, lamps, road end, yard and apron props |
+
+`ue_dress_lib.py` holds the shared helpers. Each `ue_dress_*` script
+deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,
+`ArtStall_`, `ArtProp_`, `ArtWall_`) and places it again with a fixed
+random seed, so a run is repeatable.
+
+Still graybox: the booth, customs shed, office, grill shack, gate arch,
+Doner tower, the gnomes and the people. They are next for Meshy.

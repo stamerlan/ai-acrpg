@@ -1,0 +1,98 @@
+import importlib
+import json
+import random
+import sys
+import traceback
+
+sys.path.insert(0, r"C:\Users\vvovchenko\repo\acrpg\Art\Environment\Scripts")
+import ue_dress_lib as L  # noqa: E402
+importlib.reload(L)
+import unreal  # noqa: E402
+
+D = L.__file__.rsplit("\\", 1)[0]  # out.json goes next to the scripts
+N = "nature_kit/SM_"
+PINES = [N + "tree_pineTallA_detailed", N + "tree_pineTallB_detailed",
+         N + "tree_pineRoundC", N + "tree_pineRoundE",
+         N + "tree_pineDefaultA"]
+LEAFY = [N + "tree_oak", N + "tree_default", N + "tree_detailed",
+         N + "tree_fat", N + "tree_simple"]
+POPLAR = [N + "tree_tall"]
+BUSH = [N + "plant_bush", N + "plant_bushDetailed", N + "plant_bushLarge",
+        N + "plant_bushSmall"]
+GRASS = [N + "grass", N + "grass_large", N + "grass_leafs"]
+FLOWER = [N + "flower_redA", N + "flower_yellowA", N + "flower_purpleA"]
+ROCK = [N + "rock_largeA", N + "rock_largeC", N + "rock_smallA",
+        N + "rock_smallC"]
+# (meshes, scale range, min gap in cm)
+KIND = {"pine": (PINES, (3.6, 5.0), 260), "leafy": (LEAFY, (4.2, 5.6), 330),
+        "poplar": (POPLAR, (4.8, 6.0), 220), "bush": (BUSH, (3.0, 4.5), 120),
+        "grass": (GRASS, (1.4, 2.2), 60), "flower": (FLOWER, (1.6, 2.4), 50),
+        "rock": (ROCK, (1.0, 1.8), 150)}
+# region: (x0, x1, y0, y1, [(kind, count)])
+REGIONS = {
+    "North": (4060, 4600, -3300, 2200,
+              [("bush", 90), ("grass", 90), ("rock", 8)]),
+    "NorthEast": (2600, 4600, 2260, 4800,
+                  [("leafy", 30), ("pine", 18), ("bush", 40),
+                   ("grass", 60), ("rock", 6)]),
+    "East": (-6800, 2560, 2780, 4800,
+             [("poplar", 26), ("leafy", 60), ("pine", 20), ("bush", 70),
+              ("grass", 120), ("flower", 50), ("rock", 10)]),
+    "South": (-6800, -4240, -3300, 2780,
+              [("leafy", 50), ("pine", 40), ("bush", 60), ("grass", 110),
+               ("flower", 40), ("rock", 10)]),
+    "WestLot": (-4240, 0, -3290, -2770,
+                [("bush", 56), ("grass", 60), ("rock", 4)]),
+    "WestBazaar": (0, 2560, -3290, -2760,
+                   [("bush", 44), ("grass", 50), ("flower", 20)]),
+    "EarWest": (1100, 2540, -2660, -2100,
+                [("bush", 26), ("grass", 36), ("flower", 14)]),
+    "EarEast": (1100, 2540, 2100, 2660,
+                [("bush", 26), ("grass", 36), ("flower", 14)]),
+    "RiverBank": (-6800, 4600, -3420, -3320,
+                  [("bush", 70), ("grass", 80), ("rock", 16)]),
+    "FarBank": (-6800, 4600, -6800, -4850,
+                [("leafy", 70), ("pine", 70), ("poplar", 14),
+                 ("bush", 60)]),
+}
+NO_GO = [(3010, 3550, -4900, -3200)]  # the bridge
+res = {}
+try:
+    L.clear("Art_Nature_")
+    L.clear("Ground_Patch_FarBank")
+    cube = L.eal.load_asset("/Engine/BasicShapes/Cube")
+    g = L.eas.spawn_actor_from_class(
+        unreal.StaticMeshActor, unreal.Vector(-1100, -5800, -0.5),
+        unreal.Rotator())
+    g.set_actor_label("Ground_Patch_FarBank")
+    g.set_folder_path("Shared/Ground")
+    g.static_mesh_component.set_static_mesh(cube)
+    g.set_actor_scale3d(unreal.Vector(114, 20, 0.01))
+    g.static_mesh_component.set_material(0, L.eal.load_asset(
+        "/Game/Environment/Materials/MI_Ground_Grass"))
+    L.camera_only(g.static_mesh_component, False)
+    rng = random.Random(22)
+    for rname, (x0, x1, y0, y1, plan) in REGIONS.items():
+        h = L.holder("Art_Nature_" + rname, "Art/Nature")
+        comps = {}
+        taken = []
+        count = 0
+        for kind, n in plan:
+            meshes, (s0, s1), gap = KIND[kind]
+            pts = L.scatter(rng, x0, x1, y0, y1, n, gap,
+                            taken if kind in ("pine", "leafy", "poplar",
+                                              "rock") else None)
+            for x, y in pts:
+                if any(a <= x <= b and c <= y <= d for a, b, c, d in NO_GO):
+                    continue
+                m = rng.choice(meshes)
+                if m not in comps:
+                    big = kind in ("pine", "leafy", "poplar")
+                    comps[m] = L.ism(h, m.split("SM_")[1], m, occluder=big)
+                L.add(comps[m], x, y, 0.0, rng.uniform(0, 360),
+                      rng.uniform(s0, s1))
+                count += 1
+        res[rname] = count
+except Exception:
+    res["err"] = traceback.format_exc()
+json.dump(res, open(D + r"\out.json", "w"), indent=0)

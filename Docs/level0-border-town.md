@@ -103,6 +103,18 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   the west bound to the east bound, and `Truck_Queue_1` stands across
   it in the queue lane. `Gate_BorderExit` (`BP_StoryGate`) is a pole
   across the road; it opens when `f_border_check` is done.
+* The map edges the player can reach are dressed, not walled: the
+  bazaar fence, the truck queue with a road block of two box trucks at
+  the east end, and the bridge to the west. Where the road leaves the
+  map a `BP_EdgeReturn` trigger (`Shared/Bounds`) fades out, shows a
+  joke line in `WBP_Toast` (Edge_QueueEast: "The queue goes on all the
+  way to Kudakhstan...", Edge_BridgeWest: "Germany is behind you. Your
+  car is not.") and teleports her back to its `ReturnPoint` arrow.
+* Art: Kenney models and Poly Haven ground over the hidden graybox (see
+  [graybox.md](graybox.md#art-over-the-graybox)). The sun is in the
+  north-west so the faces the camera sees are lit. Tall trees stay at
+  least 6 m from walkable ground on the north and west; only bushes
+  grow there.
 
 ## Story in short
 

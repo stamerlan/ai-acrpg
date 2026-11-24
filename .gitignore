@@ -47,3 +47,6 @@ Thumbs.db
 
 # Blender backups
 *.blend1
+
+# Result files of the art scripts
+Art/Environment/Scripts/out.json
