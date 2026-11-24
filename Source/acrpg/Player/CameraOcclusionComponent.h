@@ -13,8 +13,8 @@ class UPrimitiveComponent;
  *   - FadeDataIndex: cutout amount, 0 (none) to 1 (full)
  *   - FadeDataIndex + 1, + 2: owner position in viewport UV
  *   - FadeDataIndex + 3: owner view depth
- *  Primitives right above the owner (roofs) count as occluders too.
  *  Actors tagged NoOcclusionCutout are never cut.
+ *  Roofs right above the owner are hidden (see RoofCheckHeight).
  */
 UCLASS(ClassGroup = (Camera), meta = (BlueprintSpawnableComponent))
 class UCameraOcclusionComponent : public UActorComponent
@@ -42,13 +42,19 @@ protected:
 	int32 MaxOccludersPerProbe = 8;
 
 	/**
-	 *  Height above the owner searched for roofs. A roof right above her
-	 *  fades even when the camera ray passes under its edge, so the whole
-	 *  room she is in shows. 0 turns the check off.
+	 *  Height above the owner searched for roofs. Every part of a roof's
+	 *  actor over it that is at least RoofMinHeight above her (the roof,
+	 *  signs on it) is hidden, so the whole room or stall she is in shows.
+	 *  Hidden parts keep their shadow. 0 turns the check off.
 	 */
 	UPROPERTY(EditAnywhere, Category = "Occlusion",
 		meta = (ClampMin = 0, Units = "cm"))
 	float RoofCheckHeight = 1000.f;
+
+	/** Lowest a roof part may reach above the owner, walls reach lower */
+	UPROPERTY(EditAnywhere, Category = "Occlusion",
+		meta = (ClampMin = 0, Units = "cm"))
+	float RoofMinHeight = 100.f;
 
 	/** Time for the cutout to fully open or close */
 	UPROPERTY(EditAnywhere, Category = "Occlusion",
@@ -62,6 +68,9 @@ protected:
 	/** Occluders with their current cutout amount */
 	TMap<TWeakObjectPtr<UPrimitiveComponent>, float> Occluders;
 
+	/** Roof parts hidden now, with their own cast hidden shadow flag */
+	TMap<TWeakObjectPtr<UPrimitiveComponent>, bool> HiddenRoofs;
+
 public:
 
 	UCameraOcclusionComponent();
@@ -73,12 +82,16 @@ public:
 
 protected:
 
-	/**
-	 *  Adds every primitive between the camera and the probe points, and
-	 *  every one above the owner (roofs)
-	 */
+	/** Adds every primitive between the camera and the probe points */
 	void FindOccluders(const FVector& CameraLocation,
 		TSet<UPrimitiveComponent*>& OutOccluders) const;
+
+	/**
+	 *  Hides the roof parts above the owner and shows the ones she left.
+	 *  Primitives above her that are not roofs (tree tops) are added to
+	 *  OutOccluders to get the cutout.
+	 */
+	void UpdateRoofs(TSet<UPrimitiveComponent*>& OutOccluders);
 
 	/** Adds every primitive the shape touches from Start to Target */
 	void SweepOccluders(const FVector& Start, const FVector& Target,

@@ -13,11 +13,13 @@ document (stop 0: [level0-border-town.md](level0-border-town.md#graybox)).
   Walls and props use children of `M_Graybox` (screen-space cutout when
   they hide the player); roofs and awnings use children of
   `MI_GrayboxRoof` (the whole mesh fades out). A roof right above the
-  player fades too, even when the camera looks under its edge, so the
-  whole room shows from inside (`RoofCheckHeight` on the chicken's
-  `CameraOcclusion`). Give a roof its own component with a roof
-  material, as the guard office and the open container
-  (`MI_GB_ContainerBlueRoof`) have.
+  player is hidden, even when the camera looks under its edge, so the
+  whole room or stall shows from inside: the chicken's `CameraOcclusion`
+  traces up (`RoofCheckHeight`) and hides every part of the hit actor
+  over the hit primitive that stays `RoofMinHeight` (1 m) above her,
+  such as a roof, an art tarp or the signs on a stall. Hidden parts keep
+  their shadow. So give a roof its own component (or actor), apart from
+  the walls, as the guard office and the open container have.
 * Ground: a collision slab with its top at Z = 0, plus colored surface
   patches (road, paving, dirt) 1 cm above it with no collision.
 * Level bounds and fence collision are invisible components with

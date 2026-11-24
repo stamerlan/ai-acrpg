@@ -174,8 +174,8 @@ Zones:
    with a radio, the garden gnome seller. Background stalls (car parts,
    tracksuits, plastic flowers) are props only. Each stall has its own
    tarp awning over the counter; the walkway in the middle is open to
-   the sky, with string lights and banners across it, so the camera
-   needs no roof cutaway here.
+   the sky, with string lights and banners across it. When she walks
+   into a stall, its tarp and sign hide so the stall shows.
 5. **Gnome field.** An open yard where the gnome seller keeps his stock:
    hundreds of garden gnomes in rows, making low cover and a loose maze.
    The first fight happens here. A hole in the lot fence is at the far

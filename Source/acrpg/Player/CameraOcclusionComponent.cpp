@@ -30,6 +30,7 @@ void UCameraOcclusionComponent::TickComponent(float DeltaTime,
 		PC->PlayerCameraManager->GetCameraLocation();
 	TSet<UPrimitiveComponent*> Current;
 	FindOccluders(CameraLocation, Current);
+	UpdateRoofs(Current);
 	for (UPrimitiveComponent* Component : Current)
 	{
 		Occluders.FindOrAdd(Component, 0.f);
@@ -88,6 +89,16 @@ void UCameraOcclusionComponent::EndPlay(
 	}
 	Occluders.Empty();
 
+	for (const auto& Pair : HiddenRoofs)
+	{
+		if (UPrimitiveComponent* Component = Pair.Key.Get())
+		{
+			Component->SetHiddenInGame(false);
+			Component->SetCastHiddenShadow(Pair.Value);
+		}
+	}
+	HiddenRoofs.Empty();
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -102,14 +113,74 @@ void UCameraOcclusionComponent::FindOccluders(
 		SweepOccluders(CameraLocation, OwnerLocation + Offset, Sphere,
 			OutOccluders);
 	}
+}
 
+void UCameraOcclusionComponent::UpdateRoofs(
+	TSet<UPrimitiveComponent*>& OutOccluders)
+{
 	// A steep camera ray passes under the edge of the roof she stands
-	// under and only cuts a hole in the wall, so look straight up too
+	// under and only cuts a hole in the wall, so look straight up
+	const FVector OwnerLocation = GetOwner()->GetActorLocation();
+	TSet<UPrimitiveComponent*> Above;
 	if (RoofCheckHeight > 0.f)
 	{
 		SweepOccluders(OwnerLocation,
 			OwnerLocation + FVector(0.f, 0.f, RoofCheckHeight),
-			FCollisionShape::MakeSphere(0.f), OutOccluders);
+			FCollisionShape::MakeSphere(0.f), Above);
+	}
+
+	// A roof is every part of the hit actor over the hit primitive that
+	// stays above her: an art tarp, a graybox roof, the signs on a stall's
+	// hidden graybox awning. Walls and posts reach the ground and stay.
+	TSet<UPrimitiveComponent*> Roofs;
+	const float MinZ = OwnerLocation.Z + RoofMinHeight;
+	for (UPrimitiveComponent* Hit : Above)
+	{
+		if (!Hit->GetOwner())
+		{
+			continue;
+		}
+		const FBox HitBox = Hit->Bounds.GetBox();
+		const FBox2D HitArea(FVector2D(HitBox.Min), FVector2D(HitBox.Max));
+		TInlineComponentArray<UPrimitiveComponent*> Parts(Hit->GetOwner());
+		for (UPrimitiveComponent* Part : Parts)
+		{
+			const FBox Box = Part->Bounds.GetBox();
+			const bool bShown = HiddenRoofs.Contains(Part) ||
+				(Part->IsVisible() && !Part->bHiddenInGame);
+			if (bShown && Box.Min.Z >= MinZ && HitArea.Intersect(
+				FBox2D(FVector2D(Box.Min), FVector2D(Box.Max))))
+			{
+				Roofs.Add(Part);
+			}
+		}
+		if (!Roofs.Contains(Hit))
+		{
+			OutOccluders.Add(Hit);
+		}
+	}
+
+	for (auto It = HiddenRoofs.CreateIterator(); It; ++It)
+	{
+		UPrimitiveComponent* Component = It.Key().Get();
+		if (Component && !Roofs.Contains(Component))
+		{
+			Component->SetHiddenInGame(false);
+			Component->SetCastHiddenShadow(It.Value());
+		}
+		if (!Component || !Roofs.Contains(Component))
+		{
+			It.RemoveCurrent();
+		}
+	}
+	for (UPrimitiveComponent* Component : Roofs)
+	{
+		if (!HiddenRoofs.Contains(Component))
+		{
+			HiddenRoofs.Add(Component, Component->bCastHiddenShadow);
+			Component->SetCastHiddenShadow(true);
+			Component->SetHiddenInGame(true);
+		}
 	}
 }
 
