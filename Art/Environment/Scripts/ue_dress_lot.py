@@ -123,8 +123,11 @@ try:
         elif n == "Tractor":
             fit(a, C + "tractor", (), flip=True)
             L.hide_graybox(a)
-        elif n in ("Civic_Start", "Civic"):
+        elif n == "Civic_Start":
             fit(a, C + "sedan", body, mi=blk)
+        elif n == "Civic":
+            # Opening trunk (blender_civic.py), facing the arena and camera
+            fit(a, "/Game/Environment/Civic/SM_CivicBody", body)
             L.hide_graybox(a)
         elif n == "Truck_Kolya":
             fit(a, C + "delivery", ("Box3", "Cab2", "Chassis1"), flip=True,

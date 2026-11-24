@@ -189,14 +189,37 @@ one shot kills him, at 5 m a shot does about 10 damage (four shots).
   `FirstReserve` (12) in reserve, moves `q_car_trouble` from `night` or
   `keys` to `car`, fires the story event `trunk_opened` (for the trunk
   checkpoint, #21) and shows the controls in a toast. After that the
-  prompt reads "Refill shells": she kneels for `UseTime` (1.5 s) and the
-  reserve fills up to 32. Taking damage, moving or dying stops it. It
-  works any number of times.
+  prompt reads "Refill shells" and refills the reserve to 32, any number
+  of times. Both run the same scene:
+  1. She walks to `StandPoint` behind the bumper (`WalkToSpeed` 150,
+     input blocked, gun stowed via `BPC_Shotgun.Stowed`).
+  2. She hops onto the bumper (`BumperDepth` in, `BumperRise` up, with
+     `HopArc`) while the lid (`Hinge` > `Lid`) swings open to
+     `LidOpenAngle` (75 degrees), playing `ClipOpen`.
+  3. `ClipRummage` from `RummageStart`; she leans over the rim
+     (`RimIn` 15 cm forward, `RimLift` 20 cm up) until just before
+     `CloseStart`. The shells (or the shotgun) are given at `GrantTime`.
+     `TrunkLight` inside the trunk fades with the lid (`TrunkLightMax`).
+  4. `ClipClose` from `CloseStart`, the lid closes, she hops down; input
+     and the gun come back at `SceneEnd` (3.4 s).
+  Taking damage or dying cancels the scene at once (nothing is given if
+  it happens before `GrantTime`). The three clips are variables, so new
+  clips only need their rates and start times set.
+* **The Civic** with an opening trunk is `SM_CivicBody` and
+  `SM_CivicTrunkLid` in `/Game/Environment/Civic`, made by
+  `Art/Environment/Scripts/blender_civic.py` from the Kenney sedan (lid
+  pivot on its hinge, dark cavity, a red shell box inside). The trunk
+  actor's `Hinge`, `Lid` and `StandPoint` are fitted to the car actor
+  next to it by a fitting script; `BumperRise` is the bumper top above
+  the ground (50 cm in L0, 32.5 cm in the dev map). The lid underside
+  and the trunk interior are lighter so the open trunk reads at night.
 * **Hint:** the first time the reserve is empty while she has the gun and
   a trunk is in the level, a toast says "No spare shells. The trunk has
   more." (flag `f_hint_trunk`).
 
-In `L0_BorderBazaar` the trunk (`CivicTrunk`, needs `item_car_keys`)
+In `L0_BorderBazaar` the Civic at the south end of the arena faces north,
+so its trunk opens toward the arena and the camera. The trunk
+(`CivicTrunk`, needs `item_car_keys`)
 and three shell crates (`Shells_Night_*`, at the arena and container
 markers) are on `DL_Night`. `Lvl_Dev_Movement` has a test Civic with a
 trunk (no key needed) and a crate in `CombatTest`.
