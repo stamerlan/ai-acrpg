@@ -603,8 +603,9 @@ The common enemy of the whole game. Melee grunt.
 
 * HP 30. Walks at 2.4 m/s (the chicken runs at 3 m/s, so she can always
   kite).
-* Attack: a big knife swing. 0.6 s windup (raises the knife, glint and
-  sound), 0.9 m reach, 15 damage.
+* Attack: an overhead knife chop down at her feet. 0.6 s windup (raises
+  the knife, glint and sound), 0.4 m reach, 15 damage. A peck during the
+  windup interrupts it.
 * Barks: "Fresh delivery!", "Garlic or spicy?", "Extra chicken!",
   "Tonight's special!"
 * In 0B, may drop 2 shells. The chance depends on her reserve shells:

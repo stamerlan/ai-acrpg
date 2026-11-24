@@ -158,12 +158,15 @@ checkpoints are built: [combat.md](combat.md).
 
 ### Peck
 
-* Always available melee: a short frontal arc (0.9 m, 90 degrees),
-  10 damage, one peck per 0.45 s, small knockback.
-* She hops at the nearest enemy in the arc, up to 0.8 m, so the beak
-  visibly lands on him; with nobody in reach she hops 25 cm forward.
-  The hit lands 0.2 s after the press, on the strike frame, and pops
-  the enemy up a little.
+* Always available melee: a jump at the nearest enemy within 1 m of
+  her (collision to collision) in a 120 degree arc toward the aim,
+  10 damage, one peck per 0.75 s.
+* The peck is a jump: she leaps at him, pecks his belly at the top of
+  the jump (0.25 s after the press), pushes off and jumps back while he
+  doubles over. She lands at least 0.5 m from him. The whole jump takes
+  0.67 s and she can't be hurt during it. With nobody in reach she jumps
+  30 cm forward and back.
+* A peck interrupts the enemy's attack windup.
 * **Surprise peck:** the first hit on an enemy that hasn't noticed her
   does triple damage. That kills a basic Shawarman in one peck and is
   the reward for sneaking.

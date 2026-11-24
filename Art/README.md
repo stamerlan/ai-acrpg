@@ -83,7 +83,7 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_RunBack`, `RunLeft`, `RunRight` | 0.38 s | Loops, in place |
 | `A_Chicken_CarryWalk` | 0.79 s | Loop, in place, object overhead |
 | `A_Chicken_ShotgunAim` | 1.2 s | Loop |
-| `A_Chicken_Peck` | 0.5 s | Hop-peck, keyed by script (see below) |
+| `A_Chicken_Peck` | 0.67 s | Jump-peck, keyed by script (see below) |
 | `A_Chicken_Flutter` | 2.0 s | Flapping hop, has root motion |
 | `A_Chicken_Throw` | 2.5 s | Overhead two-wing throw |
 | `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
@@ -91,28 +91,36 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_Reload` | 3.0 s | Shells one by one |
 | `A_Chicken_EatCorn` | 2.5 s | Pecks at a cob held in the wings |
 | `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
-| `A_Chicken_HitReact` | 2.0 s | |
+| `A_Chicken_HitReact` | 1.08 s | First recoil of the Meshy clip (see below) |
 | `A_Chicken_KO` | 3.0 s | Ends on her back, feet up |
 
 ### Peck clip
 
-`A_Chicken_Peck` is the one clip not made with Meshy: the Meshy peck
-was a 2 s bow to the ground (the head only went 15 cm forward, down to
-31 cm), too slow for a 0.45 s attack and hitting the floor at her feet.
-It was replaced by key poses set from a script on top of the
-`A_Chicken_Idle` first frame (24 fps, bezier between keys):
+`A_Chicken_Peck` is a jump-peck keyed by script
+(`Scripts/blender_combat_clips.py`, `build_peck_jump`), 24 fps, 16
+frames (0.67 s). The poses come from the earlier scripted peck (kept as
+`A_Chicken_PeckOld`: wind-up and neck-stretched strike), the flutter's
+wing spreads and the idle, plus bone turns. The `root` bone lifts her,
+so the jump is in the clip and the capsule stays on the ground:
 
 | Frame | Pose |
 |---|---|
 | 0 | Idle |
-| 2 | Wind-up: body crouched 3 cm and leaning back, neck pulled back |
-| 5 | Strike: leaning in, neck stretched, wings flared, legs tucked |
-| 7 | Strike held at 85% |
-| 12 | Idle |
+| 2 | Wind-up, crouched 3 cm |
+| 3-5 | Leap: rising, legs tucked, wings beat up then down |
+| 6-7 | Strike at the top, root 40 cm up, beak 44 cm ahead at 85-90 cm (a cook's belly) |
+| 8 | Push-off: leaning back, neck pulled in, feet kicked forward |
+| 9-12 | Falling back, wings beating |
+| 13 | Landing squash |
+| 16 | Idle |
 
-At the strike the beak is 29 cm in front of the rest pose, at 45 cm
-height. The capsule hop comes from `BPC_ChickenCombat`; the clip has
-no root motion.
+`BPC_ChickenCombat` moves the capsule out on frames 2-6 and back on
+frames 8-13 (see [combat.md](../Docs/combat.md#peck-and-flutter)).
+
+`A_Chicken_HitReact` is the first recoil of the Meshy hit clip (kept as
+`A_Chicken_HitReactOld`): frames 0-20, head and body thrown back, wings
+flared, then back to the idle pose by frame 26 (1.08 s), same script
+(`build_chicken_hit`).
 
 ### Locomotion
 
@@ -162,6 +170,11 @@ How they were made (Meshy, no hand animation except one pose):
 * Blender, scripted (`Enemies/Scripts/`): `root` bone added at the feet,
   Meshy's stray 2 m icosphere removed, clips trimmed, made in place where
   they loop, crossfaded into their start, and the knife swing retimed.
+  The chop and the flinch (#22) come from `Art/Scripts/
+  blender_combat_clips.py` (`build_chop`, `build_flinch`): the chop is
+  the Grill Sergeant's slam retimed so the knife (tip 25, 8, 38 cm in
+  `RightHand` bone space) lands at the chicken at 0.6 s; the flinch is
+  keyed on the first idle frame.
 * Shawarman extras: a `Cap` bone under `Head` that owns the paper cap
   (split from the head mesh, so it can fly off; `SM_ShawarmanCap` is the
   same geometry as a static mesh) and `Apron_01`/`Apron_02` under `Hips`
@@ -198,11 +211,13 @@ Shawarman's clips.
 | `A_Shawarman_Idle` | Scheming Hand Rub | 3.3 s | Loop, honing the knife |
 | `A_Shawarman_Search` | Torch Look Around | 9.3 s | Loop, suspicious with the flashlight |
 | `A_Shawarman_Shout` | Angry Stomp | 2.0 s | Alerted shout |
-| `A_Shawarman_Swing` | Charged Slash | 1.2 s | Windup 0.6 s, strike 0.2 s, recovery 0.4 s |
+| `A_Shawarman_Swing` | Charged Slash | 1.2 s | Old attack, a waist-high spin slash: passes over the chicken, unused |
+| `A_Shawarman_Chop` | Charged Ground Slam | 1.33 s | The attack: knife up by 0.23 s, chop, blade on the ground 65 cm ahead at 0.6 s, kneel, up by 1.33 s |
 | `A_Shawarman_Eat` | Stand and Drink | 8.9 s | Loop, busy, left hand to the mouth |
 | `A_Shawarman_Sleep` | Sit and Doze Off | 17.3 s | Loop, sitting on the plastic chair |
 | `A_Shawarman_WakeUp` | Sit to Stand | 2.8 s | Waking up |
-| `A_Shawarman_HitReact` | Hit Reaction | 1.6 s | |
+| `A_Shawarman_HitReact` | Hit Reaction | 1.6 s | Hand to the head, unused |
+| `A_Shawarman_Flinch` | (keyed) | 0.8 s | Pecked: hips back, doubled over, hands on the belly |
 | `A_Shawarman_Knockdown`, `GetUp` | Knock Down, Stand Up | 2.5 s, 5.3 s | Thrown gnome, played faster |
 | `A_Shawarman_Death` | Dying Backwards | 2.2 s | Flat on his back |
 | `A_Skewerman_Throw` | Crouch Charge and Throw (end) | 2.8 s | Windup and release |

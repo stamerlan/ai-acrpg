@@ -48,19 +48,32 @@ functions: `Heal`, `RestoreHealth` (sets HP, used by reloads).
 scale). `BP_Chicken` binds the inputs: Peck and Fire call `Peck`
 (Fire only while `HasShotgun` is off), Flutter calls `Flutter`.
 
-* **Peck** picks the nearest living pawn with `BPC_Health` in a 90
-  degree arc toward the aim point (the facing direction without one), up
-  to 0.9 m from its collision edge. She turns to it and hops at it
-  (`LaunchCharacter`, flight time `PeckStrikeDelay` 0.2 s), stopping
-  with her center `PeckBeakReach` (35 cm) from its collision edge, at
-  most `PeckLungeMax` (80 cm). With no target she hops `PeckLungeIdle`
-  (25 cm) forward. Move input is ignored during the hop.
-* `PeckStrike` runs on a timer at the strike frame (0.2 s): she stops,
-  and every pawn in the same arc and reach takes 10 damage (x3 on an
-  unaware target) and is knocked back `KnockbackSpeed` (300) and up
-  `KnockbackLift` (250, about 30 cm). A hit makes a peck noise (3.6 m,
-  AI perception). One peck per 0.45 s (`PeckCooldown`), shorter than
-  the 0.5 s clip, so mashing still shows every strike.
+* **Peck** is a jump at the enemy and back. It picks the nearest living,
+  visible pawn with `BPC_Health` whose capsule is at most `PeckReach`
+  (1 m) from hers, in a `PeckArc` (120 degree) arc toward the aim point
+  (the facing direction without one). The strike point is in front of
+  the target: capsules touching plus `PeckGap` (12 cm), so the beak
+  stops at a cook's belly instead of inside it. She lands back at the
+  start, at least `PeckRetreat` (50 cm) from the strike point. With no
+  target she jumps `PeckLungeIdle` (30 cm) forward and back.
+* The capsule moves on `Tick` (`UpdatePeck`, swept, on the ground), on
+  the beats of the `A_Chicken_Peck` clip, which does the jump itself (40
+  cm up at the strike): wind-up until `PeckLaunchTime` (0.083 s), out to
+  the strike point by `PeckStrikeDelay` (0.25 s), held, pushes off at
+  `PeckPushTime` (0.333 s), back by `PeckLandTime` (0.542 s), done at
+  `PeckDuration` (0.667 s, `EndPeck`). She faces the target, ignores
+  move input and is invulnerable the whole time; flutter waits for the
+  end. One peck per 0.75 s (`PeckCooldown`).
+* `PeckStrike` runs on a timer at the strike frame: the target takes 10
+  damage (x3 if unaware), a small shove `KnockbackSpeed` (150) and plays
+  its hit montage (the Shawarman doubles over, see
+  [enemies.md](enemies.md#attack)), which also cancels its attack. A hit
+  makes a peck noise (3.6 m, AI perception).
+* **Getting hit** (`HandleHurt`, from `BP_Chicken`'s `OnDamaged`): she
+  is knocked away from the attacker (`HitKnockback` 350), plays
+  `A_Chicken_HitReact` at `HitReactRate` (1.3) and ignores move input
+  for `HitStunTime` (0.4 s), after which the clip blends out so she can
+  run. Peck and flutter still work during the stun.
 * **Flutter** goes 2.4 m in 0.25 s in the movement direction (the
   facing direction when standing still). She is invulnerable, ignores
   move input and can't walk off ledges during the hop. 0.8 s cooldown
@@ -138,7 +151,8 @@ markers are in `Night/Markers/Checkpoint`.
 ## Testing
 
 `Lvl_Dev_Movement` has a `CombatTest` folder: two dummies (30 HP, one
-unaware), a damage zone per stop 0 killer (40 HP per second) and two
+unaware), a Shawarman (`Shawarman_Test`, busy, so he only sees her up
+close), a damage zone per stop 0 killer (40 HP per second) and two
 checkpoints. `BP_DamageZone` can also serve as hot coals.
 
 | Command | Does |

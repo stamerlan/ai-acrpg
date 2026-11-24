@@ -11,7 +11,7 @@ they work and how to set them up. Design and numbers are in the
 | Part | Where | What it does |
 |---|---|---|
 | Base class | `BP_EnemyBase` (BP, Character) | Health, states, sight, patrol, attack, shout, death |
-| Shawarman | `BP_Shawarman` (child of the base) | 30 HP, 2.4 m/s, knife swing |
+| Shawarman | `BP_Shawarman` (child of the base) | 30 HP, 2.4 m/s, knife chop |
 | First fight | `BP_FirstFight` (BP, level actor) | Scripted 0A encounter |
 
 Assets are in `/Game/Enemies`. Everything is Blueprint, with a simple
@@ -26,7 +26,7 @@ here is in the 3 m/s world scale (x0.6), like the rest of the project.
 |---|---|---|
 | Walk speed | 2.4 m/s | `WalkSpeed` (240) |
 | Sight | 70 degree cone, 6 m (busy 1.8 m) | `SightHalfAngle` (35), `SightRange`, `BusySightRange` |
-| Knife reach | 0.9 m from the collision edge | `AttackReach` (90) |
+| Knife reach | 0.4 m from the collision edge | `AttackReach` (40) |
 | Windup | 0.6 s | `WindupTime` |
 | Damage | 15 | `AttackDamage` |
 | Shout | 7.2 m | `ShoutRadius` (720) |
@@ -69,9 +69,18 @@ her invulnerable, so the hit does nothing). Recovery takes 0.5 s, then
 `KillerTag` `Shawarman` for the death screen.
 
 With `bAnimatedBody` on (the Shawarman) the attack plays `AttackMontage`
-instead of moving the placeholder knife: a 0.6 s windup, the strike, then
-the recovery. The glint is a point light at the blade. The windup sound
-is not added yet.
+instead of moving the placeholder knife. The Shawarman's is
+`AM_Shawarman_Chop`: the knife goes up, then he chops down and kneels,
+and the blade reaches the ground about 65 cm in front of him exactly at
+`WindupTime` (0.6 s), where she stands. That is why the reach is only
+0.4 m: he steps up to her before he chops. The glint is a point light at
+the blade. The windup sound is not added yet.
+
+Getting hurt (and surviving) always plays `HitMontage` on an animated
+body and cancels a running attack (`CancelAttack`: the strike timer is
+cleared, then the usual cooldown), so a peck during the windup saves
+her. The Shawarman's is `AM_Shawarman_Flinch`: he doubles over and
+clutches his belly for 0.8 s.
 
 ## Death
 
@@ -117,7 +126,7 @@ Montage variables on `BP_EnemyBase` (category Animation), used when
 | `AttackMontage` | `StartAttack` |
 | `ShoutMontage` | Becoming alerted, `Activate` (played at 1.6x) |
 | `WakeUpMontage` | Becoming alerted while `Sleeping` (then `Idle`) |
-| `HitMontage` | Damaged while alerted and not attacking |
+| `HitMontage` | Damaged and still alive (cancels the attack) |
 | `DeathMontage` | `Die` |
 | `KnockdownMontage`, `GetUpMontage` | `Knockdown`, for the thrown gnome (not called yet): 1.5 s down, then up |
 
