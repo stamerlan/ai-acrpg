@@ -15,12 +15,13 @@ at 0.
 
 | File | What |
 |---|---|
-| `Source/SK_Chicken.blend` | Working file: mesh, glasses, rig, 21 actions |
+| `Source/SK_Chicken.blend` | Working file: mesh, glasses, rig, 23 actions |
 | `Mesh/SK_Chicken.fbx` | Skeletal mesh for UE, no animation |
 | `Mesh/T_Chicken_BaseColor.png` | Texture |
 | `Anims/A_Chicken_*.fbx` | One clip per file, skeleton only |
 | `Meshy/SK_Chicken.glb` | Raw Meshy mesh |
-| `Meshy/SK_Chicken_Rigged.glb` | Raw Meshy auto-rig of that mesh |
+| `Meshy/SK_Chicken_Rigged.glb` | Raw Meshy auto-rig of that mesh (rig task `01a20587-8bdc-7617-9300-15b5202a3d37`) |
+| `Meshy/A_Chicken_TrunkCandidates.glb` | Raw Meshy library clips on that rig (trunk clips) |
 | `Reference/geometric-rooster-base.png` | Base model image (see below) |
 | `Reference/chicken-tpose-ref.png` | T-pose image the mesh was built from |
 
@@ -93,6 +94,26 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
 | `A_Chicken_HitReact` | 1.08 s | First recoil of the Meshy clip (see below) |
 | `A_Chicken_KO` | 3.0 s | Ends on her back, feet up |
+| `A_Chicken_TrunkOpen` | 0.75 s | Wings flung up, landing squash (see below) |
+| `A_Chicken_TrunkRummage` | 2.0 s | Bend into the trunk, rise holding the box |
+
+### Trunk clips
+
+The Civic trunk scene ([combat.md](../Docs/combat.md)) uses two Meshy
+library animations applied to her rig task (above), 3 credits each. Six
+candidates were made in one task (`A_Chicken_TrunkCandidates.glb`: Jump
+with Arms Open, Jump and Slam Back Down, Happy Jump Female, Female Bend
+Over Pick Up Inspect, Male Bend Over Pick Up, Collect Object) and judged
+as side-view frame strips. They were imported into `SK_Chicken.blend`
+(same bones and rest pose, so the curves copy over), retimed from 30 to
+24 fps and trimmed:
+
+| Clip | Source | Window |
+|---|---|---|
+| `A_Chicken_TrunkOpen` | Jump with Arms Open | 0.25-1.0 s, in place (21 cm drift removed) |
+| `A_Chicken_TrunkRummage` | Female Bend Over Pick Up Inspect | 0.6-2.6 s |
+
+The close reuses `A_Chicken_TrunkOpen` from 0.3 s.
 
 ### Peck clip
 

@@ -195,16 +195,22 @@ one shot kills him, at 5 m a shot does about 10 damage (four shots).
      input blocked, gun stowed via `BPC_Shotgun.Stowed`).
   2. She hops onto the bumper (`BumperDepth` in, `BumperRise` up, with
      `HopArc`) while the lid (`Hinge` > `Lid`) swings open to
-     `LidOpenAngle` (75 degrees), playing `ClipOpen`.
-  3. `ClipRummage` from `RummageStart`; she leans over the rim
-     (`RimIn` 15 cm forward, `RimLift` 20 cm up) until just before
-     `CloseStart`. The shells (or the shotgun) are given at `GrantTime`.
-     `TrunkLight` inside the trunk fades with the lid (`TrunkLightMax`).
-  4. `ClipClose` from `CloseStart`, the lid closes, she hops down; input
-     and the gun come back at `SceneEnd` (3.4 s).
+     `LidOpenAngle` (75 degrees, 0.35 to 0.75 s), playing `ClipOpen`
+     (`A_Chicken_TrunkOpen` at 0.83: wings flung up with the lid).
+  3. `ClipRummage` (`A_Chicken_TrunkRummage` at 1.55) from
+     `RummageStart`; she leans over the rim (`RimIn` 10 cm forward,
+     `RimLift` 20 cm up) until just before `CloseStart`, head down in the
+     trunk, then straightens with the wings forward. The shells (or the
+     shotgun) are given at `GrantTime` (1.6 s, the bottom of the dive).
+     `TrunkLight` inside the trunk fades with the lid (`TrunkLightMax`
+     450).
+  4. `ClipClose` (`A_Chicken_TrunkOpen` from 0.3 s at 0.95: wings up,
+     then down into a squash) from `CloseStart`, the lid slams shut (2.62
+     to 2.80 s), she hops down; input and the gun come back at `SceneEnd`
+     (3.5 s).
   Taking damage or dying cancels the scene at once (nothing is given if
-  it happens before `GrantTime`). The three clips are variables, so new
-  clips only need their rates and start times set.
+  it happens before `GrantTime`). The three clips are variables with
+  their own rate and start time.
 * **The Civic** with an opening trunk is `SM_CivicBody` and
   `SM_CivicTrunkLid` in `/Game/Environment/Civic`, made by
   `Art/Environment/Scripts/blender_civic.py` from the Kenney sedan (lid
