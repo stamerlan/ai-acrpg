@@ -269,10 +269,11 @@ were built from.
 The backpack flap is closed; the poses sheet shows it open.
 
 `Scripts/ue_props_import.py` (run in the editor with `py "<path>"`)
-imports the gnome, the broken gnome and the corn cob to
+imports the gnome, the broken gnome, the corn cob and the shotgun to
 `/Game/Props/<Name>` with an `M_Env` instance each (`MI_<Mesh>`, base
 color texture `T_<Mesh>_D`), without collision: `BP_Throwable` and
-`BP_CornPickup` bring their own.
+`BP_CornPickup` bring their own, `BPC_Shotgun` needs none. Mesh names
+after the path (`py "<path>" SM_Shotgun`) import only those.
 
 ## Item icons (`Items/`)
 

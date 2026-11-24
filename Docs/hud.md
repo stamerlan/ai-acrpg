@@ -12,12 +12,12 @@ backpack and the developer debug panel. The design is in the GDD
 | Part | Where | What it does |
 |---|---|---|
 | HUD actor | `/Game/UI/BP_AcrpgHUD` | `HUDClass` of `BP_AcrpgGameMode`; creates the widgets, eats corn, toggles the debug panel, draws the overlays |
-| HUD widget | `/Game/UI/WBP_HUD` | Bottom-right cluster: HP bar and corn count |
+| HUD widget | `/Game/UI/WBP_HUD` | Bottom-right cluster: shotgun row, HP bar and corn count |
 | Debug panel | `/Game/UI/Debug/WBP_DebugHUD` | Story state, spawn and cheat buttons, overlay toggles |
 | Story row | `/Game/UI/Debug/WBP_DebugStoryRow` | One story id: name, value, `<` and `>` |
 | Backpack | `/Game/UI/Backpack/WBP_Backpack`, `WBP_BackpackItem` | The panel and one item row |
 | Item definitions | `/Game/Items/DA_Item_*` (`UItemDefinition`, C++) | Name, picture, description, section of a story item |
-| Corn pickup | `/Game/Items/BP_CornPickup` | A cob on the ground, picked up by walking over it |
+| Corn pickup | `/Game/Items/BP_CornPickup` | A cob on the ground, picked up by walking over it; `BP_ShellPickup` is its shell crate child |
 | Inputs | `IA_EatCorn` (C, gamepad Y), `IA_Backpack` (I, Tab, gamepad View), `IA_DebugHUD` (F6) | Mapped in `IMC_Gameplay` |
 
 All of it is Blueprint except the item definition class.
@@ -39,7 +39,15 @@ the HP bar in the bottom-right corner and fades its render opacity
 * Hidden otherwise, and while there is no pawn with `BPC_Health`.
 
 The first update after the widget is created does not count as a change,
-so the cluster starts hidden. The shotgun part comes with #7.
+so the cluster starts hidden.
+
+The shotgun row (`GunRow`, above the HP bar) shows only once she has the
+shotgun: the shotgun icon (`T_Item_Shotgun`), eight shell pips (`Pips`,
+red for a loaded shell, dark for an empty slot) and the reserve as
+"+ N". `UpdateGun` runs first on every Tick; a change of the loaded
+shells, the reserve or getting the gun shows the cluster for 4 s like a
+change of HP or corn, so firing, reloading and picking up shells bring
+it in. The ammo itself is described in [combat.md](combat.md#shotgun).
 
 ## Eating corn
 
@@ -81,8 +89,9 @@ builds. To add an item: add its id to the story id table, then create a
 `DA_Item_` asset (Miscellaneous > Data Asset > Item Definition) in
 `/Game/Items`.
 
-The stop 0 items: corn cob (Gear), checklist, transit card, car keys,
-Zbyszek's box, forged stamp (Key items) and the Gnomonaut (Joke items).
+The stop 0 items: shotgun, shells, corn cob (Gear), checklist, transit
+card, car keys, Zbyszek's box, forged stamp (Key items) and the
+Gnomonaut (Joke items).
 The pictures are flat icons drawn as SVG in `Art/Items/Source` and
 rendered by `Art/Items/Scripts/make_icons.js`; `ue_items_import.py`
 imports them and sets them on the definitions.
@@ -125,7 +134,9 @@ or reels from a hit.
   cursor.
 
 The panel is created the first time it opens (`Backpack` on the HUD).
-The shotgun and shells rows come with #7.
+Gear lists the shotgun and the reserve shells ("12 / 32") before the
+corn; the loaded shells (`item_shells_loaded`) have no definition and
+show only on the HUD.
 
 ## Debug panel
 

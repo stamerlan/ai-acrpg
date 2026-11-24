@@ -66,10 +66,34 @@
 		"Description": "Has the Gnomonaut"
 	},
 	{
+		"Name": "f_hint_trunk",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Shown the hint that the trunk has more shells"
+	},
+	{
 		"Name": "stamp_cargo_poultry",
 		"Kind": "Stamp",
 		"Values": [],
 		"Description": "Checklist: CARGO: POULTRY, always set in stop 0"
+	},
+	{
+		"Name": "item_shotgun",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "The farmer's pump-action shotgun, from the Civic's trunk"
+	},
+	{
+		"Name": "item_shells",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "Reserve shotgun shells, up to 32"
+	},
+	{
+		"Name": "item_shells_loaded",
+		"Kind": "Item",
+		"Values": [],
+		"Description": "Shells in the shotgun's tube, up to 8"
 	},
 	{
 		"Name": "item_transit_card",

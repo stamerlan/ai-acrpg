@@ -1,13 +1,16 @@
 """Import the prop FBX files used by gameplay and give them M_Env instances.
 
-Run in the editor: py "<this file>". Meshes go to /Game/Props/<Name>/,
+Run in the editor: py "<this file>" [Name ...]; with names (SM_Shotgun) only
+those are imported. Meshes go to /Game/Props/<Name>/,
 the base color textures next to them as T_<Mesh>_D, one MI_<Mesh> (parent
 M_Env, BaseTex = the texture) per mesh. The meshes get no collision: the
-Blueprints that use them (BP_Throwable, BP_CornPickup) bring their own.
+Blueprints that use them (BP_Throwable, BP_CornPickup, BPC_Shotgun) bring
+their own or need none.
 Writes out.json next to this file.
 """
 import json
 import os
+import sys
 import traceback
 
 import unreal
@@ -21,7 +24,13 @@ PROPS = [
      "Gnome/SM_GnomeBroken_textures/base_color.png", "/Game/Props/Gnome"),
     ("Corn/SM_CornCob.fbx", "Corn/SM_CornCob_base_color.png",
      "/Game/Props/Corn"),
+    ("Shotgun/SM_Shotgun.fbx", "Shotgun/SM_Shotgun_base_color.png",
+     "/Game/Props/Shotgun"),
 ]
+ONLY = sys.argv[1:]
+if ONLY:
+    PROPS = [p for p in PROPS
+             if os.path.splitext(os.path.basename(p[0]))[0] in ONLY]
 eal = unreal.EditorAssetLibrary
 mel = unreal.MaterialEditingLibrary
 tools = unreal.AssetToolsHelpers.get_asset_tools()

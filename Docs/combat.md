@@ -13,6 +13,8 @@ how to set them up. Design and numbers are in the
 | Chicken combat | `BPC_ChickenCombat` (BP) on `BP_Chicken` | Peck, surprise peck, flutter, death flow |
 | Carry | `BPC_Carry` (BP) on `BP_Chicken` | Picking up, carrying and throwing throwables |
 | Throwable | `/Game/Throwables/BP_Throwable` | The garden gnome: carried, thrown, shatters |
+| Shotgun | `BPC_Shotgun` (BP) on `BP_Chicken` | Shots, pellets, reload, gun mesh, aim pose |
+| Ammo | `BP_ShellPickup`, `BP_CivicTrunk` (`/Game/Items`) | Shell crates and drops, the Civic's trunk |
 | Death screen | `WBP_DeathScreen`, `DT_DeathScreens` | Food plate, dish, pun line, "Try again" |
 | Checkpoint | `BP_Checkpoint` (BP) | Saves on overlap or on a story event |
 | Checkpoint state | `UCheckpointSubsystem` (C++) | The last snapshot in memory, reload, defeated actors |
@@ -48,8 +50,9 @@ functions: `Heal`, `RestoreHealth` (sets HP, used by reloads).
 
 `BPC_ChickenCombat` holds the numbers as defaults (GDD values, 3 m/s
 scale). `BP_Chicken` binds the inputs: Peck calls `Peck`, Fire calls
-`Fire` (throws while carrying, otherwise pecks while `HasShotgun` is
-off), Flutter calls `Flutter`. While she carries something
+`Fire` (throws while carrying, pecks while `HasShotgun` is off,
+otherwise shoots, see [Shotgun](#shotgun)), Reload calls
+`BPC_Shotgun.Reload`, Flutter calls `Flutter`. While she carries something
 (`Carrying`) the peck does nothing.
 
 * **Peck** is a jump at the enemy and back. It picks the nearest living,
@@ -120,6 +123,84 @@ gnome field (`Day/Throwables`, 12) and three at each night source (the
 fence corner crates and next to the Trabant, `Night/Throwables`). The
 markers stay in the editor and are hidden in game.
 
+## Shotgun
+
+The farmer's pump-action shotgun ([GDD](gdd.md#shotgun), GDD 3 m/s
+scale). `BPC_Shotgun` is a component on `BP_Chicken` (`Shotgun`); its
+numbers are defaults on the component.
+
+* **Ammo lives in the story state**, so checkpoints and saves keep it:
+  `item_shotgun` (she has it), `item_shells_loaded` (the tube, up to
+  `TubeSize` 8) and `item_shells` (the reserve, `MaxCount` 32 on
+  `DA_Item_Shells`). Shells picked up before the shotgun are kept.
+* **The gun:** on BeginPlay the component adds a static mesh component
+  with `SM_Shotgun` (scale `GunScale` 0.75) on the `RightHand` bone at
+  `GunOffset` / `GunRotation` (fitted to the aim pose), and a point light
+  at the muzzle for the flash. The gun shows while she has it and is
+  hidden while she carries something. `ABP_Chicken` blends
+  `A_Chicken_ShotgunAim` onto the upper body (third layered blend, from
+  `Spine02`) with `ShotgunAlpha`, which the component eases to 1 while
+  she has the gun and isn't carrying, pecking or fluttering.
+* **Fire:** `BPC_ChickenCombat.Fire` calls `BPC_Shotgun.Fire` once she has
+  the gun. With an empty tube Fire pecks, so running dry is never a
+  dead end. Otherwise one shot per `ShotInterval` (0.7 s, the pump): she
+  turns to the aim point, `A_Chicken_ShotgunFire` plays on `UpperBody`
+  at `FireAnimRate` (2.9), the muzzle flashes, and a noise of
+  `NoiseRange` (15 m, tag `Shotgun`) goes off for the hearing in #8.
+* **Pellets:** `PelletCount` (8) rays fan out over `ConeAngle` (16
+  degrees), one per equal slice with a random spot inside it. Each ray is
+  traced on the Visibility channel up to `MaxRange` (7.2 m), so walls,
+  cars and gnomes stop it; pawns don't block that channel, so a pellet
+  hits the nearest living pawn with `BPC_Health` whose capsule the ray
+  passes through in front of the wall. Damage per pellet is
+  `PelletDamage` (6) times the falloff on the distance to the target's
+  capsule: full up to `FullRange` (2.4 m), half at `HalfRange` (4.8 m),
+  nothing at 7.2 m, linear in between. All pellets on one target add up
+  to one `ApplyDamage` (killer tag `Chicken`) and a small shove
+  (`ShoveSpeed` 250 for all 8 pellets).
+* **Reload:** only on the Reload button (R / gamepad X), never
+  automatic, and only while she stands still (no move input, speed below
+  20 cm/s), isn't pecking, fluttering or carrying, and the pump is done.
+  It loads one shell every `ShellLoadTime` (0.5 s) from the reserve and
+  plays `A_Chicken_Reload` on `UpperBody` until the tube is full or the
+  reserve is empty. Moving, firing, a peck, a flutter or picking
+  something up stops it; loaded shells stay.
+
+Measured in `Lvl_Dev_Movement` against `Shawarman_Test` (30 HP): at 1.5 m
+one shot kills him, at 5 m a shot does about 10 damage (four shots).
+
+### Shells and the trunk
+
+* **Shell crates** are `BP_ShellPickup`, a child of `BP_CornPickup`
+  (an open Kenney ammo box, `Item` `DA_Item_Shells`, `Count` 8). Walking
+  over one takes the shells while the reserve is below 32; the count is
+  capped at 32 (the rest is lost). Picked crates are remembered by the
+  checkpoint like corn. `BP_CornPickup` got a `Remember` flag (on by
+  default) for pickups that are spawned at runtime.
+* **Drops:** `BP_EnemyBase.Die` calls `DropShells`. An enemy with
+  `ShellDrop` above 0 whose `DropConditions` pass drops a shell pickup of
+  `ShellDrop` shells with a chance that slides from `DropChanceEmpty`
+  (50%) at an empty reserve to `DropChanceFull` (10%) at 32, as in the
+  [level doc](level0-border-town.md#shawarman). `BP_Shawarman` drops 2
+  while `q_car_trouble` is `night`, `keys` or `car` (stop 0B).
+* **The Civic's trunk** is `BP_CivicTrunk`, an interactable (Use, 120 cm)
+  placed at the Civic in every level where she has the car. The first
+  interaction gives the shotgun with `FirstLoaded` (8) shells loaded and
+  `FirstReserve` (12) in reserve, moves `q_car_trouble` from `night` or
+  `keys` to `car`, fires the story event `trunk_opened` (for the trunk
+  checkpoint, #21) and shows the controls in a toast. After that the
+  prompt reads "Refill shells": she kneels for `UseTime` (1.5 s) and the
+  reserve fills up to 32. Taking damage, moving or dying stops it. It
+  works any number of times.
+* **Hint:** the first time the reserve is empty while she has the gun and
+  a trunk is in the level, a toast says "No spare shells. The trunk has
+  more." (flag `f_hint_trunk`).
+
+In `L0_BorderBazaar` the trunk (`CivicTrunk`, needs `item_car_keys`)
+and three shell crates (`Shells_Night_*`, at the arena and container
+markers) are on `DL_Night`. `Lvl_Dev_Movement` has a test Civic with a
+trunk (no key needed) and a crate in `CombatTest`.
+
 ## Death
 
 When the chicken's health runs out, `BPC_ChickenCombat.HandleDeath`
@@ -184,9 +265,10 @@ Stop 0 checkpoints placed so far (on `DL_Day`):
 | `CP_AfterBorderCheck` | story event `border_done` |
 | `CP_LeaveOffice` | story event `halina_call` |
 
-The night checkpoints (night start, trunk, before the boss) come with
-the night transition, the shotgun and the boss (#10, #7, #9); their
-markers are in `Night/Markers/Checkpoint`.
+The night checkpoints (night start, trunk, before the boss) are #21;
+their markers are in `Night/Markers/Checkpoint`. The trunk checkpoint can
+save on the story event `trunk_opened`, which `BP_CivicTrunk` fires when
+it gives her the shotgun.
 
 ## Testing
 

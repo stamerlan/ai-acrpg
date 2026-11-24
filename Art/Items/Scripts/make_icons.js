@@ -1,6 +1,6 @@
 // Writes the backpack item icons as SVG to ../Source and renders them to
 // ../T_Item_<Name>.png (256 px) with headless Edge.
-// Run: node make_icons.js
+// Run: node make_icons.js [Name ...]
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
@@ -134,10 +134,40 @@ stroke="#e6edf3" stroke-width="8"/>
 stroke-width="3"/>
 <path d="M90 74 A46 46 0 0 1 140 58" fill="none" stroke="#ffffff"
 stroke-width="7" stroke-linecap="round" opacity="0.8"/>`,
+
+  Shotgun: `<g transform="rotate(-35 128 128)">
+<path d="M20 120 L92 112 L104 118 L104 140 L86 146 L36 158 C24 160 16 150 18
+138 Z" fill="#8b5a2b" ${O}/>
+<path d="M30 132 L84 126" stroke="#6a4220" stroke-width="4"
+stroke-linecap="round"/>
+<rect x="98" y="112" width="40" height="22" rx="3" fill="#3a3d42" ${O}/>
+<path d="M112 134 L120 150 L128 134" fill="none" ${O}/>
+<rect x="136" y="114" width="104" height="10" rx="2" fill="#4a4e55" ${O}/>
+<rect x="136" y="124" width="96" height="9" rx="2" fill="#33363b" ${O}/>
+<rect x="160" y="120" width="44" height="18" rx="5" fill="#a0683a" ${O}/>
+<g stroke="#6a4220" stroke-width="3"><line x1="170" y1="122" x2="170"
+y2="136"/><line x1="182" y1="122" x2="182" y2="136"/><line x1="194"
+y1="122" x2="194" y2="136"/></g></g>`,
+
+  Shells: `<g transform="rotate(-20 128 128)">
+<rect x="62" y="56" width="44" height="110" rx="8" fill="#d23a2a" ${O}/>
+<rect x="62" y="150" width="44" height="40" rx="4" fill="#d9a63a" ${O}/>
+<line x1="62" y1="164" x2="106" y2="164" stroke="#8a6420" stroke-width="4"/>
+<path d="M72 70 L72 140" stroke="#f08070" stroke-width="6"
+stroke-linecap="round"/></g>
+<g transform="rotate(14 160 140)">
+<rect x="134" y="70" width="44" height="110" rx="8" fill="#d23a2a" ${O}/>
+<rect x="134" y="164" width="44" height="40" rx="4" fill="#d9a63a" ${O}/>
+<line x1="134" y1="178" x2="178" y2="178" stroke="#8a6420" stroke-width="4"/>
+<path d="M144 84 L144 154" stroke="#f08070" stroke-width="6"
+stroke-linecap="round"/></g>`,
 };
 
+// Optional icon names on the command line render only those
+const only = process.argv.slice(2);
 fs.mkdirSync(SRC, { recursive: true });
 for (const [name, body] of Object.entries(ICONS)) {
+  if (only.length && !only.includes(name)) continue;
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="256" ' +
     `height="256" viewBox="0 0 256 256">${BG}${body}</svg>\n`;
   const file = path.join(SRC, name + ".svg");
