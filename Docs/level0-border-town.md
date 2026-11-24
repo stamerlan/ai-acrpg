@@ -97,7 +97,7 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   1.5 m radius: she talks to them from about 1 m in front of the
   counter, not from the middle of the street.
 * `Road_Border` is the asphalt road from the bridge to the east bound
-  (X 3810 to 4350, with a center line) and its spur to the bazaar gate.
+  (X 3310 to 3850, with a center line) and its spur to the bazaar gate.
 * The way north is closed until the border check is done. Past the
   scale, `Fence_BorderExit` runs along the exit line (Y = -1770) from
   the west bound to the east bound, and `Truck_Queue_1` stands across
@@ -177,16 +177,18 @@ it is the same lot she sneaks into in 0B (see [Map](#map)).
 
 ### Scale
 
-Starting sizes for the graybox, to be tuned (she runs at 3 m/s).
+Graybox sizes (she runs at 3 m/s). Shrunk on 2026-11-24 to cut the
+running: the north part moved 5 m south, the yard between the stalls
+and the lot fence went from 15.6 to 10.4 m, the queue lost 3 trucks.
 
 | Area | Size |
 |---|---|
-| Whole level | about 78 x 54 m |
+| Whole level | about 55 x 49 m (W-E x N-S), plus the bridge |
 | Bridge and border post | 18 x 12 m |
-| Truck queue road | 36 m long, about 8 trucks |
+| Truck queue road | 40 m from the exit to the blocking trucks, 5 trucks in the queue |
 | Bazaar gate arch | 4.8 m wide |
 | Main street | 36 m long, 3.6 m walkway, 5-6 stalls per side |
-| Gnome field | 21 x 15 m |
+| Gnome field | 17 x 9.4 m |
 | Impound office front | 9 m of fence |
 
 The main path from the scale to the hole in the fence is about one
@@ -470,8 +472,8 @@ Starting sizes for the graybox, to be tuned.
 
 | Area | Size |
 |---|---|
-| Whole level | about 54 x 45 m |
-| Outer lot | 48 x 21 m, 4 car rows with 1.8 m dark gaps |
+| Whole level | about 54 x 41.5 m |
+| Outer lot | 54 x 26.5 m to the inner fence, 3 car rows with 1.9-2.6 m dark gaps |
 | Grill shack | 6 x 4.8 m |
 | Container stacks | 12 x 9 m |
 | Guard office | 4.8 x 3.6 m |
