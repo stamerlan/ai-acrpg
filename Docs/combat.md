@@ -155,8 +155,12 @@ numbers are defaults on the component.
   the gun. With an empty tube Fire pecks, so running dry is never a
   dead end. Otherwise one shot per `ShotInterval` (0.7 s, the pump): she
   turns to the aim point, `A_Chicken_ShotgunFire` plays on `UpperBody`
-  at `FireAnimRate` (2.9), the muzzle flashes, and a noise of
+  at `FireAnimRate` (1), the muzzle flashes, and a noise of
   `NoiseRange` (15 m, tag `Shotgun`) goes off for the hearing in #8.
+  The clip is a 0.67 s recoil kick that starts and ends in the aim pose
+  (muzzle 22 degrees up at 0.04 s, back on the aim line by 0.4 s), so
+  the gun stays on target between shots (see
+  [Art/README.md](../Art/README.md#peck-clip)).
 * **Pellets:** `PelletCount` (8) rays fan out over `ConeAngle` (16
   degrees), one per equal slice with a random spot inside it. Each ray is
   traced on the Visibility channel up to `MaxRange` (7.2 m), so walls,

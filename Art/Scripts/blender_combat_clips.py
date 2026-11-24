@@ -2,7 +2,7 @@
 
 Run inside Blender with the matching file open:
   SK_Chicken.blend:   build_peck_jump(), build_chicken_hit(),
-                      build_eat_corn()
+                      build_eat_corn(), build_shotgun_fire()
   SK_Shawarman.blend: build_chop(), build_flinch()
 
 Poses are built from frames of existing clips plus edits in armature
@@ -279,6 +279,37 @@ def build_eat_corn():
         (28, idle),
     ]
     return write_action(arm, "A_Chicken_EatCorn", keys)
+
+
+def build_shotgun_fire(kick=0.8):
+    """A_Chicken_ShotgunFire: one recoil kick out of the aim pose.
+
+    24 fps, 16 frames (0.67 s, under the 0.7 s ShotInterval), played on
+    the UpperBody slot at rate 1. Starts and ends on frame 0 of
+    A_Chicken_ShotgunAim, the pose ABP_Chicken layers under the slot, so
+    the gun never leaves the aim. The shot throws both wings up about the
+    shoulders and the chest and head back on frame 1 (muzzle about 23
+    degrees up in game), eases back with a small dip past the aim on
+    frame 8 and is settled on frame 10.
+    The Meshy clip is kept as A_Chicken_ShotgunFireOld.
+    """
+    arm = armature()
+    acts = bpy.data.actions
+    if "A_Chicken_ShotgunFireOld" not in acts:
+        acts["A_Chicken_ShotgunFire"].name = "A_Chicken_ShotgunFireOld"
+    aim = sample(arm, acts["A_Chicken_ShotgunAim"], 0)
+
+    def recoil(t):
+        a = kick * t
+        return pose_with_edits(arm, aim, [
+            ("rot", "Spine02", X, -6 * a), ("rot", "Head", X, -8 * a),
+            ("rot", "RightArm", X, -16 * a), ("rot", "LeftArm", X, -12 * a),
+            ("rot", "RightHand", X, -8 * a)])
+
+    keys = [(0, aim), (1, recoil(1.0)), (2, recoil(0.85)),
+            (4, recoil(0.45)), (6, recoil(0.1)), (8, recoil(-0.06)),
+            (10, aim), (16, aim)]
+    return write_action(arm, "A_Chicken_ShotgunFire", keys)
 
 
 def build_chop():

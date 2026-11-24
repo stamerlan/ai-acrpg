@@ -87,9 +87,9 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_Peck` | 0.67 s | Jump-peck, keyed by script (see below) |
 | `A_Chicken_Flutter` | 2.0 s | Flapping hop, has root motion |
 | `A_Chicken_Throw` | 2.5 s | Overhead two-wing throw |
-| `A_Chicken_ShotgunFire` | 2.0 s | Recoil |
+| `A_Chicken_ShotgunFire` | 0.67 s | Recoil kick out of the aim pose, keyed by script (see below) |
 | `A_Chicken_ShotgunPump` | 2.0 s | |
-| `A_Chicken_Reload` | 3.0 s | Shells one by one |
+| `A_Chicken_Reload` | 3.0 s | Shells one by one, gun lowered at her right side |
 | `A_Chicken_EatCorn` | 1.17 s | Three pecks at a cob held in the wing tips, keyed by script (see below) |
 | `A_Chicken_Kneel` | 5.0 s | Crouch, dig in a bag, stand |
 | `A_Chicken_HitReact` | 1.08 s | First recoil of the Meshy clip (see below) |
@@ -155,6 +155,28 @@ the beak 15 cm lower, biting the top of the cob, which dips 1.5 cm);
 frames 9 and 14 throw the head back; 19-23 chew with head turns. In UE
 the cob is `HeldCorn` on `BP_Chicken`, on the `Hips` bone at the
 offset of `COB` (see [hud.md](../Docs/hud.md#eating-corn)).
+
+`A_Chicken_ShotgunFire` is keyed by the same script
+(`build_shotgun_fire`), 24 fps, 16 frames (0.67 s, under the 0.7 s
+`ShotInterval`), for the `UpperBody` slot at rate 1. The Meshy clip
+(kept as `A_Chicken_ShotgunFireOld`) never matched the aim: the gun hung
+down, swung up and back and hung down again. The new clip starts and
+ends on frame 0 of `A_Chicken_ShotgunAim`, the pose `ABP_Chicken` layers
+under the slot, so the gun stays on the aim line:
+
+| Frame | Pose |
+|---|---|
+| 0 | Aim |
+| 1-2 | Kick: wings turned up about the shoulders (right 13, left 10 degrees), wrist 6, chest 5 and head 6 back; in game the muzzle is 22 degrees up, 9 cm higher, 2 cm back |
+| 4-6 | Easing back (level at about 0.27 s) |
+| 8 | Muzzle 2 degrees below the aim |
+| 10-16 | Aim |
+
+`A_Chicken_Reload` (Meshy) was checked in PIE once the `UpperBody` slot
+worked: the gun drops from the aim to her right side, muzzle out and
+about 35 degrees down, while shells go in, and the clip loops for long
+reloads. It clips nothing and reads as "not ready" from the game camera,
+so it stays as it is.
 
 ### Locomotion
 
