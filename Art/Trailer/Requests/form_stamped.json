@@ -1,0 +1,3 @@
+{"prompt": "Edit this image and change nothing else, keep the exact same framing, paper, text and lighting. Add a bold red rubber-stamp check mark inside the second checkbox (the one before CARGO: POULTRY, LIVE, 1 PC), with slightly uneven wet red ink and a few ink specks around it. The first checkbox (DRIVER) stays empty.",
+ "images": ["Stills/form_empty.jpg"],
+ "config": {"responseModalities": ["TEXT", "IMAGE"], "imageConfig": {"aspectRatio": "16:9", "imageSize": "2K"}}}

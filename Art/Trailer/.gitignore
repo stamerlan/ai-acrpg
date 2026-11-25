@@ -1,0 +1,6 @@
+# Built by Scripts/blender_mix.py
+Audio/mix.wav
+# A sound effect downloaded from YouTube with no stated license: get it
+# again with yt-dlp (see README.md), it is not ours to publish
+Audio/sfx_radio_tuning.m4a
+__pycache__/

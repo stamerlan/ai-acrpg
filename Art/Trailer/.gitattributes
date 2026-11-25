@@ -1,0 +1,2 @@
+# Run by Git Bash: CRLF line ends would break it
+*.sh text eol=lf

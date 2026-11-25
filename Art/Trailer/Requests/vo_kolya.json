@@ -1,0 +1,2 @@
+{"prompt": "Read as a huge, kind, old Russian truck driver with a deep gravelly voice and a strong Russian accent, slow and warm, by a campfire at night: Tell me, little one. Why cosmos?",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Algenib"}}}}}

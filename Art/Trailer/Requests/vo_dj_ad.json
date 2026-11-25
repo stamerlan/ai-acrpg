@@ -1,0 +1,2 @@
+{"prompt": "Read as an over-excited 1980s AM radio commercial announcer, fast, loud, big smile, selling hard: KUDAKHSTAN! The place where ALL chickens go, to co-co-cosmos! Thousands have already gone!",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Fenrir"}}}}}

@@ -1,0 +1,2 @@
+{"prompt": "Read as a radio commercial announcer doing the quick quiet legal disclaimer at the end of an ad, flat and low: Not one came back.",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Fenrir"}}}}}

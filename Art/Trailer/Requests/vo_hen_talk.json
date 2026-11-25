@@ -1,0 +1,2 @@
+{"prompt": "Read as a small but fearless action heroine, low, cool, confident, short: Now we talk.",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Leda"}}}}}

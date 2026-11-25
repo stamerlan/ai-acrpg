@@ -11,6 +11,9 @@ swept across the belly and legs, and the clips were human mocap. FBX files
 are in centimeters with the chicken 60 cm to the comb top and her feet
 at 0.
 
+The teaser trailer and everything made for it are in `Trailer/`
+([README](Trailer/README.md)).
+
 ## Chicken (`Chicken/`)
 
 | File | What |

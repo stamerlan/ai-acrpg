@@ -1,0 +1,2 @@
+{"prompt": "Read as a young heroine narrating a movie trailer, dry deadpan humor, slow, with clear pauses after each sentence: Unambitious chickens also fly. Once. Between two slices of bread.",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Leda"}}}}}

@@ -1,0 +1,2 @@
+{"prompt": "Read as a young, brave, dreamy heroine narrating a movie trailer, calm, full of wonder, slow: Ambitious chickens fly higher than mountains.",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Leda"}}}}}

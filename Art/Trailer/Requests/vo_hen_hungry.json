@@ -1,0 +1,2 @@
+{"prompt": "Read quietly and sincerely, by a campfire at night, a little sad, slow: Because up there, nobody is hungry.",
+ "config": {"responseModalities": ["AUDIO"], "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": "Leda"}}}}}
