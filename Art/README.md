@@ -384,6 +384,12 @@ silhouette for the empty slots. `Scripts/ue_hud_import.py` (`py "<path>"`
 in the editor) imports all four to `/Game/UI/Textures` (UI group, no
 mips).
 
+## Audio (`Audio/`)
+
+`SW_KebabJingle.wav` (4.2 s, 22.05 kHz mono) is the All-Seeing Doner's
+kebab stand jingle, a chiptune written by `Scripts/make_jingle.js`
+(`node Art/Audio/Scripts/make_jingle.js`). UE: `/Game/Audio/SW_KebabJingle`.
+
 ## Environment (`Environment/`)
 
 Level art for stop 0, placed over the graybox (see

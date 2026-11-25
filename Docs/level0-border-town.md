@@ -85,8 +85,10 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   `DL_Night` to Activated (initial runtime state in the Data Layers
   outliner) and start at `MK_Checkpoint_NightStart`; set them back
   before saving.
-* The searchlight (`DonerEye_Rig`) turns at a constant 45 deg/s; the
-  pauses and the lookout awareness come with the Doner system.
+* The searchlight is `AllSeeingDoner` (`BP_AllSeeingDoner`,
+  `Night/Lighting`): the sweep with pauses, its own awareness and the
+  jingle. It, the night shift and the sneaking rules are in
+  [enemies.md](enemies.md#all-seeing-doner).
 * These markers carry a `BPC_Interactable` and work in Play: the NPCs
   Kotlet, Kolya, Halina, Zbyszek, Krasnal, CornLady, CigaretteSeller
   and KantorClerk (Talk), `MK_Interact_CargoScale` (Kotlet's dialog

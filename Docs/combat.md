@@ -88,7 +88,8 @@ does nothing.
   damage (x3 if unaware), a small shove `KnockbackSpeed` (150) and plays
   its hit montage (the Shawarman doubles over, see
   [enemies.md](enemies.md#attack)), which also cancels its attack. A hit
-  makes a peck noise (3.6 m, AI perception).
+  makes a peck noise (`PeckNoiseRange` 3.6 m, `Sneak.ReportNoise`, see
+  [enemies.md](enemies.md#sneaking-light-awareness-and-noise)).
 * **Getting hit** (`HandleHurt`, from `BP_Chicken`'s `OnDamaged`): she
   is knocked away from the attacker (`HitKnockback` 350), plays
   `A_Chicken_HitReact` at `HitReactRate` (1.3) and ignores move input
@@ -135,7 +136,7 @@ cabbage) can be a child Blueprint with other meshes and numbers.
   living pawn with `BPC_Health` within `HitRadius` (1 m, center to
   center, flat) takes `Damage` (25, killer tag `Chicken`), enemies play
   `Knockdown` (1.5 s down, then up), and a noise event of `NoiseRange`
-  (6 m, tag `Shatter`) goes off for the hearing in #8. The broken gnome
+  (6 m, tag `Shatter`) alerts the enemies in range. The broken gnome
   (`BrokenMesh`) lies on the ground for `LieTime` (10 s).
 
 The gnome's collision (a 14 by 20 cm capsule) blocks pawns, so gnome
@@ -191,7 +192,7 @@ numbers are defaults on the component.
   (`FlashIntensity` 3200), `NS_ShotgunMuzzle` (`/Game/Combat/FX`: 14
   hot orange sparks in a 24 degree cone that live 0.06-0.16 s and a
   small warm puff for 0.12 s) goes off at `MuzzleLocal`, and a noise of
-  `NoiseRange` (15 m, tag `Shotgun`) goes off for the hearing in #8.
+  `NoiseRange` (15 m, tag `Shotgun`) alerts every enemy in range.
 * **Recoil and pump** (in `UpdateGunPose`, from `LastShotTime`): the gun
   kicks up `KickPitch` (26 degrees, 24 measured at the muzzle) and back
   `KickBack` (3 cm) within 0.04 s and is back by 0.16 s. From `PumpStart`

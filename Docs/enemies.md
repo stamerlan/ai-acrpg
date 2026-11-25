@@ -27,14 +27,15 @@ here is in the 3 m/s world scale (x0.6), like the rest of the project.
 | Value | Level doc (3 m/s scale) | Variable |
 |---|---|---|
 | Walk speed | 2.4 m/s | `WalkSpeed` (240) |
-| Sight | 70 degree cone, 6 m (busy 1.8 m) | `SightHalfAngle` (35), `SightRange`, `BusySightRange` |
+| Sight | 70 degree cone, 6 m lit, 3 m dark (busy 1.8 m) | `SightHalfAngle` (35), `SightRange`, `DarkSightRange`, `BusySightRange` |
+| Awareness | 0.5 s close up to 1.5 s at the edge, drains in 1.5 s | `AwareTimeNear`, `AwareTimeFar` |
 | Knife reach | 0.4 m from the collision edge | `AttackReach` (40) |
 | Windup | 0.6 s | `WindupTime` |
 | Damage | 15 | `AttackDamage` |
 | Shout | 7.2 m | `ShoutRadius` (720) |
 
-Light and dark sight ranges, the awareness meter and noise hearing
-belong to #8; the sight here is the first pass.
+Light, the awareness meter and noise are in
+[Sneaking](#sneaking-light-awareness-and-noise).
 
 ## States
 
@@ -46,10 +47,10 @@ belong to #8; the sight here is the first pass.
   point), `Busy` (short sight), `Sleeping` (never sees her). While
   unaware, `bUnaware` on the enemy's `BPC_Health` is true, which makes
   the peck a surprise peck (x3). Any other state clears it.
-* **Suspicious**: she is in the sight cone. The enemy stops, turns to
-  her and shows "?" over its head. After `SuspicionTime` (0.5 s) in sight
-  it becomes alerted; if she is out of sight for 1 s it goes back to
-  unaware.
+* **Suspicious**: she is in sight. The enemy stops, turns to her and its
+  awareness fills; when it is full it becomes alerted, when it drains
+  back to 0 it goes back to unaware (see
+  [Sneaking](#sneaking-light-awareness-and-noise)).
 * **Alerted**: chases (`SimpleMoveToActor` on the nav mesh) and attacks
   until it dies. It never searches or returns to patrol. Being hurt (and
   surviving) alerts it too.
@@ -57,6 +58,94 @@ belong to #8; the sight here is the first pass.
   `ShoutRadius`, who shout in turn.
 * A bark from `Barks` shows over its head for 2 s when it becomes
   alerted. Bark text is a Text Render placeholder for the barks audio.
+
+## Sneaking: light, awareness and noise
+
+The GDD's detection rules (#8). The shared parts are in C++
+(`USneakSubsystem`, `Source/acrpg/Combat`), the enemy side in
+`BP_EnemyBase`.
+
+* **Lit or dark.** `USneakSubsystem.IsLit(Location, Ignore)`. While an
+  actor tagged `Darkness` exists (the night post process volume
+  `NightExposure` on `DL_Night`), she is lit only inside a lit zone or a
+  light cone; by day everything is lit.
+  * Lit zones are actors tagged `LitZone`: the graybox Lit markers, whose
+    disc radius is the zone (up to 4 m above it).
+  * Light cones are spot lights tagged `SightLight` (component or actor
+    tag) that are visible and on: within the attenuation radius and the
+    outer cone angle, with nothing on the Visibility channel in between,
+    so cars cast dark shadows. Tagged: the Shawarman's flashlight
+    (`Beam`, 9 m, 24 degrees, shown on `Patrol`) and the Doner's beam.
+  * Console: `Sneak.Info` lists the zones, cones and darkness.
+* **Sight range** (`SightRangeNow`): busy (unaware and `Busy`)
+  `BusySightRange` (1.8 m), else `SightRange` (6 m) when she is lit and
+  `DarkSightRange` (3 m) in the dark. Sleeping enemies never see her.
+  `CanSeeTarget` adds the 70 degree cone and a line of sight trace.
+* **Awareness** (`Awareness`, 0 to 1): seeing her makes an unaware enemy
+  suspicious. Each tick in sight it fills by Dt / fill time, the fill time
+  sliding from `AwareTimeNear` (0.5 s) at 0 m to `AwareTimeFar` (1.5 s) at
+  the edge of the current range; out of sight it drains in
+  `AwareTimeFar`. Full: alerted. Empty: unaware again.
+* **Meter**: `AwareMeter`, a screen space widget component with
+  `WBP_AwarenessMeter` (a 46 pt orange "?" over a 48 x 12 px bar) above the
+  head, shown while suspicious and for 1.5 s after becoming alerted
+  (`AlertShowUntil`), when the mark turns to "!". `UpdateAwareMeter`
+  runs every tick and creates the widget when a placed actor has none.
+* **Noise.** `USneakSubsystem.ReportNoise(Location, Radius, Tag)` calls
+  `HearNoise(Location, Tag)` on every actor within the radius that has
+  it; an unaware or suspicious enemy (sleeping ones too) becomes alerted.
+  Sources: a peck hit (`PeckNoiseRange`, 3.6 m), a shattered gnome
+  (`NoiseRange`, 6 m), a shot (`NoiseRange`, 15 m). The inner gate
+  squeak makes no noise.
+
+### All-Seeing Doner
+
+`BP_AllSeeingDoner` (`/Game/Enemies`) is the lookout on the tower in the
+middle of the outer lot (L0, `AllSeeingDoner` on `DL_Night`, over the
+`AllSeeingDoner_Tower` graybox). Its `Head` (at 19.7 m) turns with an
+eye (`Iris` and a vertical `Slit` pupil) and the `Beam` spot light
+(tag `SightLight`, 59 degrees down, 10 degree cone, 35 m, unitless
+intensity 150000), so in the beam she counts as lit for every guard.
+`Shaft` (an engine cone with `M_DonerBeam`: additive, warm and faint,
+fading out within 5 to 20 m of the camera) shows where the beam points
+from anywhere in the lot; it is hidden while the beam is locked on her.
+`EyeGlow` is an orange point light in front of the eye. The tower's fixed
+graybox eye (`P6`, `P7`) is hidden in game.
+
+* **Sweep**: `SweepStep` (90 degrees) in `SweepMove` (1.5 s), then a
+  `SweepPause` (0.5 s): a full turn in 8 s with four pauses.
+* **Awareness**: in the beam it fills in `AwareTime` (1 s), out of it it
+  drains as fast. The slit narrows from 40 to 8 cm and the beam goes
+  from `BaseIntensity` to `AlertIntensity` as it fills.
+* **Spotted** (`Spot`): it locks the head and the beam on her, plays
+  `Jingle` (`SW_KebabJingle`, `Art/Audio/Scripts/make_jingle.js`) in 2D
+  and alerts every enemy within `AlertRadius` (12 m) of her. It follows
+  her until she is out of the beam for `ReleaseTime` (3 s), then sweeps
+  again from there.
+
+### 0B night shift
+
+On `DL_Night`, folder `Night/Enemies`, at the Shawarman markers (the
+markers, patrol points and lit discs are hidden in game, as are the text
+labels of the night markers and the impounded cars):
+
+| Actor | Mode | Notes |
+|---|---|---|
+| `Shawarman_Night_PatrolA` | Patrol, flashlight | Starts at `MK_Patrol_A_2` and loops A_3, A_4, A_1 (the hole corner, about 13 s in), A_2 |
+| `Shawarman_Night_PatrolB` | Patrol, flashlight | Loops B_1 to B_4 through the middle rows |
+| `Shawarman_Night_Grill_1` to `_3` | Busy | At the grill shack table, backs to the lot |
+| `Shawarman_Night_Sleeping` | Sleeping | In the guard office, wakes only to noise |
+
+All are tagged `NightShift` (the waves in #9 count them).
+
+Checked in PIE (`Story.Set q_car_trouble office`,
+`Story.Event wait_for_midnight`): walking the fence lane from the hole
+to the office at full speed alerts nobody; standing 1.2 m behind the
+eaters is unseen and pecking one alerts the other two; in the dark a
+guard notices her at 2.5 m but not at 3.5 m, his meter fills in 1.33 s
+there, 0.83 s at 1 m, and stepping back to 6 m at 60 % drains it in
+0.9 s; holding her in the Doner beam locks it after 1 s and alerts the
+guards within 12 m.
 
 ## Attack
 
