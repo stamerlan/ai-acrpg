@@ -101,7 +101,8 @@ try:
             rng.uniform(0, 360), 2.6, "Art/Shared/Lot/Aprons")
         put(V + "box", x + 60, y + rng.uniform(-60, 60), rng.uniform(0, 360),
             2.4, "Art/Shared/Lot/Aprons")
-    put(C + "truck", -2300, 2350, 0, (1.2, 1.4, 1.2), "Art/Shared/Lot/Aprons")
+    put("/Game/Environment/Meshy/SM_Truck", -2300, 2350, 0, 0.62,
+        "Art/Shared/Lot/Aprons")
 except Exception:
     res["err"] = traceback.format_exc()
 json.dump(res, open(D + r"\out.json", "w"), indent=0)

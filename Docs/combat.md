@@ -301,14 +301,16 @@ one shot kills him, at 5 m a shot does about 10 damage (four shots).
   Taking damage or dying cancels the scene at once (nothing is given if
   it happens before `GrantTime`). The three clips are variables with
   their own rate and start time.
-* **The Civic** with an opening trunk is `SM_CivicBody` and
+* **The Civic** with an opening hatch is `SM_CivicBody` and
   `SM_CivicTrunkLid` in `/Game/Environment/Civic`, made by
-  `Art/Environment/Scripts/blender_civic.py` from the Kenney sedan (lid
-  pivot on its hinge, dark cavity, a red shell box inside). The trunk
-  actor's `Hinge`, `Lid` and `StandPoint` are fitted to the car actor
-  next to it by a fitting script; `BumperRise` is the bumper top above
-  the ground (50 cm in L0, 32.5 cm in the dev map). The lid underside
-  and the trunk interior are lighter so the open trunk reads at night.
+  `Art/Environment/Scripts/blender_civic.py` from the Meshy hatchback
+  (the rear window and tailgate cut out as the lid, its pivot on the
+  hinge at the roof edge, a dark cavity, a red shell box inside). The
+  trunk actor's `Hinge`, `Lid` and `TrunkLight` are put on the car
+  actor next to it by `ue_fit_trunk.py` (run it after the lot dressing);
+  `BumperRise` is the bumper top above the ground (50 cm in L0, 32.5 cm
+  in the dev map). The lid underside and the trunk interior are lighter
+  so the open trunk reads at night.
 * **Hint:** the first time the reserve is empty while she has the gun and
   a trunk is in the level, a toast says "No spare shells. The trunk has
   more." (flag `f_hint_trunk`).

@@ -398,8 +398,9 @@ when Mr. Kebabski charges into a car.
 ## Environment (`Environment/`)
 
 Level art for stop 0, placed over the graybox (see
-[graybox.md](../Docs/graybox.md#art-over-the-graybox)). Everything here is
-CC0; no Meshy models are used yet.
+[graybox.md](../Docs/graybox.md#art-over-the-graybox)). The Kenney kits
+and the ground textures are CC0; the vehicles, trees, bushes and ferns
+are Meshy models made for the trailer ([Trailer/](Trailer/README.md)).
 
 | Folder | What | Source |
 |---|---|---|
@@ -407,11 +408,18 @@ CC0; no Meshy models are used yet.
 | `Kenney/_fbx/` | The GLBs as FBX, one joined mesh each | `blender_kenney_to_fbx.py` |
 | `Kenney/_textures/` | Kit colormaps; `T_car_kit_colormap_<paint>.png` repaint the car body swatch | Kenney, repaints by hand |
 | `Textures/T_*_D.jpg`, `_N.jpg` | Ground: grass, asphalt, pavers, dirt, gravel, concrete (1k) | [Poly Haven](https://polyhaven.com/textures), CC0 |
+| `Meshy/` | Vehicles (Civic, sedan, SUV, van, reefer truck) and plants (pine, spruce, birch, oak, bush, fern) at real size, 5k to 20k triangles, one texture each; `Paints/` holds sedan and van repaints | `blender_meshy_to_fbx.py`, `blender_car_paints.py` |
+| `Civic/` | The Civic cut into a body and a hatch that opens, and its texture | `blender_civic.py` |
 | `Stall/` | Market stall: pipe frame and sloped tarp with a valance, stripe texture | `blender_stall_kit.py` |
 | `Source/StallKit.blend` | Working file of the stall | |
 
 Kenney models are tiny and not to one scale; the dressing scripts scale
-each placement. The Kenney meshes get `MI_Env_<kit>` (colormap, nearest
+each placement. The graybox is 0.6 scale in plan and full height, so a
+vehicle stretched to its box came out tall and narrow: the Meshy
+vehicles are fitted by length only (`natural` in `ue_dress_lot.py`) and
+keep their proportions, which leaves them lower than their collision
+box (a car is about 95 cm tall over a 140 cm box). The trees are placed
+at about 0.55 of real size for the same reason. The Kenney meshes get `MI_Env_<kit>` (colormap, nearest
 filter, no mips) or, for the flat-color kits, one `MI_Env_<kit>_<slot>`
 per material slot. Leaves and grass are tinted away from Kenney's mint.
 
@@ -425,10 +433,15 @@ Each writes `out.json` next to itself. Run order for a clean pass:
 |---|---|
 | `blender_kenney_to_fbx.py` | GLB to FBX (`convert()`) |
 | `blender_stall_kit.py` | Builds and exports the stall (`build()`) |
+| `blender_meshy_to_fbx.py` | Meshy GLB to FBX at real size (headless) |
+| `blender_car_paints.py` | Sedan and van repaints (headless) |
+| `blender_civic.py` | The Civic body and hatch (headless) |
+| `ue_meshy_import.py` | Imports the Meshy meshes, textures and the Civic, makes `MI_Meshy_*` and `MI_Civic` |
 | `ue_kenney_import.py` | Imports the FBX and colormaps, makes the `MI_Env_*` |
 | `ue_dress_polish.py` | `M_Ground` parameters, ground palette, car liveries, sun direction |
 | `ue_dress_nature.py` | Trees, bushes, grass, rocks by region; far bank ground |
 | `ue_dress_lot.py` | Cars, trucks, containers fitted to their graybox boxes |
+| `ue_fit_trunk.py` | Puts each trunk actor's lid and light on its Civic |
 | `ue_dress_stalls.py` | Stall frames, tarps and counter goods |
 | `ue_dress_props.py` | Bazaar wall panels, lamps, road end, yard and apron props |
 

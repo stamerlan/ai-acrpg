@@ -11,21 +11,23 @@ import unreal  # noqa: E402
 
 D = L.__file__.rsplit("\\", 1)[0]  # out.json goes next to the scripts
 N = "nature_kit/SM_"
-PINES = [N + "tree_pineTallA_detailed", N + "tree_pineTallB_detailed",
-         N + "tree_pineRoundC", N + "tree_pineRoundE",
-         N + "tree_pineDefaultA"]
-LEAFY = [N + "tree_oak", N + "tree_default", N + "tree_detailed",
-         N + "tree_fat", N + "tree_simple"]
-POPLAR = [N + "tree_tall"]
-BUSH = [N + "plant_bush", N + "plant_bushDetailed", N + "plant_bushLarge",
-        N + "plant_bushSmall"]
+# Meshy plants at real size (blender_meshy_to_fbx.py): pine 13 m,
+# spruce 11 m, birch and oak 9 m, bush 1.5 m, fern 0.7 m
+P = "/Game/Environment/Meshy/SM_"
+PINES = [P + "Pine", P + "Spruce"]
+LEAFY = [P + "Oak", P + "Birch"]
+POPLAR = [P + "Birch"]
+BUSH = [P + "Bush"]
+FERN = [P + "Fern"]
 GRASS = [N + "grass", N + "grass_large", N + "grass_leafs"]
 FLOWER = [N + "flower_redA", N + "flower_yellowA", N + "flower_purpleA"]
 ROCK = [N + "rock_largeA", N + "rock_largeC", N + "rock_smallA",
         N + "rock_smallC"]
 # (meshes, scale range, min gap in cm)
-KIND = {"pine": (PINES, (3.6, 5.0), 260), "leafy": (LEAFY, (4.2, 5.6), 330),
-        "poplar": (POPLAR, (4.8, 6.0), 220), "bush": (BUSH, (3.0, 4.5), 120),
+# The world is 0.6 scale in plan, so the trees are about 0.55 of real
+KIND = {"pine": (PINES, (0.48, 0.66), 260), "leafy": (LEAFY, (0.5, 0.7), 330),
+        "poplar": (POPLAR, (0.62, 0.8), 220), "bush": (BUSH, (0.55, 0.95), 120),
+        "fern": (FERN, (0.8, 1.3), 70),
         "grass": (GRASS, (1.4, 2.2), 60), "flower": (FLOWER, (1.6, 2.4), 50),
         "rock": (ROCK, (1.0, 1.8), 150)}
 # region: (x0, x1, y0, y1, [(kind, count)])
@@ -77,6 +79,8 @@ try:
         comps = {}
         taken = []
         count = 0
+        plan = plan + [("fern", n // 3) for kind, n in plan
+                       if kind == "grass"]
         for kind, n in plan:
             meshes, (s0, s1), gap = KIND[kind]
             pts = L.scatter(rng, x0, x1, y0, y1, n, gap,

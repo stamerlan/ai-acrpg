@@ -12,8 +12,13 @@ import unreal  # noqa: E402
 
 D = L.__file__.rsplit("\\", 1)[0]  # out.json goes next to the scripts
 C = "car_kit/SM_"
-CARS = [C + "sedan", C + "hatchback_sports", C + "suv", C + "van", C + "taxi",
-        C + "truck", C + "sedan", C + "hatchback_sports", C + "suv"]
+# Meshy vehicles at real size (blender_meshy_to_fbx.py)
+V = "/Game/Environment/Meshy/SM_"
+CARS = [V + "Sedan", V + "Suv", V + "Van", V + "Sedan", V + "Suv"]
+# Repaints (blender_car_paints.py); None is the model as it came
+MI = "/Game/Environment/Meshy/Materials/MI_Meshy_"
+REPAINT = {V + "Sedan": [None, "Blue", "Red", "Green", "Gray", "Orange"],
+           V + "Van": [None, None, "Yellow", "Blue", "Red"]}
 CONT = ["city_kit_industrial/SM_shipping_container_a",
         "city_kit_industrial/SM_shipping_container_b",
         "city_kit_industrial/SM_shipping_container_c"]
@@ -51,8 +56,14 @@ def local_box(actor, names):
 
 
 def fit(actor, path, names=(), label=None, folder=None, flip=False,
-        mi=None, keep_aspect=False):
-    """Place mesh path over the actor's box; Kenney long axis is Y."""
+        mi=None, keep_aspect=False, natural=False):
+    """Place mesh path over the actor's box; the long axis is Y.
+
+    natural is for the real-size vehicles: the length fits the box, the
+    width and height follow it and only bend toward the box within
+    limits (the graybox is 0.6 scale in plan and full height, which made
+    stretched cars tall and narrow).
+    """
     lo, hi = local_box(actor, names)
     dims = [hi[i] - lo[i] for i in range(3)]
     sm = L.mesh(path)
@@ -66,6 +77,10 @@ def fit(actor, path, names=(), label=None, folder=None, flip=False,
     if keep_aspect:
         k = L_ / md[1]
         sc = [min(sc[0], k * 1.15), k, min(sc[2], k * 1.2)]
+    if natural:
+        k = L_ / md[1]
+        sc = [min(max(sc[0], k * 0.8), k * 1.15), k,
+              min(max(sc[2], k * 0.8), k * 1.25)]
     cxl, cyl = (lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2
     ca, sa = math.cos(math.radians(ay)), math.sin(math.radians(ay))
     al = actor.get_actor_location()
@@ -107,39 +122,41 @@ try:
         n = a.get_actor_label()
         body = ("Body1", "Cabin2")
         if n.startswith("Car_R") or n.startswith("Arena_Car_"):
-            fit(a, rng.choice(CARS), body, flip=rng.random() < 0.5,
-                mi=LIV + rng.choice(PAINT) if rng.random() < 0.8 else None)
+            car = rng.choice(CARS)
+            coat = rng.choice(REPAINT.get(car, [None]))
+            fit(a, car, body, flip=rng.random() < 0.5, natural=True,
+                mi=MI + car.split("SM_")[1] + "_" + coat if coat else None)
             L.hide_graybox(a)
         elif n == "Car_Hatchback":
-            fit(a, C + "hatchback_sports", body)
+            fit(a, V + "Civic", body, natural=True)
             L.hide_graybox(a)
         elif n == "Car_Trabant":
-            fit(a, C + "hatchback_sports", body)
+            fit(a, V + "Sedan", body, natural=True)
             L.hide_graybox(a, keep=("P3", "P4", "P5", "P6"))
         elif n == "Car_Limousine":
-            fit(a, C + "sedan", body,
-                mi="/Game/Environment/Kenney/Materials/MI_Env_car_kit")
+            fit(a, V + "Sedan", body, natural=True)
             L.hide_graybox(a)
         elif n == "Tractor":
             fit(a, C + "tractor", (), flip=True)
             L.hide_graybox(a)
         elif n == "Civic_Start":
-            fit(a, C + "sedan", body, mi=blk)
+            fit(a, V + "Civic", body, natural=True)
         elif n == "Civic":
-            # Opening trunk (blender_civic.py), facing the arena and camera
-            fit(a, "/Game/Environment/Civic/SM_CivicBody", body)
+            # Opening hatch (blender_civic.py), facing the arena and
+            # camera; ue_fit_trunk.py puts the trunk actor's lid on it
+            fit(a, "/Game/Environment/Civic/SM_CivicBody", body,
+                natural=True)
             L.hide_graybox(a)
         elif n == "Truck_Kolya":
-            fit(a, C + "delivery", ("Box3", "Cab2", "Chassis1"), flip=True,
-                mi=LIV + "White")
+            fit(a, V + "Truck", ("Box3", "Cab2", "Chassis1"), flip=True,
+                natural=True)
             L.hide_graybox(a)
         elif n.startswith("Truck_Queue_"):
-            fit(a, C + "delivery", ("Box3", "Cab2", "Chassis1"), flip=True,
-                mi=LIV + rng.choice(["Red", "Blue", "Orange", "Gray"]))
+            fit(a, V + "Truck", ("Box3", "Cab2", "Chassis1"), flip=True,
+                natural=True)
             L.hide_graybox(a)
         elif n.startswith("Truck_Block_"):
-            fit(a, C + "delivery", (), flip=True,
-                mi=LIV + rng.choice(["Red", "Blue", "Yellow"]))
+            fit(a, V + "Truck", (), flip=True, natural=True)
             L.hide_graybox(a)
         elif n.startswith(("Container_", "Arena_Container_")) and any(
                 c.get_name() == "Box1" for c in
