@@ -70,7 +70,7 @@ otherwise shoots, see [Shotgun](#shotgun)), Reload calls
   `PeckPushTime` (0.333 s), back by `PeckLandTime` (0.542 s), done at
   `PeckDuration` (0.667 s, `EndPeck`). She faces the target, ignores
   move input and is invulnerable the whole time; flutter waits for the
-  end. One peck per 0.75 s (`PeckCooldown`).
+  end. One peck per 0.68 s (`PeckCooldown`, just over the jump).
 * `PeckStrike` runs on a timer at the strike frame: the target takes 10
   damage (x3 if unaware), a small shove `KnockbackSpeed` (150) and plays
   its hit montage (the Shawarman doubles over, see
@@ -145,22 +145,50 @@ numbers are defaults on the component.
   `DA_Item_Shells`). Shells picked up before the shotgun are kept.
 * **The gun:** on BeginPlay the component adds a static mesh component
   with `SM_Shotgun` (scale `GunScale` 0.75) on the `RightHand` bone at
-  `GunOffset` / `GunRotation` (fitted to the aim pose), and a point light
-  at the muzzle for the flash. The gun shows while she has it and is
-  hidden while she carries something. `ABP_Chicken` blends
-  `A_Chicken_ShotgunAim` onto the upper body (third layered blend, from
-  `Spine02`) with `ShotgunAlpha`, which the component eases to 1 while
-  she has the gun and isn't carrying, pecking or fluttering.
+  `GunOffset` / `GunRotation`, and a point light at the muzzle for the
+  flash. The gun shows while she has it and is hidden while she carries
+  something. `ABP_Chicken` blends `A_Chicken_ShotgunAim` onto the upper
+  body (third layered blend, from `Spine02`) with `ShotgunAlpha`, which
+  the component eases to 1 while she has the gun and isn't carrying,
+  pecking or fluttering.
+* **Two-wing hold:** the gun pose is procedural. `UpdateGunPose` (every
+  tick) works out where the gun should be in actor space and drives four
+  nodes at the end of `ABP_Chicken`, all weighted by `ShotgunAlpha`: a
+  Two Bone IK puts the right wing tip on the grip (`GunHandPos`), a
+  Transform (Modify) Bone sets the wing tip's rotation so the gun points
+  where the pose says (`GunHandRot`), a second Two Bone IK puts the left
+  wing tip under the gun (`GunLeftPos`), and an additive Head rotation
+  nods her head down while she loads (`GunHeadRot`). Targets are in mesh
+  component space, elbows at `ElbowR` / `ElbowL`. The aim pose is the grip
+  at `AimGrip` (12, 3, 1 cm: in front of her chest, just right of the
+  middle) with the gun at `AimRot` (level, straight ahead); the left wing
+  tip holds the point `LeftGripLocal` of the gun (gun-mesh units, under
+  the receiver about 10 cm ahead of the grip), so both wings visibly
+  hold it. Her wings are about 24 cm
+  long, so the pump (28 cm ahead of the grip) is out of reach; the IK may
+  stretch a wing up to 15 % (right) and 20 % (left). While she pecks,
+  flutters or carries, `ShotgunAlpha` falls to 0 and the clips move the
+  gun with her right wing as before.
 * **Fire:** `BPC_ChickenCombat.Fire` calls `BPC_Shotgun.Fire` once she has
   the gun. With an empty tube Fire pecks, so running dry is never a
-  dead end. Otherwise one shot per `ShotInterval` (0.7 s, the pump): she
+  dead end. Otherwise one shot per `ShotInterval` (0.5 s, the pump): she
   turns to the aim point, `A_Chicken_ShotgunFire` plays on `UpperBody`
-  at `FireAnimRate` (1), the muzzle flashes, and a noise of
+  at `FireAnimRate` (1) (chest and head kick), the muzzle flashes
+  (`FlashIntensity` 3200), `NS_ShotgunMuzzle` (`/Game/Combat/FX`: 14
+  hot orange sparks in a 24 degree cone that live 0.06-0.16 s and a
+  small warm puff for 0.12 s) goes off at `MuzzleLocal`, and a noise of
   `NoiseRange` (15 m, tag `Shotgun`) goes off for the hearing in #8.
-  The clip is a 0.67 s recoil kick that starts and ends in the aim pose
-  (muzzle 22 degrees up at 0.04 s, back on the aim line by 0.4 s), so
-  the gun stays on target between shots (see
-  [Art/README.md](../Art/README.md#peck-clip)).
+* **Recoil and pump** (in `UpdateGunPose`, from `LastShotTime`): the gun
+  kicks up `KickPitch` (26 degrees, 24 measured at the muzzle) and back
+  `KickBack` (3 cm) within 0.04 s and is back by 0.16 s. From `PumpStart`
+  (0.14 s) for `PumpTime` (0.26 s) she racks the pump: the left wing tip
+  slides `PumpSlide` (10 units, 7.5 cm) back along the gun and forward
+  again while the gun rolls `PumpRoll` (25 degrees) and lifts 10
+  degrees. At 40 % of the pump `EjectShell` throws a spent `SM_ShellCasing` out of the
+  right side of the gun (`EjectLocal`): a physics `StaticMeshActor` that
+  flies right and up, spins, ignores pawns and the camera and is gone
+  after 6 s. The next shot is allowed at 0.5 s, just after the rack, so
+  the gun visibly isn't ready while it can't fire.
 * **Pellets:** `PelletCount` (8) rays fan out over `ConeAngle` (16
   degrees), one per equal slice with a random spot inside it. Each ray is
   traced on the Visibility channel up to `MaxRange` (7.2 m), so walls,
@@ -175,10 +203,22 @@ numbers are defaults on the component.
 * **Reload:** only on the Reload button (R / gamepad X), never
   automatic, and only while she stands still (no move input, speed below
   20 cm/s), isn't pecking, fluttering or carrying, and the pump is done.
-  It loads one shell every `ShellLoadTime` (0.5 s) from the reserve and
-  plays `A_Chicken_Reload` on `UpperBody` until the tube is full or the
-  reserve is empty. Moving, firing, a peck, a flutter or picking
-  something up stops it; loaded shells stay.
+  It loads one shell every `ShellLoadTime` (0.5 s) from the reserve
+  until the tube is full or the reserve is empty. Moving, firing, a peck,
+  a flutter or picking something up stops it; loaded shells stay.
+  The motion is procedural and runs once per shell: `ReloadBlend` eases
+  the gun (speed `ReloadBlendSpeed` 6, about 0.25 s) into the loading
+  pose `ReloadGrip` / `ReloadRot` (grip pulled back, muzzle 45 degrees
+  down and 35 degrees to her left, gun rolled 65 degrees) and her head
+  nods down `HeadNod` (20 degrees), so even from the game camera the gun
+  is clearly off target. Each 0.5 s shell cycle: the left wing tip goes
+  from the loading port down to the shell pouch at her hip (`Pouch`,
+  first 30 %), comes back up to the port (`PortLocal`) holding a small
+  red shell (`ShellInHand`, an `SM_ShellCasing` at 1.5x on the
+  `LeftHand` bone, to 75 %), and pushes it in (`PortInLocal`, the gun
+  jolts 2 cm); the
+  shell is counted at the end of the push. When the reload stops, a pump
+  rack plays and the next shot waits for it (`PumpTime`).
 
 Measured in `Lvl_Dev_Movement` against `Shawarman_Test` (30 HP): at 1.5 m
 one shot kills him, at 5 m a shot does about 10 damage (four shots).

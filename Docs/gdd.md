@@ -160,7 +160,7 @@ checkpoints are built: [combat.md](combat.md).
 
 * Always available melee: a jump at the nearest enemy within 1 m of
   her (collision to collision) in a 120 degree arc toward the aim,
-  10 damage, one peck per 0.75 s.
+  10 damage, one peck per 0.68 s.
 * The peck is a jump: she leaps at him, pecks his belly at the top of
   the jump (0.25 s after the press), pushes off and jumps back while he
   doubles over. She lands at least 0.5 m from him. The whole jump takes
@@ -198,7 +198,8 @@ comes from enemies, throwables and level design.
 
 * Holds 8 shells. One shot fires 8 pellets of 6 damage in a cone. Full
   damage up to 2.4 m, half at 4.8 m, nothing past 7.2 m. A pump between
-  shots: 0.7 s per shot.
+  shots: 0.5 s per shot. The kick and the pump are visible on the gun,
+  so the player sees when the next shot isn't ready.
 * Reload only on a button press (R / X), never automatic. The reload
   rule from game 1 stays: she reloads only while standing still, one
   shell per 0.5 s, until the tube is full. Moving, firing, pecking or
@@ -376,14 +377,14 @@ slots to manage, no weight, no sorting, no dropping, no crafting.
 
 How the HUD and the debug panel are built: [hud.md](hud.md).
 
-* HUD, minimal and contextual like The Last of Us:
-  * One cluster in the bottom-right corner: the HP bar, the shotgun
-    icon with loaded shells (as shell pips) and reserve count, and the
-    corn count.
-  * The cluster hides during exploration and fades in when she takes
-    damage, heals, picks up ammo or corn, draws or fires the shotgun,
-    reloads, or an enemy becomes suspicious or alerted. HP below 25%
-    keeps it visible.
+* HUD, small and always on screen:
+  * One block at the bottom center, close to the hen in the middle of
+    the screen: the shotgun icon, one shell picture per tube slot
+    (loaded or an empty outline) and the reserve count, then the HP bar
+    and one cob picture per corn slot.
+  * It stays visible: how many shells are left must always be clear.
+    While the pump or a reload means the next shot isn't ready, the gun
+    icon gets an amber frame.
   * Before she has the shotgun, only the HP bar and corn are shown.
   * Enemy awareness meters ("?" to "!") above enemy heads.
   * Interaction prompts next to the object, and one-time tutorial

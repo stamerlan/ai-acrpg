@@ -89,7 +89,7 @@ Meshy's humanoid bones (Hips to ToeBase, wings are arms) plus:
 | `A_Chicken_Throw` | 2.5 s | Overhead two-wing throw |
 | `A_Chicken_ShotgunFire` | 0.67 s | Recoil kick out of the aim pose, keyed by script (see below) |
 | `A_Chicken_ShotgunPump` | 2.0 s | |
-| `A_Chicken_Reload` | 3.0 s | Shells one by one, gun lowered at her right side |
+| `A_Chicken_Reload` | 3.0 s | Not used since the procedural reload (see below) |
 | `A_Chicken_EatCorn` | 1.17 s | Three pecks at a cob held in the wing tips, keyed by script (see below) |
 | `A_Chicken_Kneel` | 4.96 s | Crouch, rummage in the open backpack, stand; keyed by script (see below) |
 | `A_Chicken_HitReact` | 1.08 s | First recoil of the Meshy clip (see below) |
@@ -166,8 +166,8 @@ reach into it, one up while the other digs. The HUD pauses on frame 75
 and closes from frame 86, both that dig pose.
 
 `A_Chicken_ShotgunFire` is keyed by the same script
-(`build_shotgun_fire`), 24 fps, 16 frames (0.67 s, under the 0.7 s
-`ShotInterval`), for the `UpperBody` slot at rate 1. The Meshy clip
+(`build_shotgun_fire`), 24 fps, 16 frames (0.67 s), for the `UpperBody`
+slot at rate 1. The Meshy clip
 (kept as `A_Chicken_ShotgunFireOld`) never matched the aim: the gun hung
 down, swung up and back and hung down again. The new clip starts and
 ends on frame 0 of `A_Chicken_ShotgunAim`, the pose `ABP_Chicken` layers
@@ -181,11 +181,13 @@ under the slot, so the gun stays on the aim line:
 | 8 | Muzzle 2 degrees below the aim |
 | 10-16 | Aim |
 
-`A_Chicken_Reload` (Meshy) was checked in PIE once the `UpperBody` slot
-worked: the gun drops from the aim to her right side, muzzle out and
-about 35 degrees down, while shells go in, and the clip loops for long
-reloads. It clips nothing and reads as "not ready" from the game camera,
-so it stays as it is.
+`A_Chicken_Reload` (Meshy) is no longer played: its 3 s loop never
+matched the 0.5 s shells, and its left wing never came near the gun. The
+reload, the pump and the two-wing hold are now procedural (IK on both
+wings, driven by `BPC_Shotgun`, see
+[combat.md](../Docs/combat.md#shotgun)). In `A_Chicken_ShotgunAim` and
+`A_Chicken_ShotgunFire` the wings are overridden by that IK; only the
+body, neck and head motion of those clips shows.
 
 ### Locomotion
 
@@ -331,6 +333,7 @@ were built from.
 | `Backpack/SM_Backpack.fbx` | 0.30 m tall | 2113 | Bottom |
 | `Backpack/SM_BackpackOpen.fbx` | 0.15 m rim, 0.24 m with the flap | 3309 | Bottom, pocket toward -Y |
 | `Sunglasses/SM_Sunglasses.fbx` | 0.15 m wide | 622 | `Glasses` bone |
+| `Shell/SM_ShellCasing.fbx` | 5.6 cm long | 164 | Center, brass end -X |
 
 The backpack flap is closed; the poses sheet shows it open.
 `SM_BackpackOpen` is the bag she digs in while the backpack panel is
@@ -350,6 +353,13 @@ and its instance is 1.8x brighter and matte (`MI_LOOK`): the source
 texture is dark and glossy and vanished from the gameplay camera. Mesh names
 after the path (`py "<path>" SM_Shotgun`) import only those.
 
+`SM_ShellCasing` is the shotgun shell she loads and ejects, built by
+`Scripts/blender_shell.py` (run headless: `blender --background --python
+blender_shell.py`, writes `Source/Shell.blend`): a red hull and a brass
+head, 1.8 cm across (fatter than a real 12 gauge so it reads from the game
+camera), colored from a 2-texel texture so it gets an `M_Env` instance
+like the other props.
+
 ## Item icons (`Items/`)
 
 Flat 256 px backpack pictures of the stop 0 items, drawn as SVG
@@ -359,6 +369,21 @@ the headless render). `Scripts/ue_items_import.py` imports them to
 `/Game/Items/Textures` (UI group, no mips) and sets each as the picture
 of `DA_Item_<Name>`. To change an icon, edit its SVG in the script and
 run both.
+
+## HUD pictures (`UI/`)
+
+The shell and corn cob pictures of the HUD slots
+([hud.md](../Docs/hud.md#hud-cluster)).
+`HUD/Source/<Name>_gen.png` are the Nano Banana (Gemini image) results,
+1024 px, flat icons with a thick dark outline on pure magenta, from the
+prompts in Fable's HUD review (issue #7) in the palette of the item icons.
+`Scripts/key_icons.ps1` (`powershell -File key_icons.ps1`) keys out the
+magenta (partly keyed edge pixels take the outline color), crops to the
+picture and scales it to `HUD/T_HUD_<Name>.png` (shell 104x208, cob
+107x160), plus `T_HUD_<Name>Empty.png`, the same shape as a white
+silhouette for the empty slots. `Scripts/ue_hud_import.py` (`py "<path>"`
+in the editor) imports all four to `/Game/UI/Textures` (UI group, no
+mips).
 
 ## Environment (`Environment/`)
 

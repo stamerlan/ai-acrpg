@@ -30,6 +30,8 @@ PROPS = [
      "/Game/Props/Shotgun"),
     ("Backpack/SM_BackpackOpen.fbx", "Backpack/SM_Backpack_textures/"
      "base_color.png", "/Game/Props/Backpack"),
+    ("Shell/SM_ShellCasing.fbx", "Shell/SM_ShellCasing_base_color.png",
+     "/Game/Props/Shotgun"),
 ]
 # Material slots past the first that use another prop's instance
 EXTRA_SLOTS = {"BackpackOpen": {1: "/Game/Props/Corn/MI_CornCob"}}

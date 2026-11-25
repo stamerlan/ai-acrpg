@@ -12,7 +12,7 @@ backpack and the developer debug panel. The design is in the GDD
 | Part | Where | What it does |
 |---|---|---|
 | HUD actor | `/Game/UI/BP_AcrpgHUD` | `HUDClass` of `BP_AcrpgGameMode`; creates the widgets, eats corn, toggles the debug panel, draws the overlays |
-| HUD widget | `/Game/UI/WBP_HUD` | Bottom-right cluster: shotgun row, HP bar and corn count |
+| HUD widget | `/Game/UI/WBP_HUD` | Bottom-center block: shotgun row, HP bar and corn slots |
 | Debug panel | `/Game/UI/Debug/WBP_DebugHUD` | Story state, spawn and cheat buttons, overlay toggles |
 | Story row | `/Game/UI/Debug/WBP_DebugStoryRow` | One story id: name, value, `<` and `>` |
 | Backpack | `/Game/UI/Backpack/WBP_Backpack`, `WBP_BackpackItem` | The panel and one item row |
@@ -26,28 +26,33 @@ work without touching `BP_Chicken`.
 
 ## HUD cluster
 
-`WBP_HUD` polls on Tick: the chicken's `BPC_Health` (`Health /
-MaxHealth`) and the story item `item_corn_cob`. It shows "Corn x N" and
-the HP bar in the bottom-right corner and fades its render opacity
-(interpolation speed 5, about half a second) between hidden and shown:
+`WBP_HUD` is one block at the bottom center of the screen (`Plate`, a
+dark rounded plate 28 px above the bottom edge), close to the hen in the
+middle of the screen. It is always visible while there is a pawn with
+`BPC_Health` (hidden otherwise), so the shell count can always be read.
+The layout follows a design review by Fable (issue #7).
 
-* Shown for 4 s after HP or the corn count changes: damage, healing,
-  eating, picking up corn.
-* Always shown below 25% HP.
-* Shown while an enemy (`BP_EnemyBase`) within 15 m is alive and not
-  unaware (`bUnaware` off on its `BPC_Health`).
-* Hidden otherwise, and while there is no pawn with `BPC_Health`.
+* **Row 1, the gun** (`GunRow`, only once she has the shotgun): the
+  shotgun tile (`GunTile`: `T_Item_Shotgun` at 56 px with an amber
+  frame `GunFrame` over it), eight shell slots (`Pips`, 24x48 px, 4 px
+  apart) and the reserve as "+N" (26 px bold, outlined). A loaded slot
+  shows `T_HUD_Shell`; an empty one shows `T_HUD_ShellEmpty` (the same
+  shape as a white silhouette) tinted gray at 45 %, so the eight slots
+  always read as "this many of eight".
+* **Row 2:** the HP bar (200x20, green, red below 25 %) and five corn
+  slots (`CornRow`, `T_HUD_Corn` / `T_HUD_CornEmpty` at 26x39), one per
+  cob she can carry (`MaxCount` 5).
+* **Next shot not ready:** `UpdateGun` reads `BPC_Shotgun`. During the
+  pump (`NextShotTime` in the future) the frame is solid amber and the
+  next shell to fire (the rightmost loaded one) is darkened and
+  brightens back up as the pump ends. During a reload the frame pulses
+  (2 Hz) and the slot being loaded blinks amber.
 
-The first update after the widget is created does not count as a change,
-so the cluster starts hidden.
-
-The shotgun row (`GunRow`, above the HP bar) shows only once she has the
-shotgun: the shotgun icon (`T_Item_Shotgun`), eight shell pips (`Pips`,
-red for a loaded shell, dark for an empty slot) and the reserve as
-"+ N". `UpdateGun` runs first on every Tick; a change of the loaded
-shells, the reserve or getting the gun shows the cluster for 4 s like a
-change of HP or corn, so firing, reloading and picking up shells bring
-it in. The ammo itself is described in [combat.md](combat.md#shotgun).
+`UpdateGun` runs first on every Tick, then the corn slots and the HP bar.
+The ammo itself is described in [combat.md](combat.md#shotgun). The
+pictures are made by Nano Banana and keyed by
+`Art/UI/Scripts/key_icons.ps1` (see
+[Art/README.md](../Art/README.md#hud-pictures-ui)).
 
 ## Eating corn
 
