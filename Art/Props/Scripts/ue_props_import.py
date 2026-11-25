@@ -7,7 +7,8 @@ M_Env, BaseTex = the texture) per mesh; EXTRA_SLOTS gives later material
 slots another prop's instance (the cob in the open backpack). The meshes
 get no collision: the Blueprints that use them (BP_Throwable,
 BP_CornPickup, BPC_Shotgun, BP_AcrpgHUD's backpack) bring their own or
-need none.
+need none. BOX_COLLISION meshes get one simple box: the spent shells
+BPC_Shotgun ejects simulate physics and fall through the floor without it.
 Writes out.json next to this file.
 """
 import json
@@ -39,6 +40,7 @@ EXTRA_SLOTS = {"BackpackOpen": {1: "/Game/Props/Corn/MI_CornCob"}}
 # The backpack texture is dark and glossy: lighter and matte, it reads from
 # the gameplay camera next to the flat-shaded hen.
 MI_LOOK = {"BackpackOpen": (1.8, 1.0)}
+BOX_COLLISION = {"ShellCasing"}
 ONLY = sys.argv[1:]
 if ONLY:
     PROPS = [p for p in PROPS
@@ -107,6 +109,11 @@ def assign():
         for i in range(len(sm.static_materials)):
             sm.set_material(i, eal.load_asset(extra[i]) if i in extra
                             else mi)
+        if name in BOX_COLLISION:
+            sms = unreal.get_editor_subsystem(
+                unreal.StaticMeshEditorSubsystem)
+            sms.remove_collisions(sm)
+            sms.add_simple_collisions(sm, unreal.ScriptCollisionShapeType.BOX)
         eal.save_loaded_asset(sm)
         b = sm.get_bounding_box()
         res[name] = [round(b.min.x), round(b.min.y), round(b.min.z),

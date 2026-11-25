@@ -82,6 +82,18 @@ cleared, then the usual cooldown), so a peck during the windup saves
 her. The Shawarman's is `AM_Shawarman_Flinch`: he doubles over and
 clutches his belly for 0.8 s.
 
+## Health bar
+
+An enemy shows no health bar until it is first hurt. The `HealthBar`
+widget component (screen space, `WBP_EnemyHealthBar` in `/Game/UI`: a
+70 by 8 px red bar on dark red in a black frame) starts hidden.
+`OnDamaged` and `OnDied` call `UpdateHealthBar`, which puts the bar
+`HealthBarGap` above the capsule top (34 cm on the base and the
+Shawarman, so it clears his cap), shows it while health is above 0 and
+sets it to health / `MaxHealth`. On death it is hidden. If the component
+has no widget (a placed actor loaded before the component existed), the
+function creates one.
+
 ## Death
 
 `BPC_Health.OnDied` calls `Die`: it stops, loses collision and shows

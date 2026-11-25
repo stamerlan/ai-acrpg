@@ -200,9 +200,11 @@ numbers are defaults on the component.
   again while the gun rolls `PumpRoll` (25 degrees) and lifts 10
   degrees. At 40 % of the pump `EjectShell` throws a spent `SM_ShellCasing` out of the
   right side of the gun (`EjectLocal`): a physics `StaticMeshActor` that
-  flies right and up, spins, ignores pawns and the camera and is gone
-  after 6 s. The next shot is allowed at 0.5 s, just after the rack, so
-  the gun visibly isn't ready while it can't fire.
+  flies right and up, spins, ignores pawns and the camera, lands and lies
+  on the ground for 30 s. The mesh has one simple box collision
+  (`ue_props_import.py`, `BOX_COLLISION`); without it the shells fell
+  through the floor. The next shot is allowed at 0.5 s, just after the
+  rack, so the gun visibly isn't ready while it can't fire.
 * **Pellets:** `PelletCount` (8) rays fan out over `ConeAngle` (16
   degrees), one per equal slice with a random spot inside it. Each ray is
   traced on the Visibility channel up to `MaxRange` (7.2 m), so walls,
@@ -214,6 +216,17 @@ numbers are defaults on the component.
   nothing at 7.2 m, linear in between. All pellets on one target add up
   to one `ApplyDamage` (killer tag `Chicken`) and a small shove
   (`ShoveSpeed` 250 for all 8 pellets).
+* **Tracers:** every pellet draws a glowing streak so she sees how far
+  the shot reaches. `SpawnTracer` (called by `FirePellet` once the target
+  is known) spawns `BP_PelletTracer` (`/Game/Combat/FX`) at the muzzle
+  and sets its `EndPoint` where the pellet stops: the wall, the target's
+  capsule, or `MaxRange`, at muzzle height. On `Tick` the tracer moves a
+  `StreakLength` (2.2 m) streak from the muzzle to the end point at
+  `Speed` (45 m/s); its head stops at the end point and the tail catches
+  up, then it is destroyed (about 0.2 s for a full 7.2 m shot). The
+  streak is the engine cylinder, `Thickness` (4 cm) wide, with
+  `M_PelletTracer` (unlit, additive, warm emissive), no collision and no
+  shadow. Impact marks on walls and objects are #32.
 * **Reload:** only on the Reload button (R / gamepad X), never
   automatic, and only while she stands still (no move input, speed below
   20 cm/s), isn't pecking, fluttering or carrying, and the pump is done.
