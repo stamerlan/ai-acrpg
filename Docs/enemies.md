@@ -12,6 +12,8 @@ they work and how to set them up. Design and numbers are in the
 |---|---|---|
 | Base class | `BP_EnemyBase` (BP, Character) | Health, states, sight, patrol, attack, shout, death |
 | Shawarman | `BP_Shawarman` (child of the base) | 30 HP, 2.4 m/s, knife chop |
+| Skewerman | `BP_Skewerman` (child of the Shawarman) | 20 HP, skewer throw |
+| Grill Sergeant | `BP_GrillSergeant` (child of the Shawarman) | 80 HP, 1.8 m/s, grill slam |
 | First fight | `BP_FirstFight` (BP, level actor) | Scripted 0A encounter |
 
 Assets are in `/Game/Enemies`. Everything is Blueprint, with a simple
@@ -155,6 +157,35 @@ size of 95 to 105%.
 
 Enemy body parts must not affect navigation: with the dynamic nav mesh a
 colliding part carves a hole around the enemy and it can't find a path.
+
+## Skewerman and Grill Sergeant
+
+Both are children of `BP_Shawarman`, so they keep his props code
+(`SetupBody`: knife slot, flashlight, steel, kebab, chair, the flatbread on
+the face after death) and override only defaults and a few components.
+Their own behaviour (the thrown skewer, the lid shield, the hot coals) is
+#9; for now they use the base melee attack with their own montages.
+
+| | Skewerman | Grill Sergeant |
+|---|---|---|
+| Mesh / AnimBP | `SK_Skewerman` / `ABP_Cook` | `SK_GrillSergeant` / `ABP_GrillSergeant` |
+| Skin | `MI_Skewerman` | `MI_GrillSergeant` |
+| Health | 20 | 80 |
+| `WalkSpeed` | 240 | 180 |
+| Attack | `AM_Skewerman_Throw`, released at `WindupTime` 1.6 s | `AM_GrillSergeant_Slam`, lands at 1.8 s |
+| Reach / damage | 360 cm / 10 (hits at release, no projectile yet) | 60 cm / 25 |
+| Death | `AM_Skewerman_Death` | `AM_Shawarman_Death` |
+| `KillerTag` | `Skewerman` | `GrillSergeant` |
+| Props | `SM_Skewer` in the knife slot, `Bucket` on his back | `Grill` in the right hand, `Lid` in the left, no knife |
+
+The extra props are components under `Mesh`; `AttachProps`, called from
+the construction script after the parent's, attaches them to their bones.
+The grill and lid sit at the hand bone with no offset (their origin is the
+handle). The bucket is placed in mesh space on his back in the reference
+pose (0, -11, 100 cm) and then attached to `Spine01` keeping that offset,
+so it follows his back. `CapProp` has no mesh on both (no paper cap).
+`M_Prop_DarkSteel` (the lid dome and the grill bowl) is two-sided, so the
+lid does not show as an empty ring from behind.
 
 ## Placing an enemy
 

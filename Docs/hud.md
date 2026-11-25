@@ -190,8 +190,10 @@ game and the UI. Closing restores the previous cursor state.
   value, refreshed every frame. `<` and `>` step quests and flags with
   values through None and their values; bool flags toggle; stamps can
   only be added (the story system has no remove); items add or take one.
-* **Spawn Shawarman**: spawns `BP_Shawarman` 3.5 m in front of the
-  chicken, facing her. It is not dormant, so it attacks.
+* **Spawn Shawarman**, **Spawn Skewerman**, **Spawn Grill Sergeant** (their
+  own row): spawn `BP_Shawarman`, `BP_Skewerman` or `BP_GrillSergeant`
+  3.5 m in front of the chicken, facing her. They are not dormant, so they
+  attack; turn on God mode to watch their animations.
 * **+1 corn**, **Full heal**, **God mode** (keeps `bInvulnerable` on the
   chicken while on), **Kill enemies** (10000 damage to every
   `BP_EnemyBase`), **Reset story** (`Story.Reset`).

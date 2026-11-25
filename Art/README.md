@@ -314,9 +314,8 @@ last pose.
 | `SM_GrillLid` | 56 cm | `LeftHand` (handle), dome forward |
 | `SM_CharcoalGrill` | 48 cm | Side handle at the origin; `M_Coals` is emissive |
 
-The Skewerman and Grill Sergeant have no Blueprints yet (#9). Their props
-attach the same way as the Shawarman's (see `SetupBody` in
-`BP_Shawarman` and [enemies.md](../Docs/enemies.md#body-and-animation)).
+`BP_Skewerman` and `BP_GrillSergeant` wear these props (see
+[enemies.md](../Docs/enemies.md#skewerman-and-grill-sergeant)).
 
 ## Props (`Props/`)
 
