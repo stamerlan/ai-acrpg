@@ -36,7 +36,7 @@ namespace
 		return Radius;
 	}
 
-	FAutoConsoleCommandWithWorldArgsAndOutputDevice InfoCommand(
+	FAutoConsoleCommandWithWorldArgsAndOutputDevice SneakInfoCommand(
 		TEXT("Sneak.Info"),
 		TEXT("Shows the lit zones, light cones and darkness"),
 		FConsoleCommandWithWorldArgsAndOutputDeviceDelegate::CreateLambda(

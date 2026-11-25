@@ -99,7 +99,10 @@ void AChickenPlayerController::PlayerTick(float DeltaTime)
 		return;
 	}
 
-	if (InputContext == EAcrpgInputContext::Gameplay)
+	// No aim while her facing is locked (backpack) or a scene has taken
+	// her input (the trunk): she must not turn to the cursor
+	if (InputContext == EAcrpgInputContext::Gameplay &&
+		!Chicken->bFacingLocked && Chicken->InputEnabled())
 	{
 		UpdateAim(Chicken);
 	}
