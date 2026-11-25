@@ -49,11 +49,24 @@ functions: `Heal`, `RestoreHealth` (sets HP, used by reloads).
 ## Peck and flutter
 
 `BPC_ChickenCombat` holds the numbers as defaults (GDD values, 3 m/s
-scale). `BP_Chicken` binds the inputs: Peck calls `Peck`, Fire calls
-`Fire` (throws while carrying, pecks while `HasShotgun` is off,
-otherwise shoots, see [Shotgun](#shotgun)), Reload calls
-`BPC_Shotgun.Reload`, Flutter calls `Flutter`. While she carries something
-(`Carrying`) the peck does nothing.
+scale). `BP_Chicken` binds the inputs: Peck, Fire and Flutter call
+`PressInput` with "Peck", "Fire" or "Flutter", which runs `Peck`, `Fire`
+(throws while carrying, pecks while `HasShotgun` is off, otherwise
+shoots, see [Shotgun](#shotgun)) or `Flutter`. Reload calls
+`BPC_Shotgun.Reload`. While she carries something (`Carrying`) the peck
+does nothing.
+
+* **Input buffer:** a press that can't act yet (the pump, a peck or
+  flutter in progress, a cooldown) is kept for `InputBufferTime` (0.3 s)
+  and `TryBufferedInput` retries it every tick, so it goes off the frame
+  it can. It is done once she pecks, flutters, shoots or carries, and is
+  dropped when it runs out or the input context leaves Gameplay. One slot:
+  a newer press replaces it. A press more than 0.3 s before it could act
+  is lost, so mashing doesn't queue shots.
+* **Double clicks:** Windows sends a second click within 500 ms as a
+  double click, and Enhanced Input drops one whose press and release fall
+  in the same frame. `AChickenPlayerController::InputKey` passes double
+  clicks on as plain presses.
 
 * **Peck** is a jump at the enemy and back. It picks the nearest living,
   visible pawn with `BPC_Health` whose capsule is at most `PeckReach`
@@ -171,7 +184,8 @@ numbers are defaults on the component.
   gun with her right wing as before.
 * **Fire:** `BPC_ChickenCombat.Fire` calls `BPC_Shotgun.Fire` once she has
   the gun. With an empty tube Fire pecks, so running dry is never a
-  dead end. Otherwise one shot per `ShotInterval` (0.5 s, the pump): she
+  dead end. Otherwise one shot per `ShotInterval` (0.5 s, the pump; a
+  click in its last 0.3 s fires when it ends, see the input buffer): she
   turns to the aim point, `A_Chicken_ShotgunFire` plays on `UpperBody`
   at `FireAnimRate` (1) (chest and head kick), the muzzle flashes
   (`FlashIntensity` 3200), `NS_ShotgunMuzzle` (`/Game/Combat/FX`: 14

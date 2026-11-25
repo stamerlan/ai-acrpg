@@ -128,6 +128,16 @@ bool AChickenPlayerController::InputKey(const FInputKeyEventArgs& Params)
 		SetLastInputDevice(EAcrpgInputDevice::KeyboardMouse);
 	}
 
+	// Windows sends a second click within its double-click time (500 ms)
+	// as a double click. Enhanced Input loses one whose press and release
+	// land in the same frame (only plain presses get the sub-tick tap
+	// fix), so the game takes every click as a plain press.
+	if (Params.Event == IE_DoubleClick)
+	{
+		FInputKeyEventArgs Press = Params;
+		Press.Event = IE_Pressed;
+		return Super::InputKey(Press);
+	}
 	return Super::InputKey(Params);
 }
 
