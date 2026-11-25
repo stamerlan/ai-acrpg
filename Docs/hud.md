@@ -190,9 +190,10 @@ game and the UI. Closing restores the previous cursor state.
   value, refreshed every frame. `<` and `>` step quests and flags with
   values through None and their values; bool flags toggle; stamps can
   only be added (the story system has no remove); items add or take one.
-* **Spawn Shawarman**, **Spawn Skewerman**, **Spawn Grill Sergeant** (their
-  own row): spawn `BP_Shawarman`, `BP_Skewerman` or `BP_GrillSergeant`
-  3.5 m in front of the chicken, facing her. They are not dormant, so they
+* **Spawn Shawarman**, **Spawn Skewerman**, **Spawn Grill Sergeant**,
+  **Spawn Mr. Kebabski** (their own row): spawn `BP_Shawarman`,
+  `BP_Skewerman` or `BP_GrillSergeant` 3.5 m (the boss 6 m) in front of the
+  chicken, facing her. The boss waits until he is hurt. They are not dormant, so they
   attack; turn on God mode to watch their animations.
 * **+1 corn**, **Full heal**, **God mode** (keeps `bInvulnerable` on the
   chicken while on), **Kill enemies** (10000 damage to every

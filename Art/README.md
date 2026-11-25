@@ -389,6 +389,8 @@ mips).
 `SW_KebabJingle.wav` (4.2 s, 22.05 kHz mono) is the All-Seeing Doner's
 kebab stand jingle, a chiptune written by `Scripts/make_jingle.js`
 (`node Art/Audio/Scripts/make_jingle.js`). UE: `/Game/Audio/SW_KebabJingle`.
+`SW_CarAlarm.wav` (2.5 s two-tone siren, `Scripts/make_car_alarm.js`) plays
+when Mr. Kebabski charges into a car.
 
 ## Environment (`Environment/`)
 

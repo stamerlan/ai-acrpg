@@ -13,7 +13,10 @@ they work and how to set them up. Design and numbers are in the
 | Base class | `BP_EnemyBase` (BP, Character) | Health, states, sight, patrol, attack, shout, death |
 | Shawarman | `BP_Shawarman` (child of the base) | 30 HP, 2.4 m/s, knife chop |
 | Skewerman | `BP_Skewerman` (child of the Shawarman) | 20 HP, skewer throw |
-| Grill Sergeant | `BP_GrillSergeant` (child of the Shawarman) | 80 HP, 1.8 m/s, grill slam |
+| Grill Sergeant | `BP_GrillSergeant` (child of the Shawarman) | 80 HP, 1.8 m/s, lid shield, grill slam, hot coals |
+| Mr. Kebabski | `BP_MrKebabski` (child of the Shawarman) | 400 HP boss: Spit Spin, Spit Charge, Order for Table One |
+| Projectiles, hazards | `BP_SkewerProjectile`, `BP_HotCoals` | The thrown skewer, the coals after a slam |
+| Night fight | `BP_NightShiftFight` (BP, level actor) | 0B waves, crate refill, boss intro |
 | First fight | `BP_FirstFight` (BP, level actor) | Scripted 0A encounter |
 
 Assets are in `/Game/Enemies`. Everything is Blueprint, with a simple
@@ -123,7 +126,7 @@ graybox eye (`P6`, `P7`) is hidden in game.
   her until she is out of the beam for `ReleaseTime` (3 s), then sweeps
   again from there.
 
-### 0B night shift
+### 0B night shift (sneak part)
 
 On `DL_Night`, folder `Night/Enemies`, at the Shawarman markers (the
 markers, patrol points and lit discs are hidden in game, as are the text
@@ -158,6 +161,33 @@ her invulnerable, so the hit does nothing). Recovery takes 0.5 s, then
 `AttackCooldown` (1.2 s). The damage goes through
 `BPC_Health.ApplyDamage(AttackDamage, KillerTag, enemy)`, with
 `KillerTag` `Shawarman` for the death screen.
+
+Variants without new code (category Attack on `BP_EnemyBase`; every
+default is 0, which keeps the Shawarman's knife chop):
+
+* `AttackRate`: play rate of `AttackMontage` (0 means 1), so a long clip
+  lands on a short `WindupTime`.
+* `AttackRadius` and `AttackCenterOffset`: the strike hits her when she is
+  within the radius (plus 25 cm) of a point that far in front of him,
+  instead of the reach and front check. During the windup a red disc of
+  that radius (`AttackArea`) marks the spot on the ground.
+* `StrikeSpawnClass`: an actor spawned on the ground at that point when
+  the strike lands (the Grill Sergeant's coals).
+* `ProjectileClass`: the strike throws this actor from the `RightHand`
+  socket at her chest instead of hitting, and hides the held `Knife` slot
+  until `AttackEnd` (the Skewerman's skewer).
+* `KeepAway`: while she is closer than this (and he is not on a
+  container) he backs off instead of attacking.
+* `ClimbFrom`, `ClimbTop`, `ClimbMontage`: when `ClimbTop` is set, the
+  alerted enemy first walks to `ClimbFrom`, plays the climb montage and
+  after 1.2 s is set onto `ClimbTop` (`FinishClimb`); once on top he never
+  moves again, he only attacks.
+
+`BPC_Health` has two damage modifiers (category Armor, 0 = off):
+`DamageBonus` (damage x (1 + bonus), the stunned boss uses 1) and
+`FrontReduction` with `FrontArmorCos` (the share of damage stopped when
+the causer is inside the front cone, the Grill Sergeant's lid). Every
+`ApplyDamage` goes through them.
 
 With `bAnimatedBody` on (the Shawarman) the attack plays `AttackMontage`
 instead of moving the placeholder knife. The Shawarman's is
@@ -251,9 +281,31 @@ colliding part carves a hole around the enemy and it can't find a path.
 
 Both are children of `BP_Shawarman`, so they keep his props code
 (`SetupBody`: knife slot, flashlight, steel, kebab, chair, the flatbread on
-the face after death) and override only defaults and a few components.
-Their own behaviour (the thrown skewer, the lid shield, the hot coals) is
-#9; for now they use the base melee attack with their own montages.
+the face after death) and override only defaults and a few components;
+their attacks are the variants in [Attack](#attack). The child health
+templates have `Health` -1, so `BeginPlay` starts them at `MaxHealth`.
+
+* **Skewerman**: stays 3.6 to 6 m away (`KeepAway` 360, `AttackReach`
+  600) and backs off when she comes closer. The throw (`AttackRate` 1.6,
+  so the release of the 2.8 s clip is at `WindupTime` 1.0 s) launches
+  `BP_SkewerProjectile`: a 1.3x `SM_Skewer` flying straight at `Speed`
+  720 cm/s; a Visibility hit (wall, car, ground) sticks it for 1.5 s, coming
+  within 55 cm of her does `Damage` 10 (`Skewerman`) and removes it. It
+  never turns, so stepping aside dodges it. Wave 2 Skewermen climb arena
+  containers (`MK_Enemy_ClimbPoint_1` and `_3`, top 3.5 m).
+* **Grill Sergeant**: the lid stops 75 % of the damage from the front 60
+  degrees (`FrontReduction` 0.75, `FrontArmorCos` 0.5); from behind he
+  takes it all. The slam (`AttackRate` 1.8, lands at `WindupTime` 1.0 s)
+  hits a 1.2 m area 1.1 m in front of him for 25 and leaves `BP_HotCoals`:
+  a glowing `M_Coals` disc of `Radius` 1.2 m with an orange light for
+  `Lifetime` 3 s that does `Damage` 10 every `HurtEvery` 1 s to her
+  while she stands in it (killer `GrillSergeant`, the "Grilled chicken"
+  death screen).
+
+Checked in PIE: the Skewerman backed from 3.7 to 4.6 m and his skewers hit
+a standing target every 3 s for 10; the slam took 25 and the coals 10 a
+second; 10 damage to the Grill Sergeant from in front took 2.5, from
+behind 10.
 
 | | Skewerman | Grill Sergeant |
 |---|---|---|
@@ -275,6 +327,70 @@ pose (0, -11, 100 cm) and then attached to `Spine01` keeping that offset,
 so it follows his back. `CapProp` has no mesh on both (no paper cap).
 `M_Prop_DarkSteel` (the lid dome and the grill bowl) is two-sided, so the
 lid does not show as an empty ring from behind.
+
+## Mr. Kebabski
+
+`BP_MrKebabski` is a child of `BP_Shawarman` with the Grill Sergeant's
+body (placeholder until his own model), 400 HP, `KillerTag` `MrKebabski`,
+no hit flinch, and a spit in his right hand (`SpitRod`, a steel rod with a
+doner cone, attached in `AttachSpit` from the construction script). His
+`Tick` replaces the base one: when he becomes alerted (the night fight
+calls `WakeUp`) he switches to the state `Boss` ("Tonight's special
+does not leave the kitchen.") and runs his own phases (`Phase`,
+`SetPhase` keeps the timers, the telegraphs, the walk speed and the
+stun bonus in one place):
+
+| Phase | What |
+|---|---|
+| Recover | `RecoverTime` 0.8 s, then: close (`SpinRange` 1.5 m) spin, else charge unless the last attack was a charge, else chase |
+| Chase | Walks to her until she is within `SpinRange` |
+| SpinWind | `SpinWindup` 0.8 s, red disc `SpinRing` (1.8 m) on the ground, glint |
+| Spin | `SpinTime` 2 s turning at `SpinRate`; once per spin 25 if she is within `SpinRadius` 1.8 m |
+| ChargeWind | `ChargeWindup` 1 s facing her, red strip `ChargeLine` (12 m) on the ground |
+| Charge | Runs along the line at `ChargeSpeed` 9 m/s for up to `ChargeLength` 12 m; 30 if he reaches her (the charge ends there) |
+| Stunned | Hit a car (`ImpoundedCar`) or a container (`Container`): `StunTime` 2.5 s, double damage (`DamageBonus` 1), `SW_CarAlarm` at the impact, "WEE-OO! WEE-OO!" |
+
+Never two charges in a row: after a charge he chases until he can spin.
+At half health (`OrderForTableOne`, once) he shouts "ORDER FOR TABLE
+ONE!", two Shawarmen come from the first two `WaveSpawn` markers and the
+arena crates refill (a `BP_ShellPickup` with `Remember` off at every
+`Refill` marker). The charge trace is the Visibility channel, so a body
+lying in his path also ends a charge.
+
+Checked in PIE: spins hit for 25, a charge hit her for 30, a charge into an
+arena car stunned him for 2.5 s and 10 damage took 20; damage no longer
+resets his phase; the order spawned the two cooks.
+
+Shell budget: at 2.4 m and closer a shot does 48 (96 while stunned), so
+400 HP is 9 close shots or fewer. The arena gives the two crates (16),
+their refill between the waves (16), the refill at half health (16), cook
+drops and the Civic's trunk, which refills at any time.
+
+## 0B night fight
+
+`NightShiftFight` (`BP_NightShiftFight`, `DL_Night`, `Night/Story`) checks
+every 0.5 s:
+
+1. When `q_car_trouble` is `car` (the trunk was opened): every living
+   `Wave1` enemy (the six night shift) becomes alerted; if fewer than
+   `MinWave1` (3) are alive, the rest come from `GrillSpawn` (the grill
+   shack wave marker).
+2. When they are all dead: the arena crates refill (`RefillMarkers`), and
+   3 s later `Wave2` wakes up (`WakeUp`): `Shawarman_Wave2_1`/`_2` and
+   `Skewerman_Wave2_1`/`_2` at the inner gate (the Skewermen climb the
+   containers by `MK_Enemy_ClimbPoint_1`/`_3`), `GrillSergeant_Wave2`.
+   They are dormant (hidden, no collision) until then.
+3. When wave 2 is dead: a `BeforeBoss` checkpoint (phase `Night`), and 2 s
+   later `MrKebabski` (dormant at the grill shack) wakes up.
+
+`WakeUp` on `BP_EnemyBase` clears `bDormant`, shows the actor, turns
+collision on and alerts it (`BecomeAlerted`). The fight does not resume
+from the middle after a reload; a reload restarts it from wave 1 with the
+defeated enemies staying defeated.
+
+Checked in PIE: the trunk state started wave 1, killing it refilled two
+crates and woke wave 2 (a Skewerman stood on his container), killing that
+woke the boss.
 
 ## Placing an enemy
 
