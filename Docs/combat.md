@@ -239,7 +239,7 @@ numbers are defaults on the component.
   degrees), so even from the game camera the gun is clearly off target.
   The loading pose holds the gun diagonally across her front: the grip
   (18, 8, -6 cm) in front of her right side, the muzzle 60 degrees to her
-  left and 22 degrees down, the gun rolled 60 degrees so the port faces
+  left and 15 degrees down, the gun rolled 60 degrees so the port faces
   her left wing, and the stock out past her right wing. The gun pivots on
   the grip, so a muzzle that points down and back toward her puts the
   stock through her shoulder (the first pose did); keep the stock in
