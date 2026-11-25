@@ -235,11 +235,19 @@ numbers are defaults on the component.
   a flutter or picking something up stops it; loaded shells stay.
   The motion is procedural and runs once per shell: `ReloadBlend` eases
   the gun (speed `ReloadBlendSpeed` 6, about 0.25 s) into the loading
-  pose `ReloadGrip` / `ReloadRot` (grip pulled back, muzzle 45 degrees
-  down and 35 degrees to her left, gun rolled 65 degrees) and her head
-  nods down `HeadNod` (20 degrees), so even from the game camera the gun
-  is clearly off target. Each 0.5 s shell cycle: the left wing tip goes
-  from the loading port down to the shell pouch at her hip (`Pouch`,
+  pose `ReloadGrip` / `ReloadRot` and her head nods down `HeadNod` (20
+  degrees), so even from the game camera the gun is clearly off target.
+  The loading pose holds the gun diagonally across her front: the grip
+  (18, 8, -6 cm) in front of her right side, the muzzle 60 degrees to her
+  left and 22 degrees down, the gun rolled 60 degrees so the port faces
+  her left wing, and the stock out past her right wing. The gun pivots on
+  the grip, so a muzzle that points down and back toward her puts the
+  stock through her shoulder (the first pose did); keep the stock in
+  front of or beside her when tuning. The values are set on `BP_Chicken`'s
+  `Shotgun` component as well as on the component defaults, and they are
+  instance editable for tuning in PIE. Each 0.5 s shell cycle: the left
+  wing tip goes from the loading port down to the shell pouch at her hip
+  (`Pouch`,
   first 30 %), comes back up to the port (`PortLocal`) holding a small
   red shell (`ShellInHand`, an `SM_ShellCasing` at 1.5x on the
   `LeftHand` bone, to 75 %), and pushes it in (`PortInLocal`, the gun
