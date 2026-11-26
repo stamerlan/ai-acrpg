@@ -57,12 +57,15 @@ shoots, see [Shotgun](#shotgun)) or `Flutter`. Reload calls
 does nothing.
 
 * **Input buffer:** a press that can't act yet (the pump, a peck or
-  flutter in progress, a cooldown) is kept for `InputBufferTime` (0.3 s)
-  and `TryBufferedInput` retries it every tick, so it goes off the frame
-  it can. It is done once she pecks, flutters, shoots or carries, and is
-  dropped when it runs out or the input context leaves Gameplay. One slot:
-  a newer press replaces it. A press more than 0.3 s before it could act
-  is lost, so mashing doesn't queue shots.
+  flutter in progress, a cooldown) is kept and `TryBufferedInput`
+  retries it every tick, so it goes off the frame it can. `PressInput`
+  keeps it until `InputBufferTime` (0.3 s) after the peck
+  (`NextPeckTime`), flutter (`FlutterEndTime`) or, for Fire, the pump
+  (`BPC_Shotgun.NextShotTime`) in progress ends, so a click early in a
+  0.67 s peck or the 0.5 s pump is not lost. It is done once she pecks,
+  flutters, shoots or carries, and is dropped when it runs out or the
+  input context leaves Gameplay. One slot: a newer press replaces it,
+  so mashing queues at most one more action.
 * **Double clicks:** Windows sends a second click within 500 ms as a
   double click, and Enhanced Input drops one whose press and release fall
   in the same frame. `AChickenPlayerController::InputKey` passes double
@@ -186,7 +189,7 @@ numbers are defaults on the component.
 * **Fire:** `BPC_ChickenCombat.Fire` calls `BPC_Shotgun.Fire` once she has
   the gun. With an empty tube Fire pecks, so running dry is never a
   dead end. Otherwise one shot per `ShotInterval` (0.5 s, the pump; a
-  click in its last 0.3 s fires when it ends, see the input buffer): she
+  click during it fires when it ends, see the input buffer): she
   turns to the aim point, `A_Chicken_ShotgunFire` plays on `UpperBody`
   at `FireAnimRate` (1) (chest and head kick), the muzzle flashes
   (`FlashIntensity` 3200), `NS_ShotgunMuzzle` (`/Game/Combat/FX`: 14
