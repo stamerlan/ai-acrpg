@@ -73,8 +73,12 @@ def block(label, folder, x, y, hx, hy, h):
     return a
 
 
-def over(actors, label, model, heading, size, names):
-    """A model over a graybox actor's box, centered on the named parts."""
+def over(actors, label, model, heading, size, names, sign, sign_size):
+    """A model over a graybox actor's box, centered on the named parts.
+
+    The graybox's sign text lies on a black plate on the model's roof,
+    where the camera reads it (like the stall names on their tarps).
+    """
     a = actors[label]
     lo = [1e9, 1e9]
     hi = [-1e9, -1e9]
@@ -87,6 +91,20 @@ def over(actors, label, model, heading, size, names):
             heading - 90, size, "ArtBld_" + label,
             "Art/Shared/BorderPost")
     L.hide_graybox(a)
+    top = L.mesh(B + model).get_bounding_box().max.z * size
+    mid = ((lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2)
+    L.place("/Engine/BasicShapes/Cube", (mid[0], mid[1], top + 1), 0,
+            (sign_size * 1.6 / 100, (hi[1] - lo[1]) * 0.9 / 100, 0.02),
+            "ArtBld_Sign_" + label, "Art/Shared/BorderPost", False,
+            "/Game/Materials/Graybox/MI_GB_Black")
+    for t in a.get_components_by_class(unreal.TextRenderComponent):
+        t.modify()
+        t.set_text(unreal.Text(sign))
+        t.set_world_size(sign_size)
+        t.set_world_location_and_rotation(
+            unreal.Vector(mid[0], mid[1], top + 3),
+            unreal.Rotator(roll=0, pitch=90, yaw=0), False, False)
+        t.set_visibility(True)
     res["n"] += 1
 
 
@@ -104,8 +122,10 @@ try:
         res["n"] += 1
     # Border post: the booth's door and the office door face the road
     # (north), the booth's window faces the trucks coming from the east
-    over(actors, "BorderBooth", "Booth", 0, 0.84, ("P1",))
-    over(actors, "CustomsShed", "VetOffice", 0, 0.97, ("P1",))
+    over(actors, "BorderBooth", "Booth", 0, 0.84, ("P1",),
+         "STRAZ GRANICZNA", 22)
+    over(actors, "CustomsShed", "VetOffice", 0, 0.97, ("P1",),
+         "ODPRAWA WETERYNARYJNA", 24)
     # The officer checks papers at the head of the queue, on the verge
     # north-west of the first truck, facing it
     ox, oy = 3540, -2050

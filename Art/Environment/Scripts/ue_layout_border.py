@@ -11,6 +11,8 @@ run again. What it does:
   queue is longer and is the north edge of the map: an invisible wall
   runs along its south side.
 * The edge triggers get their new lines.
+* The kantor clerk and the cigarette seller move to the shop buildings;
+  their old stalls sell honey and socks.
 * Night shift fixes: the graybox chairs of the grill shack and the office
   stool blocked the cooks placed on them; they are hidden, no collision.
 """
@@ -220,8 +222,45 @@ def night_shift(A):
         a.set_actor_location(unreal.Vector(-222, l.y, l.z), False, False)
 
 
+def shops(A):
+    # The kantor and the cigarettes are shop buildings now
+    # (ue_dress_border.py): their stalls on the main street sell
+    # something else, and the clerk and the seller are talked to through
+    # the kantor's window and the shop's door. Kotlet sits in his booth.
+    # Nobody is modelled inside, so the markers are hidden.
+    for old, new, text in (("Stall_Kantor", "Stall_Honey", "MIOD"),
+                           ("Stall_Cigarettes", "Stall_Socks", "SKARPETY")):
+        a = A.get(old) or A[new]
+        a.modify()
+        a.set_actor_label(new)
+        for t in a.get_components_by_class(unreal.TextRenderComponent):
+            t.modify()
+            t.set_text(unreal.Text(text))
+        glass = comp(a, "Glass7")
+        if glass and new == "Stall_Honey":
+            glass.modify()
+            glass.set_collision_profile_name("NoCollision")
+            glass.set_visibility(False)
+            glass.set_editor_property("hidden_in_game", True)
+    for label, spot in (("MK_NPC_KantorClerk", (2905, 640)),
+                        ("MK_NPC_CigaretteSeller", (1512, 2400)),
+                        ("MK_NPC_Kotlet", None)):
+        a = A[label]
+        a.modify()
+        if spot:
+            a.set_actor_location_and_rotation(
+                unreal.Vector(spot[0], spot[1], a.get_actor_location().z),
+                unreal.Rotator(), False, False)
+        for c in (a.get_components_by_class(unreal.StaticMeshComponent) +
+                  a.get_components_by_class(unreal.TextRenderComponent)):
+            c.modify()
+            c.set_collision_profile_name("NoCollision")
+            c.set_visibility(False)
+            c.set_editor_property("hidden_in_game", True)
+
+
 try:
-    for step in (bazaar, road, edges, night_shift):
+    for step in (bazaar, road, edges, night_shift, shops):
         step(actors())
         res["log"].append(step.__name__)
     res["ok"] = True

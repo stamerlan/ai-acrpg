@@ -28,7 +28,8 @@ GOODS = {
                        (F + "carrot", 0.6)],
     "Stall_Kebab": [(F + "meat_cooked", 0.8), (F + "meat_sausage", 1.2),
                     (F + "bread", 0.8), (F + "bottle_oil", 0.5)],
-    "Stall_Cigarettes": [(U + "cardboardBoxClosed", 1.2), (F + "can", 0.5)],
+    "Stall_Socks": [(U + "cardboardBoxOpen", 1.3),
+                    (U + "cardboardBoxClosed", 1.2)],
     "Stall_CarParts": [(V + "box_open", 1.6), (V + "bucket", 1.6),
                        (V + "barrel", 1.4)],
     "Stall_Household": [(F + "bottle_oil", 0.5), (F + "can", 0.5),
@@ -43,7 +44,7 @@ GOODS = {
     "Stall_Tools": [(V + "box_open", 1.5), (V + "bucket", 1.5)],
     "Stall_Flowers": [(N + "flower_redA", 2.0), (N + "flower_yellowA", 2.0),
                       (N + "flower_purpleA", 2.0)],
-    "Stall_Kantor": [],
+    "Stall_Honey": [(F + "can", 0.5), (F + "bottle_oil", 0.5)],
     "Stall_Gnomes": [],
 }
 res = {"stalls": 0, "goods": 0}

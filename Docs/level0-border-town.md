@@ -181,7 +181,7 @@ moves south through the bazaar to the impound lot fence.
  +--------+------------+-------+----------+----------------+
                                | 3. GATE  |
          +---------------------+----------+-------------+
-         | Cigarettes | Corn lady | Kantor | Zbyszek     |
+         | Socks      | Corn lady | Honey  | Zbyszek     |
          |        4. MAIN STREET (stalls on both sides) |
          | Kebab stand (radio)    | Gnome seller        |
          +------------------------+---------------------+
@@ -201,9 +201,12 @@ Zones:
    north boundary of the level; the road itself runs on east, open.
 3. **Bazaar gate.** An arch: "BAZAR - WITAMY! WILLKOMMEN! WELCOME!" The
    town sign next to it: "KURNIKOWO".
-4. **Main street.** A street of stalls: cigarettes, grilled corn, the
-   kantor (currency exchange), Zbyszek's stamp stall, the kebab stand
-   with a radio, the garden gnome seller. Background stalls (car parts,
+4. **Main street.** A street of stalls: grilled corn, Zbyszek's stamp
+   stall, the kebab stand with a radio, the garden gnome seller. The
+   kantor (currency exchange) and the cigarettes are shop buildings:
+   the KANTOR on the road verge east of the gate, the ZIGARETTEN shop
+   in the east yard. Their former stalls sell honey (MIOD) and socks
+   (SKARPETY). Background stalls (car parts,
    tracksuits, plastic flowers) are props only. Each stall has its own
    tarp awning over the counter; the walkway in the middle is open to
    the sky, with string lights and banners across it. When a stall's
@@ -393,7 +396,14 @@ Sells grilled corn on the cob. Gives the chicken a free cob and the
 healing tutorial: "Eat, bird. You're too thin for the kebab anyway."
 Sets the tone: every seller sizes her up.
 
-#### Joke stalls (dialog only)
+#### Joke shops (dialog only)
+
+Nobody is modelled inside a building. She talks through the kantor's
+barred window, at the cigarette shop's door and at the window of
+Kotlet's booth: the talk point is half a meter in front of the wall,
+the NPC is a voice and a portrait in the dialog. The markers
+`MK_NPC_KantorClerk`, `MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet`
+are hidden.
 
 * **Cigarette seller:** "Cheap! Ten euro a carton!" She: "Smoking
   kills." He: "So does the kebab stand. Pick your death."
@@ -443,8 +453,9 @@ straight to the inventory).
 
 * The "WELCOME" arch, which she reads as personal.
 * The town sign "KURNIKOWO".
-* Stall signs in Polish: PAPIEROSY, KUKURYDZA, KANTOR, PIECZATKI,
-  KRASNALE.
+* Stall signs in Polish: KUKURYDZA, PIECZATKI, KRASNALE, MIOD,
+  SKARPETY. Shop signs for the German customers: ZIGARETTEN, KANTOR,
+  FRISEUR.
 * The All-Seeing Doner: the kebab stand's giant sign on a tall black
   tower over the lot fence. By day it is unlit, just a cartoon eye on a
   doner with the slogan "WE SEE YOU HUNGRY". She: "A big friendly eye.

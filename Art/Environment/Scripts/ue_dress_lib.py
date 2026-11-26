@@ -12,7 +12,7 @@ _meshes = {}
 
 
 def mesh(path):
-    if not path.startswith("/Game"):
+    if not path.startswith("/"):
         path = K + path
     if path not in _meshes:
         sm = eal.load_asset(path)
