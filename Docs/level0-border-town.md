@@ -131,11 +131,16 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   officer with a clipboard (`ArtBld_Officer`) checks papers on the
   verge by the first cab. He is a prop with a blocking box.
 * The bazaar is a rectangle as wide as the lot (Y from -2700 to 2700).
-  The strips beside the stall block are yards with buildings (blocking
-  boxes `Yard_*` in `Shared/Bazaar/Yards`): toilet, two sheet metal
-  garages and a kiosk in the west yard, which opens onto the gnome
-  field; an office cabin, a bar shack with parasol tables and a kiosk in
-  the east yard.
+  The strips beside the stall block are yards with shops (blocking
+  boxes `Yard_*` in `Shared/Bazaar/Yards`): a hairdresser (FRISEUR), a
+  WC container and a bar with parasol tables in the west yard, which
+  opens onto the gnome field; a Sklep 24 and a ZIGARETTEN shop in the
+  east yard. A KANTOR and a row of four market units under a canopy
+  stand on the south verge of the road east of the gate, facing the
+  road. The shops look like today's bazaars on the German border
+  (Slubice, Osinow Dolny, Leknica): new, clean, plaster or panel walls,
+  red metal tile roofs, huge signs. Nothing here is old or abandoned.
+  Shops that are to be read face north, toward the camera.
 * Art: Kenney models and Poly Haven ground over the hidden graybox (see
   [graybox.md](graybox.md#art-over-the-graybox)). The sun is in the
   north-west so the faces the camera sees are lit. Tall trees stay at

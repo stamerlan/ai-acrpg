@@ -27,13 +27,15 @@ OUT = os.path.join(ART, "Buildings")
 # "z" is the height, "xy" the longer side of the footprint
 MODELS = {
     "officer": ("Officer", 1.78, "z", 0),
-    "booth": ("Booth", 2.8, "z", 1),
+    "booth": ("Booth", 2.6, "z", 0),
     "vetoffice": ("VetOffice", 4.0, "xy", 0),
-    "cabin": ("Cabin", 5.6, "xy", 0),
-    "bar": ("Bar", 4.8, "xy", 0),
-    "garage": ("Garage", 4.6, "xy", 1),
-    "toilet": ("Toilet", 3.0, "xy", 0),
-    "kiosk": ("Kiosk", 2.5, "xy", 0),
+    "zigaretten": ("Zigaretten", 6.0, "xy", 0),
+    "kantor": ("Kantor", 4.4, "xy", 0),
+    "friseur": ("Friseur", 5.2, "xy", 0),
+    "sklep": ("Sklep", 6.0, "xy", 0),
+    "bar": ("Bar", 5.0, "xy", 0),
+    "pavilion": ("Pavilion", 10.0, "xy", 0),
+    "toilet": ("Toilet", 3.2, "xy", 0),
 }
 
 

@@ -1,12 +1,17 @@
-"""Meshy buildings: the yards beside the stalls, the border post, the
+"""Meshy buildings: the shops of the bazaar, the border post, the
 officer at the head of the truck queue.
 
 Run in the editor: py "<this file>" (after ue_layout_border.py and
-ue_buildings_import.py). The yard buildings have no graybox of their
-own: this script makes a hidden blocking box per building (Yard_<Name>,
+ue_buildings_import.py). The shops have no graybox of their own: this
+script makes a hidden blocking box per building (Yard_<Name>,
 Shared/Bazaar/Yards) from the model's bounds and puts the model
 (ArtBld_<Name>) on it. The guard booth and the veterinary office go over
-their graybox actors. The models' fronts are their local +Y.
+their graybox actors. The models' fronts are their local +Y. The camera
+looks south, so a shop whose front is to be read faces north (0).
+
+The look follows photos of today's bazaars on the German border
+(Slubice, Osinow Dolny, Leknica): clean plastered or panel pavilions,
+red metal tile roofs, huge ZIGARETTEN / KANTOR / FRISEUR signs.
 """
 import importlib
 import json
@@ -27,15 +32,19 @@ CM = "city_kit_commercial/SM_"
 U = "furniture_kit/SM_"
 SIZE = 0.9  # people here are about 0.9 of real height
 # name: (model, x, y, heading of the front in degrees (0 is north, +X;
-# 90 is east, +Y))
+# 90 is east, +Y), size)
 YARDS = {
-    "Toilet": ("Toilet", 2380, -2520, 90),
-    "Garage_1": ("Garage", 1960, -2440, 90),
-    "Garage_2": ("Garage", 1590, -2440, 90),
-    "Kiosk_W": ("Kiosk", 1210, -2420, 90),
-    "Cabin": ("Cabin", 2250, 2510, -90),
-    "Bar": ("Bar", 1570, 2470, -90),
-    "Kiosk_E": ("Kiosk", 1200, 2190, 0),
+    # East yard. The red shop stands south of the pale one: its bounce
+    # light turned the wall behind it pink, and that wall faced the camera
+    "Sklep": ("Sklep", 2090, 2400, 0, SIZE),
+    "Zigaretten": ("Zigaretten", 1345, 2400, 0, SIZE),
+    # West yard
+    "Friseur": ("Friseur", 2090, -2420, 0, SIZE),
+    "Toilet": ("Toilet", 1730, -2540, 90, SIZE),
+    "Bar": ("Bar", 1340, -2470, 90, SIZE),
+    # South verge of the road, east of the gate, facing the road
+    "Kantor": ("Kantor", 2775, 700, 0, 0.85),
+    "Pavilion": ("Pavilion", 2775, 1400, 0, 0.85),
 }
 res = {"n": 0}
 
@@ -87,15 +96,15 @@ try:
             L.eas.destroy_actor(a)
     rng = random.Random(7)
     actors = {a.get_actor_label(): a for a in L.eas.get_all_level_actors()}
-    for name, (model, x, y, heading) in YARDS.items():
-        hx, hy, h = half_sizes(B + model, heading, SIZE)
+    for name, (model, x, y, heading, size) in YARDS.items():
+        hx, hy, h = half_sizes(B + model, heading, size)
         block("Yard_" + name, "Shared/Bazaar/Yards", x, y, hx, hy, h)
-        L.place(B + model, (x, y, 0), heading - 90, SIZE, "ArtBld_" + name,
+        L.place(B + model, (x, y, 0), heading - 90, size, "ArtBld_" + name,
                 "Art/Shared/Bazaar/Yards")
         res["n"] += 1
-    # Border post: the booth's service window and the office door face
-    # the road (north)
-    over(actors, "BorderBooth", "Booth", 0, 0.85, ("P1",))
+    # Border post: the booth's door and the office door face the road
+    # (north), the booth's window faces the trucks coming from the east
+    over(actors, "BorderBooth", "Booth", 0, 0.84, ("P1",))
     over(actors, "CustomsShed", "VetOffice", 0, 0.97, ("P1",))
     # The officer checks papers at the head of the queue, on the verge
     # north-west of the first truck, facing it
@@ -109,20 +118,14 @@ try:
                 path.split("SM_")[1], "Art/Shared/Bazaar/Yards", occ)
         res["n"] += 1
 
-    # West yard: storage behind the garages, a van being unloaded
-    put("/Game/Environment/Meshy/SM_Van", 2130, -2080, 200, 0.62)
-    for (x, y) in ((1790, -2180), (1420, -2190), (1380, -2250),
-                   (2230, -2600), (1250, -2620)):
-        put(V + rng.choice(["box_large", "barrel", "box"]), x, y,
-            rng.uniform(0, 360), 2.5)
-    # East yard: the bar's tables under parasols
-    for (x, y) in ((1470, 2090), (1760, 2120)):
+    # West yard: the bar's tables under parasols, its stock behind it
+    for (x, y) in ((1230, -2040), (1500, -2010)):
         put(CM + "detail_parasol_a", x, y, rng.uniform(0, 360), 5.2)
         for k in range(3):
             ang = k * 2.1 + rng.uniform(0, 0.5)
             put(U + "chair", x + math.cos(ang) * 110,
                 y + math.sin(ang) * 110, math.degrees(ang) + 90, 1.9, False)
-    for (x, y) in ((1870, 2600), (1930, 2560), (2000, 2620)):
+    for (x, y) in ((1150, -2180), (1100, -2250)):
         put(V + rng.choice(["barrel", "box"]), x, y, rng.uniform(0, 360),
             2.5)
 except Exception:

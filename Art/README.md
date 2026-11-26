@@ -470,7 +470,7 @@ are Meshy models made for the trailer ([Trailer/](Trailer/README.md)).
 | `Textures/T_*_D.jpg`, `_N.jpg` | Ground: grass, asphalt, pavers, dirt, gravel, concrete (1k) | [Poly Haven](https://polyhaven.com/textures), CC0 |
 | `Meshy/` | Vehicles (Civic, sedan, SUV, van, reefer truck) and plants (pine, spruce, birch, oak, bush, fern) at real size, 5k to 20k triangles, one texture each; `Paints/` holds sedan and van repaints | `blender_meshy_to_fbx.py`, `blender_car_paints.py` |
 | `Civic/` | The Civic cut into a body and a hatch that opens, and its texture | `blender_civic.py` |
-| `Buildings/` | Guard booth, veterinary office, office cabin, bar shack, sheet metal garage, toilet, kiosk and the border officer (a static figure) at real size, 10k to 27k triangles, one 2k texture each; `Buildings/Meshy/` holds the raw GLBs | Meshy (2026-11-26: a nano-banana-2 concept image each, then image to 3D with meshy-7.1 remeshed, 36 credits a model), `blender_buildings_to_fbx.py` |
+| `Buildings/` | Guard booth, veterinary office, the shops (Zigaretten, Kantor, Friseur, Sklep 24, Bar Grill, a row of market units, a WC container; modern and clean, after photos of real border bazaars) and the border officer (a static figure) at real size, 10k to 27k triangles, one 2k texture each; `Buildings/Meshy/` holds the raw GLBs | Meshy (2026-11-26: a nano-banana-2 concept image each, then image to 3D with meshy-7.1 remeshed, 36 credits a model), `blender_buildings_to_fbx.py` |
 | `Stall/` | Market stall: pipe frame and sloped tarp with a valance, stripe texture | `blender_stall_kit.py` |
 | `Source/StallKit.blend` | Working file of the stall | |
 
@@ -508,7 +508,7 @@ Each writes `out.json` next to itself. Run order for a clean pass:
 | `ue_fit_trunk.py` | Puts each trunk actor's lid and light on its Civic |
 | `ue_dress_stalls.py` | Stall frames, tarps and counter goods |
 | `ue_dress_props.py` | Bazaar wall panels, lamps, office yard and apron props |
-| `ue_dress_border.py` | Buildings of the side yards with their blocking boxes, booth and veterinary office over the graybox, the officer, yard props |
+| `ue_dress_border.py` | Shops of the side yards and the road verge with their blocking boxes, booth and veterinary office over the graybox, the officer, yard props |
 
 `ue_dress_lib.py` holds the shared helpers. Each `ue_dress_*` script
 deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,

@@ -5,7 +5,7 @@ run again. What it does:
 
 * The bazaar becomes a rectangle: the side walls of the stall block move
   out to the lot's width (Y = +-2700), which adds a yard on each side of
-  the stalls (ue_dress_border.py puts the buildings there).
+  the stalls (ue_dress_border.py puts the shops there).
 * The road is a through road: no road block, no card game. It runs on
   east past the map edge and west over the far bank (Germany). The truck
   queue is longer and is the north edge of the map: an invisible wall
@@ -126,6 +126,13 @@ def road(A):
     box_actor("Bounds_Queue", "Shared/Bounds",
               (3322, (-1770 + EAST_END) / 2, 150),
               (4, (EAST_END + 1770) / 2, 250), visible=False)
+    # Paving under the shops on the south verge, east of the gate
+    if "Ground_Patch_RoadShops" not in A:
+        a = eas.duplicate_actor(A["Ground_Patch_GateApron"], None,
+                                unreal.Vector(0, 1175, 0))
+        a.set_actor_label("Ground_Patch_RoadShops")
+        s = a.get_actor_scale3d()
+        a.set_actor_scale3d(unreal.Vector(s.x, s.y * 1.9, s.z))
     strip = A["Road_Border"]
     strip.modify()
     y0, y1 = -3270.0, 4800.0
@@ -148,6 +155,10 @@ def edges(A):
     east = A["Edge_QueueEast"]
     east.modify()
     east.set_actor_location(unreal.Vector(2950, 2660, 100), False, False)
+    # From the bazaar's north wall to the queue: not into the east yard
+    box = comp(east, "Trigger")
+    box.modify()
+    box.set_box_extent(unreal.Vector(365, 70, 200), True)
     back = comp(east, "ReturnPoint")
     back.modify()
     back.set_world_location(unreal.Vector(3180, 2150, 60), False, False)
