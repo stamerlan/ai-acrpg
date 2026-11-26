@@ -58,6 +58,11 @@ Light, the awareness meter and noise are in
 * **Alerted**: chases (`SimpleMoveToActor` on the nav mesh) and attacks
   until it dies. It never searches or returns to patrol. Being hurt (and
   surviving) alerts it too.
+* While unaware, suspicious or alerted, `Tick` first calls
+  `EnsureController`: an enemy without an AI controller spawns its
+  default one. Re-instancing in PIE (a Blueprint compile, Live Coding)
+  leaves the pawns without one, and every move call then logged
+  "Accessed None" each frame.
 * **Shout**: becoming alerted alerts every other enemy within
   `ShoutRadius`, who shout in turn.
 * A bark from `Barks` shows over its head for 2 s when it becomes

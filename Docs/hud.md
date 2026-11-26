@@ -168,9 +168,15 @@ or reels from a hit.
   is a row (`WBP_BackpackItem`) in its section, in the definition order;
   counted items show "2 / 5" or "x 2". Items she no longer has disappear;
   the rows are rebuilt when the number of owned items changes.
-* Clicking, hovering or focusing a row (D-pad) selects it: the right side
-  shows its picture, name and description. The corn cob has an Eat
-  button there.
+* Clicking, hovering or focusing a row (arrows, W / S, D-pad) selects it:
+  the right side shows its picture, name and description. The corn cob
+  has an Eat button there.
+* Keys while it is open: the focused row would take Tab for UI
+  navigation, so `WBP_Backpack.OnPreviewKeyDown` handles Tab and I
+  itself and closes the panel (a held key's repeats are ignored). W and
+  S (`StepSelection`) focus the row above or below the selected one, in
+  panel order (Gear, Key items, Joke items); the arrows and the D-pad
+  use Slate's own navigation.
 * The mouse cursor shows and input goes to both the game and the UI
   while it is open, as with the debug panel. Closing restores the
   cursor.

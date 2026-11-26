@@ -62,7 +62,7 @@ does nothing.
   keeps it until `InputBufferTime` (0.3 s) after the peck
   (`NextPeckTime`), flutter (`FlutterEndTime`) or, for Fire, the pump
   (`BPC_Shotgun.NextShotTime`) in progress ends, so a click early in a
-  0.67 s peck or the 0.5 s pump is not lost. It is done once she pecks,
+  0.67 s peck or the 0.4 s pump is not lost. It is done once she pecks,
   flutters, shoots or carries, and is dropped when it runs out or the
   input context leaves Gameplay. One slot: a newer press replaces it,
   so mashing queues at most one more action.
@@ -188,7 +188,7 @@ numbers are defaults on the component.
   gun with her right wing as before.
 * **Fire:** `BPC_ChickenCombat.Fire` calls `BPC_Shotgun.Fire` once she has
   the gun. With an empty tube Fire pecks, so running dry is never a
-  dead end. Otherwise one shot per `ShotInterval` (0.5 s, the pump; a
+  dead end. Otherwise one shot per `ShotInterval` (0.4 s, the pump; a
   click during it fires when it ends, see the input buffer): she
   turns to the aim point, `A_Chicken_ShotgunFire` plays on `UpperBody`
   at `FireAnimRate` (1) (chest and head kick), the muzzle flashes
@@ -199,7 +199,7 @@ numbers are defaults on the component.
 * **Recoil and pump** (in `UpdateGunPose`, from `LastShotTime`): the gun
   kicks up `KickPitch` (26 degrees, 24 measured at the muzzle) and back
   `KickBack` (3 cm) within 0.04 s and is back by 0.16 s. From `PumpStart`
-  (0.14 s) for `PumpTime` (0.26 s) she racks the pump: the left wing tip
+  (0.14 s) for `PumpTime` (0.22 s) she racks the pump: the left wing tip
   slides `PumpSlide` (10 units, 7.5 cm) back along the gun and forward
   again while the gun rolls `PumpRoll` (25 degrees) and lifts 10
   degrees. At 40 % of the pump `EjectShell` throws a spent `SM_ShellCasing` out of the
@@ -207,7 +207,7 @@ numbers are defaults on the component.
   flies right and up, spins, ignores pawns and the camera, lands and lies
   on the ground for 30 s. The mesh has one simple box collision
   (`ue_props_import.py`, `BOX_COLLISION`); without it the shells fell
-  through the floor. The next shot is allowed at 0.5 s, just after the
+  through the floor. The next shot is allowed at 0.4 s, just after the
   rack, so the gun visibly isn't ready while it can't fire.
 * **Pellets:** `PelletCount` (8) rays fan out over `ConeAngle` (16
   degrees), one per equal slice with a random spot inside it. Each ray is

@@ -198,7 +198,7 @@ comes from enemies, throwables and level design.
 
 * Holds 8 shells. One shot fires 8 pellets of 6 damage in a cone. Full
   damage up to 2.4 m, half at 4.8 m, nothing past 7.2 m. A pump between
-  shots: 0.5 s per shot. The kick and the pump are visible on the gun,
+  shots: 0.4 s per shot. The kick and the pump are visible on the gun,
   so the player sees when the next shot isn't ready.
 * Reload only on a button press (R / X), never automatic. The reload
   rule from game 1 stays: she reloads only while standing still, one
