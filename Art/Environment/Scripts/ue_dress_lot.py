@@ -158,9 +158,6 @@ try:
             fit(a, V + "Truck", ("Box3", "Cab2", "Chassis1"), flip=True,
                 natural=True)
             L.hide_graybox(a)
-        elif n.startswith("Truck_Block_"):
-            fit(a, V + "Truck", (), flip=True, natural=True)
-            L.hide_graybox(a)
         elif n.startswith(("Container_", "Arena_Container_")) and any(
                 c.get_name() == "Box1" for c in
                 a.get_components_by_class(unreal.StaticMeshComponent)):

@@ -32,9 +32,12 @@ KIND = {"pine": (PINES, (0.48, 0.66), 260), "leafy": (LEAFY, (0.5, 0.7), 330),
         "rock": (ROCK, (1.0, 1.8), 150)}
 # region: (x0, x1, y0, y1, [(kind, count)])
 REGIONS = {
-    "North": (4060, 4600, -3300, 2200,
+    "North": (4060, 4600, -3300, 2800,
               [("bush", 90), ("grass", 90), ("rock", 8)]),
-    "NorthEast": (2600, 4600, 2260, 4800,
+    # Behind the truck queue, so it reads as the edge of the map
+    "QueueVerge": (3620, 4060, -1650, 2800,
+                   [("bush", 110), ("grass", 80), ("rock", 6)]),
+    "NorthEast": (2600, 4600, 2800, 4800,
                   [("leafy", 30), ("pine", 18), ("bush", 40),
                    ("grass", 60), ("rock", 6)]),
     "East": (-6800, 2560, 2780, 4800,
@@ -47,17 +50,14 @@ REGIONS = {
                 [("bush", 56), ("grass", 60), ("rock", 4)]),
     "WestBazaar": (0, 2560, -3290, -2760,
                    [("bush", 44), ("grass", 50), ("flower", 20)]),
-    "EarWest": (1100, 2540, -2660, -2100,
-                [("bush", 26), ("grass", 36), ("flower", 14)]),
-    "EarEast": (1100, 2540, 2100, 2660,
-                [("bush", 26), ("grass", 36), ("flower", 14)]),
     "RiverBank": (-6800, 4600, -3420, -3320,
                   [("bush", 70), ("grass", 80), ("rock", 16)]),
     "FarBank": (-6800, 4600, -6800, -4850,
                 [("leafy", 70), ("pine", 70), ("poplar", 14),
                  ("bush", 60)]),
 }
-NO_GO = [(3010, 3550, -4900, -3200)]  # the bridge
+# The bridge and the road beyond it on both sides, with the truck queue
+NO_GO = [(2900, 3660, -6900, -3200), (2900, 3660, 2700, 4900)]
 res = {}
 try:
     L.clear("Art_Nature_")

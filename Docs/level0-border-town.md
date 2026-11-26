@@ -107,20 +107,35 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   interactables sit 80 cm behind the front of their counters with a
   1.5 m radius: she talks to them from about 1 m in front of the
   counter, not from the middle of the street.
-* `Road_Border` is the asphalt road from the bridge to the east bound
-  (X 3310 to 3850, with a center line) and its spur to the bazaar gate.
+* `Road_Border` is the asphalt road from the bridge on east past the
+  map edge (with a center line) and its spur to the bazaar gate.
+  `Road_West` carries it over the far bank: west of the river is
+  Germany, the road east goes into Poland.
 * The way north is closed until the border check is done. Past the
   scale, `Fence_BorderExit` runs along the exit line (Y = -1770) from
   the west bound to the east bound, and `Truck_Queue_1` stands across
   it in the queue lane. `Gate_BorderExit` (`BP_StoryGate`) is a pole
   across the road; it opens when `f_border_check` is done.
 * The map edges the player can reach are dressed, not walled: the
-  bazaar fence, the truck queue with a road block of two box trucks at
-  the east end, and the bridge to the west. Where the road leaves the
+  bazaar wall, the truck queue and the open road at both ends. The queue
+  (`Truck_Queue_1` to `_12`, the last ones stand past the map edge) is
+  the north edge: `Bounds_Queue` is an invisible wall along its south
+  side from the exit fence to the east bound, so she can't get between
+  or behind the trucks. Nothing stands on the road. Where it leaves the
   map a `BP_EdgeReturn` trigger (`Shared/Bounds`) fades out, shows a
-  joke line in `WBP_Toast` (Edge_QueueEast: "The queue goes on all the
-  way to Kudakhstan...", Edge_BridgeWest: "Germany is behind you. Your
-  car is not.") and teleports her back to its `ReturnPoint` arrow.
+  line in `WBP_Toast` and teleports her back to its `ReturnPoint`
+  arrow: Edge_BridgeWest (on the bridge) "That way is Germany.
+  Co-co-cosmos is the other way.", Edge_QueueEast (Y = 2660) "Poland is
+  too far to walk on chicken feet. You need to pick up a car first."
+* The trucks wait to leave Poland: their cabs point west, and a border
+  officer with a clipboard (`ArtBld_Officer`) checks papers on the
+  verge by the first cab. He is a prop with a blocking box.
+* The bazaar is a rectangle as wide as the lot (Y from -2700 to 2700).
+  The strips beside the stall block are yards with buildings (blocking
+  boxes `Yard_*` in `Shared/Bazaar/Yards`): toilet, two sheet metal
+  garages and a kiosk in the west yard, which opens onto the gnome
+  field; an office cabin, a bar shack with parasol tables and a kiosk in
+  the east yard.
 * Art: Kenney models and Poly Haven ground over the hidden graybox (see
   [graybox.md](graybox.md#art-over-the-graybox)). The sun is in the
   north-west so the faces the camera sees are lit. Tall trees stay at
@@ -156,8 +171,8 @@ moves south through the bazaar to the impound lot fence.
  W                                                          E
  +--------+------------+----------------------------------+
  |  ODER  |  BRIDGE    | 1. BORDER POST   2. TRUCK QUEUE   |
- | (river)|============|  booth, scale,   (road east)      |
- |        |            |  barrier         [Kolya's truck]  |
+ | (river)|============|  booth, scale,   (officer, road   |
+ | Germany|            |  barrier         east to Poland)  |
  +--------+------------+-------+----------+----------------+
                                | 3. GATE  |
          +---------------------+----------+-------------+
@@ -175,9 +190,10 @@ Zones:
 1. **Border post.** Guard booth, a red-white barrier, and the cargo
    scale of the veterinary border inspection ("LIVE CHICKENS"). Start of
    the level.
-2. **Truck queue.** A long line of trucks on the road east that hasn't
-   moved for three days. Uncle Kolya's refrigerated truck is in it.
-   The road beyond the queue is blocked by trucks (level boundary).
+2. **Truck queue.** A long line of trucks in the north lane of the road
+   that hasn't moved for three days: a border officer checks papers at
+   its head. Uncle Kolya's refrigerated truck is in it. The queue is the
+   north boundary of the level; the road itself runs on east, open.
 3. **Bazaar gate.** An arch: "BAZAR - WITAMY! WILLKOMMEN! WELCOME!" The
    town sign next to it: "KURNIKOWO".
 4. **Main street.** A street of stalls: cigarettes, grilled corn, the
@@ -206,11 +222,12 @@ and the lot fence went from 15.6 to 10.4 m, the queue lost 3 trucks.
 
 | Area | Size |
 |---|---|
-| Whole level | about 55 x 49 m (W-E x N-S), plus the bridge |
+| Whole level | about 60 x 49 m (W-E x N-S), plus the bridge |
 | Bridge and border post | 18 x 12 m |
-| Truck queue road | 40 m from the exit to the blocking trucks, 5 trucks in the queue |
+| Truck queue road | 45 m from the exit to the east edge, 8 trucks along it (4 more past the edge) |
 | Bazaar gate arch | 4.8 m wide |
 | Main street | 36 m long, 3.6 m walkway, 5-6 stalls per side |
+| Side yards | 9 x 15 m each, west and east of the stalls |
 | Gnome field | 17 x 9.4 m |
 | Impound office front | 9 m of fence |
 
@@ -423,8 +440,6 @@ straight to the inventory).
 * The town sign "KURNIKOWO".
 * Stall signs in Polish: PAPIEROSY, KUKURYDZA, KANTOR, PIECZATKI,
   KRASNALE.
-* Background loop by the queue: truckers playing cards on an upturned
-  crate.
 * The All-Seeing Doner: the kebab stand's giant sign on a tall black
   tower over the lot fence. By day it is unlit, just a cartoon eye on a
   doner with the slogan "WE SEE YOU HUNGRY". She: "A big friendly eye.

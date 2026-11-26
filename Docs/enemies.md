@@ -298,7 +298,9 @@ templates have `Health` -1, so `BeginPlay` starts them at `MaxHealth`.
   720 cm/s; a Visibility hit (wall, car, ground) sticks it for 1.5 s, coming
   within 55 cm of her does `Damage` 10 (`Skewerman`) and removes it. It
   never turns, so stepping aside dodges it. Wave 2 Skewermen climb arena
-  containers (`MK_Enemy_ClimbPoint_1` and `_3`, top 3.5 m).
+  containers (`MK_Enemy_ClimbPoint_1` and `_3`, top 3.5 m). A climb
+  point and its `ClimbTop` belong over the middle part of a container,
+  not at the seam between two (he stood on the gap).
 * **Grill Sergeant**: the lid stops 75 % of the damage from the front 60
   degrees (`FrontReduction` 0.75, `FrontArmorCos` 0.5); from behind he
   takes it all. The slam (`AttackRate` 1.8, lands at `WindupTime` 1.0 s)

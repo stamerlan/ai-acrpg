@@ -470,6 +470,7 @@ are Meshy models made for the trailer ([Trailer/](Trailer/README.md)).
 | `Textures/T_*_D.jpg`, `_N.jpg` | Ground: grass, asphalt, pavers, dirt, gravel, concrete (1k) | [Poly Haven](https://polyhaven.com/textures), CC0 |
 | `Meshy/` | Vehicles (Civic, sedan, SUV, van, reefer truck) and plants (pine, spruce, birch, oak, bush, fern) at real size, 5k to 20k triangles, one texture each; `Paints/` holds sedan and van repaints | `blender_meshy_to_fbx.py`, `blender_car_paints.py` |
 | `Civic/` | The Civic cut into a body and a hatch that opens, and its texture | `blender_civic.py` |
+| `Buildings/` | Guard booth, veterinary office, office cabin, bar shack, sheet metal garage, toilet, kiosk and the border officer (a static figure) at real size, 10k to 27k triangles, one 2k texture each; `Buildings/Meshy/` holds the raw GLBs | Meshy (2026-11-26: a nano-banana-2 concept image each, then image to 3D with meshy-7.1 remeshed, 36 credits a model), `blender_buildings_to_fbx.py` |
 | `Stall/` | Market stall: pipe frame and sloped tarp with a valance, stripe texture | `blender_stall_kit.py` |
 | `Source/StallKit.blend` | Working file of the stall | |
 
@@ -498,16 +499,20 @@ Each writes `out.json` next to itself. Run order for a clean pass:
 | `blender_civic.py` | The Civic body and hatch (headless) |
 | `ue_meshy_import.py` | Imports the Meshy meshes, textures and the Civic, makes `MI_Meshy_*` and `MI_Civic` |
 | `ue_kenney_import.py` | Imports the FBX and colormaps, makes the `MI_Env_*` |
+| `blender_buildings_to_fbx.py` | Meshy buildings and the officer to FBX: squared to the axes, front to -Y (headless) |
+| `ue_buildings_import.py` | Imports them to `/Game/Environment/Buildings`, makes `MI_Bld_*` |
+| `ue_layout_border.py` | Graybox layout pass of 2026-11-26: rectangular bazaar, open road, longer truck queue as the map edge, edge lines, night shift seats and climb points |
 | `ue_dress_polish.py` | `M_Ground` parameters, ground palette, car liveries, sun direction |
 | `ue_dress_nature.py` | Trees, bushes, grass, rocks by region; far bank ground |
 | `ue_dress_lot.py` | Cars, trucks, containers fitted to their graybox boxes |
 | `ue_fit_trunk.py` | Puts each trunk actor's lid and light on its Civic |
 | `ue_dress_stalls.py` | Stall frames, tarps and counter goods |
-| `ue_dress_props.py` | Bazaar wall panels, lamps, road end, yard and apron props |
+| `ue_dress_props.py` | Bazaar wall panels, lamps, office yard and apron props |
+| `ue_dress_border.py` | Buildings of the side yards with their blocking boxes, booth and veterinary office over the graybox, the officer, yard props |
 
 `ue_dress_lib.py` holds the shared helpers. Each `ue_dress_*` script
 deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,
-`ArtStall_`, `ArtProp_`, `ArtWall_`) and places it again with a fixed
+`ArtStall_`, `ArtProp_`, `ArtWall_`, `ArtBld_` with `Yard_`) and places it again with a fixed
 random seed, so a run is repeatable.
 
 Still graybox: the booth, customs shed, office, grill shack, gate arch,

@@ -120,8 +120,10 @@ def scatter(rng, x0, x1, y0, y1, n, min_gap, taken=None):
 
 def hide_graybox(actor, keep=()):
     """Hide the visible graybox pieces; collision stays for gameplay."""
+    actor.modify()  # or the map does not save the change
     for c in actor.get_components_by_class(unreal.StaticMeshComponent):
         if c.get_name() in keep or not c.static_mesh:
             continue
+        c.modify()
         c.set_visibility(False)
         c.set_editor_property("hidden_in_game", True)

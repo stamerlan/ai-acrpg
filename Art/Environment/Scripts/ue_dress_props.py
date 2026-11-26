@@ -61,23 +61,8 @@ try:
         c.set_editor_property("hidden_in_game", True)
 
     # road: lamps on the south verge, none in front of the gate
-    for y in (-2900, -1800, -700, 1500):
+    for y in (-2900, -1800, -700, 1500, 2500):
         put(R + "light_square", 2985, y, 180, 4.2, "Art/Road")
-    # road end behind the jackknifed trucks
-    for i, y in enumerate((1780, 1900, 2020, 2140)):
-        put(R + "construction_barrier", 3180 + (i % 2) * 120, y, 90, 6,
-            "Art/Road")
-        put(R + "construction_barrier", 3440 + (i % 2) * 120, y, 90, 6,
-            "Art/Road")
-    for i in range(6):
-        put(R + "construction_cone", 3100 + i * 80,
-            1680 + rng.uniform(-20, 20),
-            0, 5.5, "Art/Road", False)
-    put(R + "road_sign_warning", 3000, 1650, 90, 4, "Art/Road")
-    # bridge entrance on the German side, barriers across the far end
-    for i in range(4):
-        put(R + "construction_barrier", 3130 + i * 120, -4150, 0, 6,
-            "Art/Road")
 
     # office yard: beer corner with parasols, crates and pallets
     for (x, y) in ((700, -300), (860, 260), (640, 640)):
