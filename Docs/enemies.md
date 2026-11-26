@@ -30,6 +30,7 @@ here is in the 3 m/s world scale (x0.6), like the rest of the project.
 | Value | Level doc (3 m/s scale) | Variable |
 |---|---|---|
 | Walk speed | 2.4 m/s | `WalkSpeed` (240) |
+| Patrol speed | 1.3 m/s | `PatrolSpeed` (130, the sergeant 120); `SetAwareState` sets `MaxWalkSpeed` to it while unaware on `Patrol`, else `WalkSpeed`, so patrols play the walk clip (111 cm/s) instead of the run |
 | Sight | 70 degree cone, 6 m lit, 3 m dark (busy 1.8 m) | `SightHalfAngle` (35), `SightRange`, `DarkSightRange`, `BusySightRange` |
 | Awareness | 0.5 s close up to 1.5 s at the edge, drains in 1.5 s | `AwareTimeNear`, `AwareTimeFar` |
 | Knife reach | 0.4 m from the collision edge | `AttackReach` (40) |
@@ -134,7 +135,7 @@ labels of the night markers and the impounded cars):
 
 | Actor | Mode | Notes |
 |---|---|---|
-| `Shawarman_Night_PatrolA` | Patrol, flashlight | Starts at `MK_Patrol_A_2` and loops A_3, A_4, A_1 (the hole corner, about 13 s in), A_2 |
+| `Shawarman_Night_PatrolA` | Patrol, flashlight | Starts at `MK_Patrol_A_2` and loops A_3, A_4, A_1 (the hole corner, about 24 s in at `PatrolSpeed`), A_2 |
 | `Shawarman_Night_PatrolB` | Patrol, flashlight | Loops B_1 to B_4 through the middle rows |
 | `Shawarman_Night_Grill_1` to `_3` | Busy | At the grill shack table, backs to the lot |
 | `Shawarman_Night_Sleeping` | Sleeping | In the guard office, wakes only to noise |
@@ -312,7 +313,7 @@ behind 10.
 | Mesh / AnimBP | `SK_Skewerman` / `ABP_Cook` | `SK_GrillSergeant` / `ABP_GrillSergeant` |
 | Skin | `MI_Skewerman` | `MI_GrillSergeant` |
 | Health | 20 | 80 |
-| `WalkSpeed` | 240 | 180 |
+| `WalkSpeed` / `PatrolSpeed` | 240 / 130 | 180 / 120 |
 | Attack | `AM_Skewerman_Throw`, released at `WindupTime` 1.6 s | `AM_GrillSergeant_Slam`, lands at 1.8 s |
 | Reach / damage | 360 cm / 10 (hits at release, no projectile yet) | 60 cm / 25 |
 | Death | `AM_Skewerman_Death` | `AM_Shawarman_Death` |
@@ -399,7 +400,7 @@ Drop a `BP_Shawarman` and set on the instance:
 | Property | Meaning |
 |---|---|
 | `UnawareMode` | `Idle`, `Patrol`, `Busy`, `Sleeping` |
-| `PatrolRoute` | Actors to walk between, in order |
+| `PatrolRoute` | Actors to walk between, in order (at `PatrolSpeed`) |
 | `bDormant` | Hidden until `Activate` is called |
 | `ActivateLine` | What it says when it wakes up |
 

@@ -252,6 +252,18 @@ How they were made (Meshy, no hand animation except one pose):
   apron. Three more textures (`_B` darker skin, `_C` fair skin and
   ginger hair, `_D` olive skin and grey hair) recolor the skin and hair
   pixels of the base one.
+* Knife pass (`Scripts/blender_knife_fix.py`): the Shawarman rig was
+  rigged again on Meshy (task `01a21510-7cd7-72e2-851b-2cda42c0d901`,
+  bones within 1 cm of the first rig) because the first rig's task id
+  was not kept; `Meshy/Anim_QuickWalk.glb` is its "Quick Walk" library
+  clip, trimmed to one cycle from the left foot plant and retimed from
+  24 to 30 fps as `A_Cook_Walk`. The doner knife sits in `RightHand`
+  with the blade forward, which put it up through the face in the idle
+  hand rub and across it in the shout: `RightHand` is rolled over those
+  frames (local Y then X, eased in and out) so the blade stays about
+  25 cm from the head. Checked per clip by parenting
+  `Props/SM_DonerKnife.fbx` to the bone with the Blueprint transform and
+  measuring the blade-to-head distance per frame.
 * `A_GrillSergeant_ShieldWalk` and `ShieldIdle` are the walk and
   look-around clips with the left arm keyed to one raised pose (the lid
   hand in front of the chest).
@@ -275,12 +287,12 @@ Shawarman's clips.
 
 | Clip | Source | Length | Use |
 |---|---|---|---|
-| `A_Cook_Walk` | rig walk | 1.0 s | Loop, 117 cm/s |
+| `A_Cook_Walk` | Quick Walk | 1.0 s | Loop, 111 cm/s, the patrol walk |
 | `A_Cook_Run` | rig run | 0.63 s | Loop, 450 cm/s |
 | `A_Cook_WalkBack` | Walk Backward | 0.87 s | Loop, 105 cm/s, Skewerman backing off |
-| `A_Shawarman_Idle` | Scheming Hand Rub | 3.3 s | Loop, honing the knife |
+| `A_Shawarman_Idle` | Scheming Hand Rub | 3.3 s | Loop, honing the knife (right hand rolled so the blade leans up and out, not through the face) |
 | `A_Shawarman_Search` | Torch Look Around | 9.3 s | Loop, suspicious with the flashlight |
-| `A_Shawarman_Shout` | Angry Stomp | 2.0 s | Alerted shout |
+| `A_Shawarman_Shout` | Angry Stomp | 2.0 s | Alerted shout (right hand rolled while the arms are up) |
 | `A_Shawarman_Swing` | Charged Slash | 1.2 s | Old attack, a waist-high spin slash: passes over the chicken, unused |
 | `A_Shawarman_Chop` | Charged Ground Slam | 1.33 s | The attack: knife up by 0.23 s, chop, blade on the ground 65 cm ahead at 0.6 s, kneel, up by 1.33 s |
 | `A_Shawarman_Eat` | Stand and Drink | 8.9 s | Loop, busy, left hand to the mouth |
