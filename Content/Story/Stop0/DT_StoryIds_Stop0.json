@@ -72,6 +72,12 @@
 		"Description": "Shown the hint that the trunk has more shells"
 	},
 	{
+		"Name": "f_boss_down",
+		"Kind": "Flag",
+		"Values": [],
+		"Description": "Mr. Kebabski is down: the Civic can drive out"
+	},
+	{
 		"Name": "stamp_cargo_poultry",
 		"Kind": "Stamp",
 		"Values": [],

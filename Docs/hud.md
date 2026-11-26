@@ -1,4 +1,4 @@
-# HUD, items, backpack and debug panel
+# HUD, items, backpack, journal, menus and debug panel
 
 The in-game HUD (issue #6), items and corn pickups, corn eating, the
 backpack and the developer debug panel. The design is in the GDD
@@ -18,7 +18,11 @@ backpack and the developer debug panel. The design is in the GDD
 | Backpack | `/Game/UI/Backpack/WBP_Backpack`, `WBP_BackpackItem` | The panel and one item row |
 | Item definitions | `/Game/Items/DA_Item_*` (`UItemDefinition`, C++) | Name, picture, description, section of a story item |
 | Corn pickup | `/Game/Items/BP_CornPickup` | A cob on the ground, picked up by walking over it; `BP_ShellPickup` is its shell crate child |
-| Inputs | `IA_EatCorn` (C, gamepad Y), `IA_Backpack` (I, Tab, gamepad View), `IA_DebugHUD` (F6) | Mapped in `IMC_Gameplay` |
+| Journal | `/Game/UI/Journal/WBP_Journal`, `WBP_JournalEntry` | Current and finished quests |
+| Checklist | `/Game/UI/Journal/WBP_Checklist` | The checklist document page (backpack and map screen) |
+| Pause menu | `/Game/UI/Menu/WBP_PauseMenu` | Resume, restart from checkpoint, quit |
+| Map screen | `/Game/UI/Map/WBP_MapScreen` | End of stop 0: checklist and the road map |
+| Inputs | `IA_EatCorn` (C, gamepad Y), `IA_Backpack` (I, Tab, gamepad View), `IA_DebugHUD` (F6), `IA_Journal` (J), `IA_Pause` (Esc, gamepad Menu), `IA_MenuConfirm` (skips a cutscene) | `IMC_Gameplay` (`IA_Pause` also in `IMC_Dialog`, `IA_MenuConfirm` in `IMC_Menu`) |
 
 All of it is Blueprint except the item definition class.
 `BP_AcrpgHUD` enables input for itself on BeginPlay, so its input actions
@@ -185,6 +189,43 @@ The panel is created the first time it opens (`Backpack` on the HUD).
 Gear lists the shotgun and the reserve shells ("12 / 32") before the
 corn; the loaded shells (`item_shells_loaded`) have no definition and
 show only on the HUD.
+
+## Journal
+
+J (`IA_Journal`, `BP_AcrpgHUD.ToggleJournal`) shows and hides the journal
+on the left; the game keeps running and it takes no input. It opens by
+itself after the tow cutscene (`OpenJournal`) and closes when a cutscene
+starts. `WBP_Journal.Refresh` (on open) lists every quest with a step, in
+`Get All Quests` order: the quest title and the line of its current step
+(`UQuestDefinition`, see [story-system.md](story-system.md#story-state))
+under CURRENT, or under FINISHED once the step is `bFinished`.
+
+## Checklist page
+
+Selecting the checklist in the backpack (`UpdateChecklistPage`, every
+tick) shows `ChecklistPage` (`WBP_Checklist`) instead of the picture and
+description: a paper page with five slots. Slot 1 is CARGO STATUS with the
+red stamp "CARGO: POULTRY, LIVE, 1 PC" once `stamp_cargo_poultry` is set;
+slot 2 reads VEHICLE REGISTRATION, "Issued in Poznan only", once
+`q_car_trouble` is `done`; the rest are "? ? ?". With the forged stamp a
+line at the bottom says so. The map screen shows the same page.
+
+## Pause menu
+
+Esc or the gamepad Menu button (`IA_Pause`, in gameplay and dialogs)
+calls `BP_AcrpgHUD.TogglePause`: the game pauses and `WBP_PauseMenu`
+shows with the cursor and focus on Resume. Input stays game and UI and
+`IA_Pause` has Trigger When Paused on, so the same key resumes. Restart
+from checkpoint unpauses and reloads the last checkpoint; Quit quits. In
+the editor Esc stops Play: open the menu with `ke * TogglePause`.
+
+## Map screen
+
+After the drive off cutscene the director shows `WBP_MapScreen`: the
+checklist page and the road map (`T_Map_Poland`) with two pins,
+KURNIKOWO (visited: a joke line, she can come back later) and POZNAN
+(new). Poznan opens the end panel: "To be continued in Poznan", Back to
+the map, Quit. The radio's exit ad and the road song keep playing.
 
 ## Debug panel
 

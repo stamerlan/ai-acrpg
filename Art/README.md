@@ -407,6 +407,54 @@ kebab stand jingle, a chiptune written by `Scripts/make_jingle.js`
 `SW_CarAlarm.wav` (2.5 s two-tone siren, `Scripts/make_car_alarm.js`) plays
 when Mr. Kebabski charges into a car.
 
+The radio broadcasts and car sounds of the stop 0 cutscenes (issue #10)
+are built in Blender by `Scripts/blender_radio.py`
+(`blender --background --python Art/Audio/Scripts/blender_radio.py`):
+
+| File | What |
+|---|---|
+| `SW_Radio_Intro.wav` | Radio tuning, the trailer's road song on the radio band under the trailer's DJ: the Kudakhstan ad and "And not one chicken came back!" |
+| `SW_Radio_News.wav` | The kebab stand radio: "Breaking news: why did the chicken cross the border?" |
+| `SW_Radio_Exit.wav` | The exit ad, then the song comes off the radio band into the car |
+| `SW_Engine.wav` | 4 s loop of the Civic's engine |
+| `SW_GateCrash.wav` | The Civic through the impound lot's main gate |
+| `radio_times.json` | Where each DJ line starts and ends, for the subtitles |
+
+The DJ voice of the intro is the trailer's (Gemini TTS, `Trailer/Audio`).
+The news and the exit ad are placeholders in a Windows voice
+(`Source/vo_dj_*.wav`, `Scripts/make_placeholder_voices.ps1`) until they
+are made with the trailer's DJ voice (`Trailer/Scripts/gen.js`, voice
+Fenrir, `GKEY` set). UE: `/Game/Audio/Radio`, imported by the cutscene
+script below.
+
+## Cutscenes (`Cutscenes/`)
+
+`Scripts/ue_cutscenes.py` (`py "<path>"` in the editor, with
+`L0_BorderBazaar` open) imports the sounds above and rebuilds the stop 0
+level sequences in `/Game/Story/Stop0/Cutscenes` from scratch: `LS_Intro`,
+`LS_Tow`, `LS_Exit` (gate ram), `LS_Van` and `LS_DriveOff`. Every actor in
+them is a spawnable copy of the level's art (the Civic, a queue truck as
+the tow truck, a van, Zbyszek's marker), the chicken and cine cameras;
+car paths are sampled from waypoints, so change the waypoints, not the
+keys. `cutscene_times.json` holds the time of the gate ram for
+`BP_StoryDirector`. How they play: [story-system.md](../Docs/story-system.md#cutscenes).
+
+## Map screen (`UI/Map/`)
+
+`T_Map_Poland.jpg` is the map screen's road map (no text on it; the
+buttons carry the names), made by Nano Banana (Gemini) from the prompt:
+"A hand-drawn road map of western and northern Poland on old cream paper
+... a thick winding red road from that border town east to a city dot in
+the middle (Poznan), then north-east to a city dot on the Baltic coast at
+the top (Gdansk) ... NO text". UE: `/Game/UI/Map/T_Map_Poland`.
+
+## Dialog tools (`Story/Scripts/`)
+
+`mkdlg.js` writes a DlgSystem dialogue as JSON from a short spec
+(`dlg_fencehole.js` is the fence hole dialog), `dlgsum.js` prints an
+exported dialogue as a list of nodes and edges. See
+[story-system.md](../Docs/story-system.md#dialogs-from-scripts).
+
 ## Environment (`Environment/`)
 
 Level art for stop 0, placed over the graybox (see

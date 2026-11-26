@@ -347,8 +347,10 @@ slots to manage, no weight, no sorting, no dropping, no crafting.
   player can walk freely between the levels of one location.
 * Travel happens on a map screen: the story reveals new locations on
   the map, and the player picks where to drive.
-* Exception: stop 0 (the prologue) is linear. Its night level can't be
-  left back to the day level.
+* Exception: stop 0 (the prologue) is linear while it is played: its
+  night level can't be left back to the day level. Once it is done,
+  Kurnikowo stays on the map and can be visited again later (what it
+  holds then is still open).
 * The car is only a way to travel between levels: no fuel, upgrades,
   driving gameplay or car combat.
 * (proposal) A short driving cutscene or animation between map and
@@ -462,7 +464,8 @@ Gameplay:
 
 Tech:
 
-* Map screen: a separate level or a UI widget.
+* Map screen: a UI widget (decided in #10, `WBP_MapScreen`); the stop 0
+  stub ends the demo when Poznan is picked.
 
 Other:
 

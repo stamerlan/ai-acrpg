@@ -22,7 +22,9 @@ public class acrpg : ModuleRules
 			"UMG",
 			"Slate",
 			"DeveloperSettings",
-			"DlgSystem"
+			"DlgSystem",
+			"LevelSequence",
+			"MovieScene"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "AssetRegistry" });

@@ -89,6 +89,8 @@ def fit(actor, path, names=(), label=None, folder=None, flip=False,
     a = L.place(path, (wx, wy, lo[2]), yaw, tuple(sc),
                 label or "Art_" + actor.get_actor_label(),
                 folder or "Art/" + str(actor.get_folder_path()), True, mi)
+    # BP_StoryDirector hides the Civic art with its graybox by these tags
+    a.tags = [t for t in actor.tags if str(t) in ("CivicDay", "CivicNight")]
     res["placed"] += 1
     return a
 
@@ -140,7 +142,8 @@ try:
             fit(a, C + "tractor", (), flip=True)
             L.hide_graybox(a)
         elif n == "Civic_Start":
-            fit(a, V + "Civic", body, natural=True)
+            # Facing east, the way she drives in from the bridge
+            fit(a, V + "Civic", body, natural=True, flip=True)
         elif n == "Civic":
             # Opening hatch (blender_civic.py), facing the arena and
             # camera; ue_fit_trunk.py puts the trunk actor's lid on it

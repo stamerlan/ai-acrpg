@@ -1,0 +1,39 @@
+{
+ "SW_Radio_Intro": {
+  "lines": [
+   [
+    0.9,
+    7.2
+   ],
+   [
+    7.7,
+    10.35
+   ]
+  ],
+  "length": 16.0
+ },
+ "SW_Radio_News": {
+  "lines": [
+   [
+    0.9,
+    7.56
+   ]
+  ],
+  "length": 8.5
+ },
+ "SW_Radio_Exit": {
+  "lines": [
+   [
+    0.9,
+    8.68
+   ]
+  ],
+  "length": 22.0
+ },
+ "SW_Engine": {
+  "length": 3.8
+ },
+ "SW_GateCrash": {
+  "length": 1.6
+ }
+}

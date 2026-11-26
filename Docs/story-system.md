@@ -13,7 +13,10 @@ content for them. Design goals are in the [GDD](gdd.md#dialogs).
 | Interactable | `BPC_Interactable` (BP on `UInteractableComponent`) | Talk, pick up or use; its sphere is the prompt range; the NPC dialog participant |
 | Interactor | `BPC_Interactor` on `BP_Chicken` | Finds the closest interactable, shows the prompt, Interact |
 | Dialog runner | `BPC_DialogRunner` on `BP_ChickenPlayerController` | Plays a dialog, switches to the dialog input context |
-| Widgets | `/Game/Story/UI` | `WBP_InteractPrompt`, `WBP_Dialog`, `WBP_DialogChoice` |
+| Widgets | `/Game/Story/UI` | `WBP_InteractPrompt`, `WBP_Dialog`, `WBP_DialogChoice`, `WBP_Subtitles` |
+| Quest definitions | `/Game/Story/Quests/DA_Quest_*` (`UQuestDefinition`, C++) | Title and journal line per step of a quest |
+| Story director | `BP_StoryDirector` (`StoryDirector` in L0) | Cutscenes, radio broadcasts, the drive out, the map screen |
+| Cutscenes | `/Game/Story/Stop0/Cutscenes` | Level sequences `LS_*` and their subtitles `DA_Cutscene_*` (`UCutsceneDefinition`, C++) |
 
 C++ holds only what Blueprints can't: the subsystem, the console
 commands, the struct and enum types and the dialog participant
@@ -48,6 +51,16 @@ reload overwrites it.
 * **Item:** a count. The name, picture and description shown in the
   backpack are in an item definition asset, and its `MaxCount` caps the
   count, see [hud.md](hud.md#items).
+
+What the journal shows of a quest is in a quest definition, a data asset
+of the C++ class `UQuestDefinition` (`Source/acrpg/Story/QuestDefinition.h`)
+in `/Game/Story/Quests` named `DA_Quest_<Name>`: `Id` (the quest id),
+`Title`, `bMain` and `SortOrder` (main quests first), and `Steps`, one
+entry per step with its journal line (`Text`) and `bFinished` (the quest
+is done at this step: `done`, or `given` / `kept` for Zbyszek's box).
+A step without an entry is not shown. Blueprints use `Get All Quests` and
+`Find Step`. The asset manager cooks `/Game/Story/Quests`
+(`DefaultGame.ini`).
 
 Id prefixes: `q_` quest, `f_` flag, `stamp_` stamp, `item_` item.
 
@@ -157,6 +170,26 @@ button: it reloads from a text file, and there is none.
 The `DLG_` assets are binary, so git can't merge two changes to the
 same dialog: edit a dialog on one branch at a time.
 
+### Dialogs from scripts
+
+The graph editor is the way to edit a dialog. When a script has to write
+one (DLG_FenceHole was made this way), two editor console commands
+(`Source/acrpg/acrpg.cpp`) go through the plugin's JSON format for a
+moment, with the project's text format left at None:
+
+1. `Acrpg.DlgExport /Game/Story/Stop0/Dialogs/DLG_X` writes
+   `DLG_X.dlg.json` next to the asset.
+2. Edit the JSON. `Art/Story/Scripts/mkdlg.js` writes it from a short
+   spec (`dlg_fencehole.js`); `dlgsum.js` prints a dialog as a list of
+   nodes and edges.
+3. `Acrpg.DlgImport /Game/Story/Stop0/Dialogs/DLG_X` replaces the
+   dialog's nodes and rebuilds the graph with the plugin's auto layout.
+   Save the asset and delete the `.dlg.json`.
+
+The auto layout orders edges right to left, so the spec lists choices in
+reverse. The graph layout of the dialog is lost, so don't do this to a
+dialog that was laid out by hand.
+
 ### Id table tool
 
 `/Game/Story/Editor/EUW_StoryIds`, an Editor Utility Widget:
@@ -218,11 +251,61 @@ Dialog events broadcast these for later issues to pick up:
 | Event | From | Meaning |
 |---|---|---|
 | `border_scale` | Kotlet | sent to the scale: movement hints |
-| `tow_civic` | Kotlet | the tow truck takes the Civic |
-| `border_done` | Kotlet | journal and checklist open, checkpoint |
+| `tow_civic` | Kotlet | Kotlet waves at the tow truck (nothing listens yet) |
+| `border_done` | Kotlet | after the dialog: the tow cutscene, then the journal opens; checkpoint |
 | `halina_call` | Halina | the kebab stand fight starts, checkpoint |
 | `hint_eat_corn` | corn lady | eat corn tutorial |
 | `wait_for_midnight` | Kolya, fence hole | fade to night (`BP_NightTransition`) |
+| `radio_kebab` | `Use_KebabRadio` | the kebab stand radio plays the news |
+| `drive_out` | `Use_CivicDrive` | the exit cutscene, the van, the drive off and the map screen |
+
+## Cutscenes
+
+`BP_StoryDirector` (one per level, `StoryDirector` in `Shared/Story` of
+L0) plays the cutscenes and the radio. A cutscene is a level sequence
+(`LS_`) plus a cutscene definition (`DA_Cutscene_<Name>`,
+`UCutsceneDefinition`, `Source/acrpg/Story/CutsceneDefinition.h`):
+`Sequence`, `Sound` (played 2D with it; for a radio in the world, played
+at the radio), `Length` (of a broadcast without a sequence) and `Lines`,
+the subtitles (`Time`, `Duration`, `Speaker`, `Text`). `WBP_Subtitles`
+shows them; her own lines have no speaker.
+
+The sequences are built by `Art/Cutscenes/Scripts/ue_cutscenes.py` (see
+[Art/README.md](../Art/README.md#cutscenes-cutscenes)); edit that and run
+it again instead of editing the sequences by hand.
+
+| Cutscene | When | Then |
+|---|---|---|
+| Intro (`LS_Intro`, 18 s, the radio ad) | BeginPlay with `q_car_trouble` and `f_border_check` not set | Kotlet's dialog starts |
+| Tow (`LS_Tow`, 12 s) | `border_done`, once the dialog is closed | the day Civic (tag `CivicDay`) is gone, the journal opens |
+| Exit (`LS_Exit`, 19.5 s, the gate ram) | `drive_out` | Van with Zbyszek's box, else Drive off |
+| Van (`LS_Van`, 4 s) | after Exit with `item_zbyszek_box` | Zbyszek's dialog over the last frame, then Drive off |
+| Drive off (`LS_DriveOff`, 11 s, the exit ad) | after Exit or Van | `q_car_trouble` = `done`, the map screen |
+| News (radio only, 10.5 s) | `radio_kebab` | - |
+
+How it works:
+
+* `Queue` sets the next cutscene; `Poll` (every 0.1 s) starts it once no
+  dialog is open and no cutscene plays. All sequences pause at their last
+  frame, and the next one starts before the old one stops, so the camera
+  does not jump back to her in between.
+* While one plays: input context Menu, the HUD hidden and the journal
+  closed, her pawn hidden (not in the tow). Enter, Space, F or gamepad A
+  (`IA_MenuConfirm`) skips it (`BP_AcrpgHUD.SkipCutscene`).
+* Exit hides the night Civic (`CivicNight`), moves her out of the lot and
+  makes her invulnerable (cooks left over from the boss's call would
+  otherwise kill her behind the cutscenes), and hides the main gate
+  (`MainGate`) at `RamTime` (11.4 s, from `cutscene_times.json`).
+* While `q_car_trouble` is `car`, `Poll` checks Mr. Kebabski: once he is
+  dead it sets `f_boss_down` and shows "The night shift is done. Time to
+  drive the Civic out." (`DA_Cutscene_BossLines`); the driver's door of
+  the Civic then reads "Drive out".
+* Zbyszek's dialog in the van scene uses the director's own
+  `ZbyszekTalk` interactable (`DLG_Zbyszek`, never in range).
+
+Voices: only the radio speaks. The intro ad is the trailer's DJ; the news
+and the exit ad are placeholders in a Windows voice
+([Art/README.md](../Art/README.md#audio-audio)).
 
 ## Console
 
@@ -232,3 +315,4 @@ Dialog events broadcast these for later issues to pick up:
 | `Story.Set <id> [value]` | flag (no value: true, `none`: clear), quest step, stamp (`none`: remove), item count |
 | `Story.Event <name>` | triggers a story event |
 | `Story.Reset` | clears the whole state |
+| `Acrpg.DlgExport <dialogue>`, `Acrpg.DlgImport <dialogue>` | editor only: a dialog to and from JSON, see [Dialogs from scripts](#dialogs-from-scripts) |

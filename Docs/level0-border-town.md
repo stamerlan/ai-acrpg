@@ -24,7 +24,8 @@ Status: first draft. All numbers are starting values for tuning.
 | UE map | `/Game/Maps/Stop0/L0_BorderBazaar` (both levels) |
 
 Stop 0 is linear: once the night level starts, she can't go back to the
-bazaar.
+bazaar that night. There is no warning before the night: after stop 0
+Kurnikowo stays on the map and she can come back to it later.
 
 ## Map
 
@@ -77,9 +78,17 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   back at night. It also shows the actors tagged `ShownAfterFirstFight`
   (the "BACK AT MIDNIGHT" sign) once `f_first_fight` is `done`.
 * The event comes from Kolya ("Wake me at midnight") or from the hole
-  (`MK_Interact_FenceHole`, Use "Wait for midnight", shown while
-  `q_car_trouble` is `office`). The hole has no dialog yet, so the
-  "too bright" line and the no-way-back warning are still missing.
+  (`MK_Interact_FenceHole`, Talk "Look", `DLG_FenceHole`, shown once
+  the border check is done). Before Halina's call she only says "Too
+  bright. They'd see me."; while `q_car_trouble` is `office` she can
+  answer "Too bright. They'd see me. I'll wait until midnight." (the
+  event) or "Not yet.".
+* Cutscenes, radio, the drive out and the map screen are run by
+  `StoryDirector` (`BP_StoryDirector`, `Shared/Story`), see
+  [story-system.md](story-system.md#cutscenes). `Use_KebabRadio` (by the
+  kebab stand, after the first fight while `q_car_trouble` is `office`)
+  and `Use_CivicDrive` (the night Civic's driver door, once
+  `f_boss_down` is set) are `BP_StoryUse` actors in `Shared/Story`.
 * To play the night in the editor: `Story.Set q_car_trouble office`, then
   `Story.Event wait_for_midnight`. Or set `DL_Day` to Unloaded and
   `DL_Night` to Activated (initial runtime state in the Data Layers
@@ -306,8 +315,8 @@ bright. They'd see me. Wait until midnight." Two ways to wait:
   once Halina has sent her away (`q_car_trouble` past started).
 * Interact with the hole again and choose "Wait for midnight".
 
-Both show the warning that the bazaar can't be revisited, then fade to
-night (see [Map](#map)) and 0B starts at the hole.
+Both fade to night (see [Map](#map)) and 0B starts at the hole. There is
+no warning: Kurnikowo stays on the map after stop 0.
 
 ### NPCs
 
@@ -581,10 +590,12 @@ special does not leave the kitchen." Checkpoint before his intro. See
 **7. Exit (cutscene).** She gets into the Civic, puts the sunglasses
 on: "I'll be kudakh!" She rams the main gate. Every impounded car alarm
 goes off behind her; nobody chases her. She drives through the empty
-night bazaar and turns into a back street. On the back street:
+night bazaar and out through the bazaar arch, where the back street
+runs along the frozen truck queue. There:
 
 * If she has Zbyszek's box, he waits by his van (dialog, see the side
   quest).
+* She overtakes the queue on the shoulder.
 * The radio plays the next Kudakhstan ad.
 * The checklist: next stamp "VEHICLE REGISTRATION - issued in Poznan
   only".
@@ -705,6 +716,7 @@ arena).
 | `f_corn_lady_cob` | Flag | Got the free cob from the corn lady |
 | `f_forged_stamp` | Flag | Has the Forged stamp |
 | `f_gnomonaut` | Flag | Has the Gnomonaut |
+| `f_boss_down` | Flag | Mr. Kebabski is down: the Civic can drive out |
 | `stamp_cargo_poultry` | Stamp | Always set in stop 0 |
 
 Item ids: `item_transit_card`, `item_checklist`, `item_corn_cob`,
