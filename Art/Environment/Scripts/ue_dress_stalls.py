@@ -12,6 +12,14 @@ import unreal  # noqa: E402
 
 D = L.__file__.rsplit("\\", 1)[0]  # out.json goes next to the scripts
 G = "/Game/Environment/Stall/"
+# A stall with a Meshy model of its own (SM_<stall label>: canopy, tables
+# and goods in one mesh, blender_buildings_to_fbx.py) gets that instead
+# of the kit frame, tarp and Kenney goods
+B = "/Game/Environment/Buildings/SM_"
+PEAK = 330.0  # height of a model stall's canopy top, cm
+# Name boards differ from stall to stall, like real ones
+BOARDS = ["/Game/Materials/Graybox/MI_GB_" + m for m in (
+    "Black", "ContainerBlue", "Red", "ContainerGreen")]
 TARPS = {"MI_GB_TarpBlue": "MI_Tarp_Blue", "MI_GB_TarpGreen": "MI_Tarp_Green",
          "MI_GB_TarpRed": "MI_Tarp_Red", "MI_GB_TarpYellow": "MI_Tarp_Yellow",
          "MI_GB_TarpStripe": "MI_Tarp_Stripe"}
@@ -79,18 +87,43 @@ try:
         sx, sy = ex / 198.0, ey / 183.0
         tarp = TARPS.get(aw.get_material(0).get_name(), "MI_Tarp_Blue")
         folder = "Art/Shared/Bazaar/Stalls"
+        aw.set_visibility(False)
+        aw.set_editor_property("hidden_in_game", True)
+        res["stalls"] += 1
+        if L.eal.does_asset_exist(B + n):
+            # The model's front is its local +Y, the stall's its +X
+            b = L.mesh(B + n).get_bounding_box()
+            L.place(B + n, (o.x, o.y, 0), yaw - 90,
+                    (ey * 1.94 / (b.max.x - b.min.x),
+                     ex * 1.94 / (b.max.y - b.min.y), PEAK / b.max.z),
+                    "ArtStall_Model_" + n, folder, True)
+            # The graybox walls, counter and goods only collide now
+            for c in a.get_components_by_class(unreal.StaticMeshComponent):
+                c.modify()
+                c.set_visibility(False)
+                c.set_editor_property("hidden_in_game", True)
+            # The name: a board on the canopy's north edge, to the camera
+            L.place("/Engine/BasicShapes/Cube", (o.x + e.x, o.y, 228), 0,
+                    (0.03, e.y * 1.5 / 100, 0.46), "ArtStall_Sign_" + n,
+                    folder, False, BOARDS[res["stalls"] % len(BOARDS)])
+            for t in a.get_components_by_class(unreal.TextRenderComponent):
+                t.set_world_size(38)
+                t.set_world_location_and_rotation(
+                    unreal.Vector(o.x + e.x + 3, o.y, 228),
+                    unreal.Rotator(), False, False)
+                t.set_editor_property(
+                    "vertical_alignment",
+                    unreal.VerticalTextAligment.EVRTA_TEXT_CENTER)
+            continue
         L.place(G + "SM_StallFrame", (o.x, o.y, 0), yaw, (sx, sy, 1.0),
                 "ArtStall_Frame_" + n, folder, True)
         L.place(G + "SM_StallTarp", (o.x, o.y, 0), yaw, (sx, sy, 1.0),
                 "ArtStall_Tarp_" + n, folder, True, G + tarp)
-        aw.set_visibility(False)
-        aw.set_editor_property("hidden_in_game", True)
         for t in a.get_components_by_class(unreal.TextRenderComponent):
             loc = t.get_world_location()
             if loc.z > 200:
                 loc.z = 296
                 t.set_world_location(loc, False, False)
-        res["stalls"] += 1
         goods = GOODS.get(n, [])
         if counter is None or not goods:
             continue
@@ -110,6 +143,16 @@ try:
                     s * rng.uniform(0.9, 1.1), "ArtStall_Good_" + n,
                     folder + "/Goods", False)
             res["goods"] += 1
+    # The graybox bunting over the aisle (flat boards on a cable) hung
+    # just over the new canopies and read as loose panels, its cables as
+    # poles through the tarps
+    for a in L.eas.get_all_level_actors():
+        if a.get_actor_label() == "StringLights_Banners":
+            for c in a.get_components_by_class(unreal.StaticMeshComponent):
+                if c.get_name().startswith(("Banner", "Cable")):
+                    c.modify()
+                    c.set_visibility(False)
+                    c.set_editor_property("hidden_in_game", True)
 except Exception:
     res["err"] = traceback.format_exc()
 json.dump(res, open(D + r"\out.json", "w"), indent=0)

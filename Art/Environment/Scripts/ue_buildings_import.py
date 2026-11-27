@@ -60,8 +60,10 @@ try:
             mi, eal.load_asset("/Game/Environment/Materials/M_Env"))
         mel.set_material_instance_texture_parameter_value(
             mi, "BaseTex", eal.load_asset(B + "/Textures/T_" + name + "_D"))
+        # Stall tarps wash out in the sun at full brightness
+        tint = 0.75 if name.startswith("Stall_") else 1.0
         mel.set_material_instance_vector_parameter_value(
-            mi, "Color", unreal.LinearColor(1, 1, 1, 1))
+            mi, "Color", unreal.LinearColor(tint, tint, tint, 1))
         mel.set_material_instance_scalar_parameter_value(
             mi, "Roughness", 0.8)
         overrides = mi.get_editor_property("base_property_overrides")

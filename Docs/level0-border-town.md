@@ -207,9 +207,11 @@ Zones:
    the KANTOR on the road verge east of the gate, the ZIGARETTEN shop
    in the east yard. Their former stalls sell honey (MIOD) and socks
    (SKARPETY). Background stalls (car parts,
-   tracksuits, plastic flowers) are props only. Each stall has its own
-   tarp awning over the counter; the walkway in the middle is open to
-   the sky, with string lights and banners across it. When a stall's
+   tracksuits, plastic flowers) are props only. Each stall is an
+   open market canopy: a steel tube frame, a plain PVC tarp, tables
+   full of its own goods, and a black board with its name on the
+   canopy's north edge, toward the camera. The walkway in the middle
+   is open to the sky, with string light cables across it. When a stall's
    tarp hides her from the camera, the tarp and its sign hide.
 5. **Gnome field.** An open yard where the gnome seller keeps his stock:
    hundreds of garden gnomes in rows, making low cover and a loose maze.

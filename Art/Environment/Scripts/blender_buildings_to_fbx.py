@@ -1,6 +1,7 @@
 """Meshy buildings and the border officer: GLB -> FBX for UE.
 
-blender --background --python blender_buildings_to_fbx.py [-- preview_dir]
+blender --background --python blender_buildings_to_fbx.py
+    [-- preview_dir [name ...]]
 
 Reads Art/Environment/Buildings/Meshy/<name>.glb (Meshy image to 3D,
 meshy-7.1 remeshed to 20-30k triangles) and writes
@@ -10,7 +11,8 @@ concept image was drawn, so each one is first squared to the axes (the
 turn with the smallest bounding box) and then turned by a quarter-turn
 count picked by eye so that its front faces -Y, like the vehicles of
 blender_meshy_to_fbx.py. With a preview_dir, renders each result from
-the front (-Y) and from above to check that.
+the front (-Y) and from above to check that; with names after it,
+converts only those models.
 """
 import math
 import os
@@ -36,6 +38,23 @@ MODELS = {
     "bar": ("Bar", 5.0, "xy", 0),
     "pavilion": ("Pavilion", 10.0, "xy", 0),
     "toilet": ("Toilet", 3.2, "xy", 0),
+    # Open market stalls of the main street, one per trade
+    "stall_fruit": ("Stall_Fruit", 4.0, "xy", 0),
+    "stall_tools": ("Stall_Tools", 4.0, "xy", 0),
+    "stall_bags": ("Stall_Bags", 4.0, "xy", 0),
+    "stall_cds": ("Stall_CDs", 4.0, "xy", 0),
+    "stall_toys": ("Stall_Toys", 4.0, "xy", 0),
+    "stall_household": ("Stall_Household", 4.0, "xy", 0),
+    "stall_gnomes": ("Stall_Gnomes", 4.0, "xy", 0),
+    "stall_flowers": ("Stall_Flowers", 4.0, "xy", 0),
+    "stall_shoes": ("Stall_Shoes", 4.0, "xy", 0),
+    "stall_tracksuits": ("Stall_Tracksuits", 4.0, "xy", 0),
+    "stall_zbyszek": ("Stall_Zbyszek", 4.0, "xy", 0),
+    "stall_honey": ("Stall_Honey", 4.0, "xy", 0),
+    "stall_carparts": ("Stall_CarParts", 4.0, "xy", 0),
+    "stall_cornlady": ("Stall_CornLady", 4.0, "xy", 0),
+    "stall_socks": ("Stall_Socks", 4.0, "xy", 0),
+    "stall_kebab": ("Stall_Kebab", 7.0, "xy", 0),
 }
 
 
@@ -71,6 +90,11 @@ def load(name, size, along, turns):
     scale = size / (span.z if along == "z" else max(span.x, span.y))
     middle = Vector(((low.x + high.x) / 2, (low.y + high.y) / 2, low.z))
     obj.data.transform(Matrix.Scale(scale, 4) @ Matrix.Translation(-middle))
+    if name.startswith("stall_"):
+        # Cloth and goods: flat faces shade a tarp into blotches
+        for poly in obj.data.polygons:
+            poly.use_smooth = True
+        obj.data.set_sharp_from_angle(angle=math.radians(40))
     for other in list(bpy.context.scene.objects):
         if other != obj:
             bpy.data.objects.remove(other)
@@ -115,6 +139,8 @@ def preview(obj, folder, name):
 if __name__ == "__main__":
     args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
     for name, (title, size, along, turns) in MODELS.items():
+        if args[1:] and name not in args[1:]:
+            continue
         obj, image = load(name, size, along, turns)
         obj.material_slots[0].material.name = "M_" + title
         export(obj, "SM_" + title)
