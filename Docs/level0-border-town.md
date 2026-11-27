@@ -348,6 +348,17 @@ no warning: Kurnikowo stays on the map after stop 0.
 
 ### NPCs
 
+Kolya, Halina, Zbyszek, Krasnal, the corn lady and the kebab stand cook
+are 3D models (`ArtNPC_<Name>`, `BP_NPC`, folder `Day/NPCs`) placed over
+their markers by `Art/NPCs/Scripts/ue_dress_npcs.py`; the markers keep
+their `BPC_Interactable` and their meshes are hidden. Each plays an idle
+loop and blends to a talk loop while its own dialog line is on screen.
+Kolya sits on a crate by his truck with his thermos, the stall sellers
+stand behind their counters (the corn lady beside her folding chair),
+and the kebab stand cook (`MK_NPC_KebabShawarman`, no dialog) is hidden
+from the moment `q_car_trouble` reaches `office`, when the fight starts.
+Models and clips: [Art/README.md](../Art/README.md#stop-0-npcs-npcs).
+
 #### Sergeant Kotlet
 
 Border guard of the veterinary border inspection. Bored, polite,

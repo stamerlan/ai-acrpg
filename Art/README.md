@@ -332,6 +332,72 @@ last pose.
 `BP_Skewerman` and `BP_GrillSergeant` wear these props (see
 [enemies.md](../Docs/enemies.md#skewerman-and-grill-sergeant)).
 
+## Stop 0 NPCs (`NPCs/`)
+
+Uncle Kolya, Pani Halina, Pan Zbyszek, Mr. Krasnal and the corn lady
+(#18), same layout as the cooks: `<Name>/Reference`, `Meshy`, `Source`
+and `Mesh`, the clips in `Anims/`, their Meshy source in
+`Meshy/Anims_NPC.glb` and `Source/NPC_Anims.blend`. Kotlet, the kantor
+clerk and the cigarette seller are not modelled here: the first two are
+voices behind windows, the seller is the static `SM_Seller`.
+
+How they were made (Meshy, no hand animation):
+
+* T-pose references from the crops of `Docs/npcs-stop0.png`, restyled
+  with the nano-banana image model after the Skewerman reference, props
+  left out. Image to 3D with meshy-t2.5 smart topology (12k triangles)
+  and the meshy-n1 texture (15 credits each), then the humanoid auto-rig
+  at the concept height (5 credits each).
+* The clips are Meshy library animations applied to the Shawarman rig
+  (task `01a21f3d-40bd-74cb-9fb2-9f9bf27c313a`, 27 credits), so the NPC
+  meshes use the cooks' `SK_Shawarman_Skeleton` and every cook and NPC
+  clip plays on all of them.
+* Blender, headless (`Scripts/blender_npc.py`): `mesh` builds
+  `SK_<Name>.blend`/`.fbx` with a `root` bone, `clips` trims the
+  library clips to loops in place with a crossfade into the start (30
+  fps), `check` renders each NPC's idle and talk clip on its own mesh
+  with its hand prop. The check poses the mesh the way UE plays the
+  Shawarman's clips (local rotations as they are, the NPC's own bone
+  lengths, the hips scaled by hip height); assigning the action to the
+  NPC rig in Blender instead adds the rotations onto its own rest pose
+  and crosses the feet of the slim NPCs, which UE does not do.
+* `Scripts/blender_npc_props.py`: `Props/SM_Thermos.fbx` (Kolya's green
+  thermos, 27 cm, axis +Z, origin in the middle of the grip) from
+  primitives, working file `Props/NPCProps.blend`.
+* UE (`Scripts/ue_npcs_import.py`, then with `materials`):
+  `/Game/Characters/NPCs`, `MI_<Name>` on the cooks' `M_Cook`.
+
+| NPC | Height | Rig task | Idle | Talk |
+|---|---|---|---|---|
+| Kolya | 195 cm | `01a21f3c-a07c-7473-93b3-05ba3a3751ca` | `A_NPC_SitHold` | `A_NPC_SitTalk` |
+| Halina | 165 cm | `01a21f3c-b133-73ef-b436-6f8aa92577a7` | `A_NPC_IdleLook` | `A_NPC_TalkHip` |
+| Zbyszek | 178 cm | `01a21f3c-c1eb-77ff-8092-9e725753f509` | `A_NPC_IdleLook` | `A_NPC_TalkPassionate` |
+| Krasnal | 150 cm with the hat | `01a21f3c-d350-7529-8490-93d58979274b` | `A_NPC_IdleLook` | `A_NPC_TalkHip` |
+| Corn lady | 155 cm | `01a21f3c-e3d1-7319-9293-a4fb950a0860` | `A_NPC_IdleLook` | `A_NPC_TalkRightHand` |
+
+| Clip | Source | Length |
+|---|---|---|
+| `A_NPC_IdleLook` | Idle 3 | 10 s |
+| `A_NPC_Idle` | Idle | 4 s, unused: turns the whole body 90 degrees and back |
+| `A_NPC_TalkPassionate` | Talk Passionately | 10.3 s |
+| `A_NPC_TalkHip` | Talk with Left Hand on Hip | 5.2 s |
+| `A_NPC_TalkOpen` | Talk with Hands Open | 4 s |
+| `A_NPC_TalkRightHand` | Talk with Right Hand Open | 3.7 s |
+| `A_NPC_SitIdle` | Chair Sit Idle Female | 11.3 s |
+| `A_NPC_SitDrink` | Sit and Drink | 11.2 s, unused: on Kolya the cup lands on his forehead |
+| `A_NPC_SitHold` | Sit and Drink, 1.2-3.2 s | 2 s, the cup held on the lap |
+| `A_NPC_SitTalk` | Sitting Answering Questions | 9.7 s |
+
+In the level, `BP_NPC` (`ABP_NPC`: a `DefaultSlot` slot only) plays
+the idle clip as a looping dynamic montage from a random time and blends
+to the talk clip while the dialog's active node belongs to its
+`Participant`; `ShowWhile` hides it while the story conditions fail.
+`HandProp` (a static mesh) is attached to the `PropSocket` bone on
+BeginPlay: Kolya holds `SM_Thermos` in `RightHand`, turned so its
+axis is world up in the `A_NPC_SitHold` pose (measured in PIE).
+`Scripts/ue_dress_npcs.py` places one per marker, see
+[level0-border-town.md](../Docs/level0-border-town.md#npcs).
+
 ## Props (`Props/`)
 
 FBX at real size with their textures next to them. `Source/Props.blend`
