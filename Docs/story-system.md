@@ -276,7 +276,7 @@ it again instead of editing the sequences by hand.
 
 | Cutscene | When | Then |
 |---|---|---|
-| Intro (`LS_Intro`, 18 s, the radio ad) | BeginPlay with `q_car_trouble` and `f_border_check` not set | Kotlet's dialog starts |
+| Intro (`LS_Intro`, 18 s, the radio ad) | BeginPlay with `q_car_trouble` and `f_border_check` not set | Kotlet's dialog opens over its last frame (the car at the booth); the game takes over when that dialog closes |
 | Tow (`LS_Tow`, 12 s) | `border_done`, once the dialog is closed | the day Civic (tag `CivicDay`) is gone, the journal opens |
 | Exit (`LS_Exit`, 19.5 s, the gate ram) | `drive_out` | Van with Zbyszek's box, else Drive off |
 | Van (`LS_Van`, 4 s) | after Exit with `item_zbyszek_box` | Zbyszek's dialog over the last frame, then Drive off |
@@ -291,7 +291,16 @@ How it works:
   does not jump back to her in between.
 * While one plays: input context Menu, the HUD hidden and the journal
   closed, her pawn hidden (not in the tow). Enter, Space, F or gamepad A
-  (`IA_MenuConfirm`) skips it (`BP_AcrpgHUD.SkipCutscene`).
+  (`IA_MenuConfirm`) skips it (`BP_AcrpgHUD.SkipCutscene`): `Skip`
+  runs the sequence to its last frame at 60 times the speed, so what a
+  sequence moves ends in place.
+* The intro drives the level's own day Civic (`Art_Civic_Start`, a
+  possessable) instead of a copy, so there is one car and it stays
+  where the drive ends. She is never shown inside a car: her model
+  does not fit it.
+* After the intro `Finished` sets `Stage` to `kotlet` and starts
+  Kotlet's dialog without ending the cutscene; `CheckKotlet` (first
+  thing in `Poll`) ends it once that dialog has closed.
 * Exit hides the night Civic (`CivicNight`), moves her out of the lot and
   makes her invulnerable (cooks left over from the boss's call would
   otherwise kill her behind the cutscenes), and hides the main gate

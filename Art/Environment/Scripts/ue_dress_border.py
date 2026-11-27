@@ -9,6 +9,10 @@ Shared/Bazaar/Yards) from the model's bounds and puts the model
 their graybox actors. The models' fronts are their local +Y. The camera
 looks south, so a shop whose front is to be read faces north (0).
 
+The buildings are empty shells, so the camera never cuts them open:
+the models take no camera traces. Behind one she shows as a silhouette
+(ue_silhouette.py).
+
 The look follows photos of today's bazaars on the German border
 (Slubice, Osinow Dolny, Leknica): clean plastered or panel pavilions,
 red metal tile roofs, huge ZIGARETTEN / KANTOR / FRISEUR signs.
@@ -89,7 +93,7 @@ def over(actors, label, model, heading, size, names, sign, sign_size):
             hi = [max(hi[0], o.x + e.x), max(hi[1], o.y + e.y)]
     L.place(B + model, ((lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, 0),
             heading - 90, size, "ArtBld_" + label,
-            "Art/Shared/BorderPost")
+            "Art/Shared/BorderPost", False)
     L.hide_graybox(a)
     top = L.mesh(B + model).get_bounding_box().max.z * size
     mid = ((lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2)
@@ -118,7 +122,7 @@ try:
         hx, hy, h = half_sizes(B + model, heading, size)
         block("Yard_" + name, "Shared/Bazaar/Yards", x, y, hx, hy, h)
         L.place(B + model, (x, y, 0), heading - 90, size, "ArtBld_" + name,
-                "Art/Shared/Bazaar/Yards")
+                "Art/Shared/Bazaar/Yards", False)
         res["n"] += 1
     # Border post: the booth's door and the office door face the road
     # (north), the booth's window faces the trucks coming from the east
@@ -132,6 +136,13 @@ try:
     L.place(B + "Officer", (ox, oy, 0), 90 - 90, 0.95, "ArtBld_Officer",
             "Art/Shared/TruckQueue", False)
     block("Yard_OfficerBlock", "Shared/TruckQueue", ox, oy, 22, 22, 170)
+    # The cigarette seller stands by his shop's door, east of it (the
+    # parasol is on the west side); MK_NPC_CigaretteSeller is on the
+    # same spot (ue_layout_border.py)
+    sx, sy = 1615, 2465
+    L.place(B + "Seller", (sx, sy, 0), 0 - 90, 0.95, "ArtBld_Seller",
+            "Art/Shared/Bazaar/Yards", False)
+    block("Yard_SellerBlock", "Shared/Bazaar/Yards", sx, sy, 22, 22, 160)
 
     def put(path, x, y, yaw=0.0, s=1.0, occ=True):
         L.place(path, (x, y, 0), yaw, s, "ArtBld_Prop_" +

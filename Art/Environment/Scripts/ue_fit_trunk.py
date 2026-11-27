@@ -25,9 +25,13 @@ for trunk in eas.get_all_level_actors():
     here = trunk.get_actor_location()
     car = min(cars, key=lambda a: (a.get_actor_location() - here).length())
     pose = car.get_actor_transform()
+    trunk.modify()
+    # The lid is part of her car: the camera never cuts it open. Tags go
+    # first, setting them runs the construction script again
+    if "NoOcclusionCutout" not in [str(t) for t in trunk.tags]:
+        trunk.tags = list(trunk.tags) + ["NoOcclusionCutout"]
     parts = {c.get_name(): c
              for c in trunk.get_components_by_class(unreal.SceneComponent)}
-    trunk.modify()
     for part in parts.values():
         part.modify()
     parts["Hinge"].set_world_location(

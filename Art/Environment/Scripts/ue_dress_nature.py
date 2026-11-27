@@ -46,13 +46,15 @@ REGIONS = {
     "South": (-6800, -4240, -3300, 2780,
               [("leafy", 50), ("pine", 40), ("bush", 60), ("grass", 110),
                ("flower", 40), ("rock", 10)]),
-    "WestLot": (-4240, 0, -3290, -2770,
+    "WestLot": (-4240, 0, -3230, -2770,
                 [("bush", 56), ("grass", 60), ("rock", 4)]),
-    "WestBazaar": (0, 2560, -3290, -2760,
+    "WestBazaar": (0, 2560, -3230, -2760,
                    [("bush", 44), ("grass", 50), ("flower", 20)]),
-    "RiverBank": (-6800, 4600, -3420, -3320,
+    # The river runs from Y = -4800 to -3300, its water 60 cm under the
+    # banks: plants stay a bush radius away from the edge
+    "RiverBank": (-6800, 4600, -3270, -3190,
                   [("bush", 70), ("grass", 80), ("rock", 16)]),
-    "FarBank": (-6800, 4600, -6800, -4850,
+    "FarBank": (-6800, 4600, -6800, -4900,
                 [("leafy", 70), ("pine", 70), ("poplar", 14),
                  ("bush", 60)]),
 }

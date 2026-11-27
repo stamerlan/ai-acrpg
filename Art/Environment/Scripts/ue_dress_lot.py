@@ -91,6 +91,15 @@ def fit(actor, path, names=(), label=None, folder=None, flip=False,
                 folder or "Art/" + str(actor.get_folder_path()), True, mi)
     # BP_StoryDirector hides the Civic art with its graybox by these tags
     a.tags = [t for t in actor.tags if str(t) in ("CivicDay", "CivicNight")]
+    if a.tags:
+        # Her car is never cut open by the camera; LS_Intro drives the
+        # day one in (ue_cutscenes.py), so it can move
+        a.tags = list(a.tags) + ["NoOcclusionCutout"]
+        a.root_component.set_mobility(unreal.ComponentMobility.MOVABLE)
+        for t in actor.get_components_by_class(unreal.TextRenderComponent):
+            t.modify()
+            t.set_visibility(False)
+            t.set_editor_property("hidden_in_game", True)
     res["placed"] += 1
     return a
 

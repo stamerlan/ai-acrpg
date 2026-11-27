@@ -432,9 +432,12 @@ script below.
 `Scripts/ue_cutscenes.py` (`py "<path>"` in the editor, with
 `L0_BorderBazaar` open) imports the sounds above and rebuilds the stop 0
 level sequences in `/Game/Story/Stop0/Cutscenes` from scratch: `LS_Intro`,
-`LS_Tow`, `LS_Exit` (gate ram), `LS_Van` and `LS_DriveOff`. Every actor in
-them is a spawnable copy of the level's art (the Civic, a queue truck as
+`LS_Tow`, `LS_Exit` (gate ram), `LS_Van` and `LS_DriveOff`. The actors in
+them are spawnable copies of the level's art (the Civic, a queue truck as
 the tow truck, a van, Zbyszek's marker), the chicken and cine cameras;
+only the intro drives the level's own day Civic (run the script again
+after `ue_dress_lot.py` has placed that car anew). She is never shown
+inside a car;
 car paths are sampled from waypoints, so change the waypoints, not the
 keys. `cutscene_times.json` holds the time of the gate ram for
 `BP_StoryDirector`. How they play: [story-system.md](../Docs/story-system.md#cutscenes).
@@ -470,7 +473,7 @@ are Meshy models made for the trailer ([Trailer/](Trailer/README.md)).
 | `Textures/T_*_D.jpg`, `_N.jpg` | Ground: grass, asphalt, pavers, dirt, gravel, concrete (1k) | [Poly Haven](https://polyhaven.com/textures), CC0 |
 | `Meshy/` | Vehicles (Civic, sedan, SUV, van, reefer truck) and plants (pine, spruce, birch, oak, bush, fern) at real size, 5k to 20k triangles, one texture each; `Paints/` holds sedan and van repaints | `blender_meshy_to_fbx.py`, `blender_car_paints.py` |
 | `Civic/` | The Civic cut into a body and a hatch that opens, and its texture | `blender_civic.py` |
-| `Buildings/` | Guard booth, veterinary office, the shops (Zigaretten, Kantor, Friseur, Sklep 24, Bar Grill, a row of market units, a WC container; modern and clean, after photos of real border bazaars) the border officer (a static figure) and the 16 market stalls of the main street (`SM_Stall_<Trade>`: canopy, tables and goods in one mesh, smooth shaded) at real size, 10k to 27k triangles, one 2k texture each; `Buildings/Meshy/` holds the raw GLBs | Meshy (2026-11-26: a nano-banana-2 concept image each, then image to 3D with meshy-7.1 remeshed, 36 credits a model), `blender_buildings_to_fbx.py` |
+| `Buildings/` | Guard booth, veterinary office, the shops (Zigaretten, Kantor, Friseur, Sklep 24, Bar Grill, a row of market units, a WC container; modern and clean, after photos of real border bazaars) the border officer (a static figure) and the 16 market stalls of the main street (`SM_Stall_<Trade>`: frame, tables and goods; `SM_Stall_<Trade>_Top`: the canopy, cut off so the game can hide it whole; smooth shaded) and the cigarette seller (`SM_Seller`, a static figure) at real size, 10k to 27k triangles, one 2k texture each; `Buildings/Meshy/` holds the raw GLBs | Meshy (2026-11-26: a nano-banana-2 concept image each, then image to 3D with meshy-7.1 remeshed, 36 credits a model), `blender_buildings_to_fbx.py` |
 | `Stall/` | Market stall: pipe frame and sloped tarp with a valance, stripe texture | `blender_stall_kit.py` |
 | `Source/StallKit.blend` | Working file of the stall | |
 
@@ -508,6 +511,7 @@ Each writes `out.json` next to itself. Run order for a clean pass:
 | `ue_fit_trunk.py` | Puts each trunk actor's lid and light on its Civic |
 | `ue_dress_stalls.py` | A Meshy model per stall (`SM_<stall label>`) with its name board; the kit frame, tarp and counter goods for a stall without one |
 | `ue_dress_props.py` | Bazaar wall panels, lamps, office yard and apron props |
+| `ue_silhouette.py` | `M_PP_Silhouette` and the `PP_Silhouette` volume: her silhouette behind things the camera does not cut open |
 | `ue_dress_border.py` | Shops of the side yards and the road verge with their blocking boxes, booth and veterinary office over the graybox, the officer, yard props |
 
 `ue_dress_lib.py` holds the shared helpers. Each `ue_dress_*` script

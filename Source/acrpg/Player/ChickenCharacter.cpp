@@ -14,6 +14,9 @@ AChickenCharacter::AChickenCharacter()
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
+	// M_PP_Silhouette draws her where something uncut hides her
+	GetMesh()->SetRenderCustomDepth(true);
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;

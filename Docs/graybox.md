@@ -22,7 +22,16 @@ document (stop 0: [level0-border-town.md](level0-border-town.md#graybox)).
   over a door. Walls and posts reach the ground, so they only get the
   cutout. Hidden parts keep their shadow. So give a roof its own
   component (or actor), apart from the walls, as the guard office and
-  the open container have.
+  the open container have; a market stall's canopy is its own mesh and
+  actor for this (`SM_Stall_<Trade>_Top`).
+* Never cut: actors tagged `NoOcclusionCutout` (her Civic and its
+  trunk lid, the lot's lamp posts) and art placed without camera
+  collision (the shop buildings, the booth and the veterinary office,
+  which are empty shells; the road lamps). Behind those she shows as a
+  yellow silhouette: her mesh renders custom depth and
+  `M_PP_Silhouette` on the unbound volume `PP_Silhouette` tints the
+  pixels where she is behind the scene
+  (`Art/Environment/Scripts/ue_silhouette.py`).
 * Ground: a collision slab with its top at Z = 0, plus colored surface
   patches (road, paving, dirt) 1 cm above it with no collision.
 * Level bounds and fence collision are invisible components with

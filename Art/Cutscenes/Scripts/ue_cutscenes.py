@@ -3,10 +3,14 @@
 py "C:/Users/vvovchenko/repo/acrpg/Art/Cutscenes/Scripts/ue_cutscenes.py"
 with L0_BorderBazaar open. Imports the sounds from Art/Audio first.
 
-Every actor in a sequence is a spawnable: copies of the level's art (the
+The actors of a sequence are spawnables: copies of the level's art (the
 Civic, a queue truck as the tow truck, a van) and of the chicken. The
 level's own Civic and the main gate are hidden by BP_StoryDirector. The
-sequences are rebuilt from scratch on every run.
+intro is the exception: it drives the level's own day Civic
+(Art_Civic_Start) in, so there is one car and it ends where the game
+picks it up; run this again after ue_dress_lot.py has placed that car
+anew. She is never shown inside the car: her model does not fit it.
+The sequences are rebuilt from scratch on every run.
 
 World axes: +X north (river side), +Y east; the lot is south of X = 0.
 The Meshy cars face their local +Y, so a car heading h has yaw h - 90.
@@ -363,8 +367,6 @@ def chicken(seq, name, seconds):
 CHICKEN_IDLE = "/Game/Characters/Chicken/Anims/A_Chicken_Idle"
 CHICKEN_WALK = "/Game/Characters/Chicken/Anims/A_Chicken_Walk"
 # The chicken mesh faces +Y: a heading h needs yaw h - 90
-# The car windows are opaque: she rides with her head out of the sunroof
-SEAT = (-5.0, -8.0, 62.0)  # forward, right (left is negative), up
 
 
 def build_intro():
@@ -372,20 +374,18 @@ def build_intro():
     T = 18.0
     EXPOSURE["bias"] = -0.8
     seq = new_sequence("LS_Intro", T)
-    civic = spawnable(seq, actor("Art_Civic_Start"), "Civic")
+    # The level's own car, not a copy: it stays where the drive ends
+    car = actor("Art_Civic_Start")
+    civic = seq.add_possessable(car)
+    civic.set_display_name("Civic")
+    s = car.get_actor_scale3d()
+    SCALES["Civic"] = (s.x, s.y, s.z)
     stop = actor("Civic_Start").get_actor_location()
-    z = actor("Art_Civic_Start").get_actor_location().z
-    o, e = actor("Art_Civic_Start").get_actor_bounds(False)
-    log.append("civic bounds o=%s e=%s" % (o, e))
+    z = car.get_actor_location().z
     # From the west end of the bridge (the far bank is forest)
     pts = [(stop.x, stop.y - 2700.0), (stop.x, stop.y)]
     samples, _ = drive(pts, 0.0, 12.0, accel=0.01, decel=4.0)
     key_transforms(civic, car_keys(samples, z, hold_after=T), T)
-    hen = chicken(seq, "Chicken", T)
-    hk = offset_keys(samples, SEAT, z, -90.0)
-    hk.append((T, hk[-1][1], hk[-1][2]))
-    key_transforms(hen, hk, T)
-    anim(hen, CHICKEN_IDLE, T)
     # Low on the bridge, aimed low so the car sits above the subtitles
     a = camera(seq, "Cam_Bridge", T, loc=(stop.x + 220, stop.y - 1500, 120),
                at=(stop.x, stop.y - 2600, 0), fov=50.0)
@@ -396,12 +396,17 @@ def build_intro():
             cam = (p[0] + 380, p[1] + 260, 150)
             side.append((t, cam, look(cam, (p[0], p[1] - 20, 95))))
     b = camera(seq, "Cam_Window", T, samples=side, fov=45.0)
-    c = camera(seq, "Cam_Booth", T, loc=(stop.x + 560, stop.y + 420, 280),
-               at=(stop.x - 60, stop.y - 80, 60))
+    # The car stops at Kotlet's booth. No fade out: his dialog opens
+    # over this shot (BP_StoryDirector), so the booth and the car sit in
+    # the upper part of the frame, clear of the dialog box
+    booth = actor("MK_NPC_Kotlet").get_actor_location()
+    mid = ((stop.x + booth.x) / 2, (stop.y + booth.y) / 2)
+    c = camera(seq, "Cam_Booth", T, loc=(mid[0] + 640, mid[1] + 60, 340),
+               at=(mid[0] - 40, mid[1], -30), fov=20.0)
     cuts(seq, [(a, 0, 5.5), (b, 5.5, 10), (c, 10, T)])
     sound(seq, "SW_Radio_Intro", 0, 16.0)
     sound(seq, "SW_Engine", 0, 12.5, 0.35, loop=True)
-    fade(seq, [(0, 1.0), (0.9, 0.0), (17.2, 0.0), (T, 1.0)])
+    fade(seq, [(0, 1.0), (0.9, 0.0)])
     eal.save_loaded_asset(seq)
     log.append("LS_Intro")
 
@@ -484,14 +489,6 @@ def build_exit():
     s2.set_editor_property("params", params)
     s2.set_range(int(1.7 * FPS), int(T * FPS))
     spawned(hen, [(0.0, True), (2.05, False)])
-    # Back out of the sunroof, sunglasses on, for the drive
-    roof = chicken(seq, "ChickenRoof", T)
-    rk = offset_keys(samples, SEAT, z, -90.0)
-    rk.insert(0, (0.0, rk[0][1], rk[0][2]))
-    rk.append((T, rk[-1][1], rk[-1][2]))
-    key_transforms(roof, rk, T)
-    anim(roof, CHICKEN_IDLE, T)
-    spawned(roof, [(0.0, False), (2.4, True)])
     # Gate debris: two leaves fly off at the ram
     leaves = []
     for i, gy in enumerate((2300.0, 2560.0)):
@@ -550,10 +547,6 @@ def build_van():
     end = EXIT_PTS[-1]
     civic = spawnable(seq, actor("Art_Civic_Start"), "Civic")
     static_transform(civic, (end[0], end[1], z), (0.0, 0.0, -90.0), T)
-    hen = chicken(seq, "Chicken", T)
-    static_transform(hen, (end[0] + SEAT[0], end[1] + SEAT[1], z + SEAT[2]),
-                     (0.0, 0.0, -90.0), T)
-    anim(hen, CHICKEN_IDLE, T)
     vz = 0.0
     van_src = None
     for a in eas.get_all_level_actors():
@@ -589,12 +582,6 @@ def build_drive_off():
     key_transforms(civic, car_keys(samples, z, hold_before=0.0,
                                    hold_after=T), T)
     spawned(civic, [(0.0, True), (6.4, False)])
-    hen = chicken(seq, "Chicken", T)
-    hk = offset_keys(samples, SEAT, z, -90.0)
-    hk.insert(0, (0.0, hk[0][1], hk[0][2]))
-    key_transforms(hen, hk, T)
-    anim(hen, CHICKEN_IDLE, T)
-    spawned(hen, [(0.0, True), (6.4, False)])
     headlights(seq, samples, z, T, [(0.0, True), (6.4, False)])
     loc = (2960, -560, 150)
     cam_keys = [(0.0, loc, look(loc, (3000, 0, 80))),

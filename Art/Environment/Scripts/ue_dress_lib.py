@@ -79,19 +79,21 @@ def holder(label, folder, loc=(0, 0, 0)):
     return a
 
 
+def part(actor, name, cls):
+    """Add a component of a class to an actor, under its root."""
+    root = sds.k2_gather_subobject_data_for_instance(actor)[0]
+    handle, fail = sds.add_new_subobject(unreal.AddNewSubobjectParams(
+        parent_handle=root, new_class=cls, blueprint_context=None))
+    sds.rename_subobject(handle, unreal.Text(name))
+    return sdl.get_object(sdl.get_data(handle))
+
+
 def ism(actor, name, path, occluder=False):
     """Add a hierarchical instanced mesh component to a holder actor."""
     sm = mesh(path)
     if occluder:
         ensure_collision(sm)
-    root = sds.k2_gather_subobject_data_for_instance(actor)[0]
-    params = unreal.AddNewSubobjectParams(
-        parent_handle=root,
-        new_class=unreal.HierarchicalInstancedStaticMeshComponent,
-        blueprint_context=None)
-    handle, fail = sds.add_new_subobject(params)
-    sds.rename_subobject(handle, unreal.Text(name))
-    c = sdl.get_object(sdl.get_data(handle))
+    c = part(actor, name, unreal.HierarchicalInstancedStaticMeshComponent)
     c.set_static_mesh(sm)
     camera_only(c, occluder)
     return c

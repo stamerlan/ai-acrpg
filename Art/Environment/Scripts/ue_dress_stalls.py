@@ -12,9 +12,9 @@ import unreal  # noqa: E402
 
 D = L.__file__.rsplit("\\", 1)[0]  # out.json goes next to the scripts
 G = "/Game/Environment/Stall/"
-# A stall with a Meshy model of its own (SM_<stall label>: canopy, tables
-# and goods in one mesh, blender_buildings_to_fbx.py) gets that instead
-# of the kit frame, tarp and Kenney goods
+# A stall with a Meshy model of its own (SM_<stall label>: frame, tables
+# and goods; SM_<stall label>_Top: the canopy, blender_buildings_to_fbx.py)
+# gets that instead of the kit frame, tarp and Kenney goods
 B = "/Game/Environment/Buildings/SM_"
 PEAK = 330.0  # height of a model stall's canopy top, cm
 # Name boards differ from stall to stall, like real ones
@@ -91,29 +91,49 @@ try:
         aw.set_editor_property("hidden_in_game", True)
         res["stalls"] += 1
         if L.eal.does_asset_exist(B + n):
-            # The model's front is its local +Y, the stall's its +X
-            b = L.mesh(B + n).get_bounding_box()
-            L.place(B + n, (o.x, o.y, 0), yaw - 90,
-                    (ey * 1.94 / (b.max.x - b.min.x),
-                     ex * 1.94 / (b.max.y - b.min.y), PEAK / b.max.z),
+            # The model's front is its local +Y, the stall's its +X. The
+            # canopy is an actor of its own: the camera occlusion hides
+            # all of it, with the name board on it, when it covers her
+            b = L.mesh(B + n + "_Top").get_bounding_box()
+            scale = (ey * 1.94 / (b.max.x - b.min.x),
+                     ex * 1.94 / (b.max.y - b.min.y), PEAK / b.max.z)
+            L.place(B + n, (o.x, o.y, 0), yaw - 90, scale,
                     "ArtStall_Model_" + n, folder, True)
+            top = L.place(B + n + "_Top", (o.x, o.y, 0), yaw - 90, scale,
+                          "ArtStall_Top_" + n, folder, True)
             # The graybox walls, counter and goods only collide now
             for c in a.get_components_by_class(unreal.StaticMeshComponent):
                 c.modify()
                 c.set_visibility(False)
                 c.set_editor_property("hidden_in_game", True)
             # The name: a board on the canopy's north edge, to the camera
-            L.place("/Engine/BasicShapes/Cube", (o.x + e.x, o.y, 228), 0,
-                    (0.03, e.y * 1.5 / 100, 0.46), "ArtStall_Sign_" + n,
-                    folder, False, BOARDS[res["stalls"] % len(BOARDS)])
+            board = L.part(top, "Board", unreal.StaticMeshComponent)
+            board.set_static_mesh(L.mesh("/Engine/BasicShapes/Cube"))
+            board.set_material(0, L.eal.load_asset(
+                BOARDS[res["stalls"] % len(BOARDS)]))
+            board.set_world_location_and_rotation(
+                unreal.Vector(o.x + e.x, o.y, 228), unreal.Rotator(),
+                False, False)
+            board.set_world_scale3d(
+                unreal.Vector(0.03, e.y * 1.5 / 100, 0.46))
+            L.camera_only(board, False)
             for t in a.get_components_by_class(unreal.TextRenderComponent):
-                t.set_world_size(38)
-                t.set_world_location_and_rotation(
+                t.modify()
+                t.set_visibility(False)
+                t.set_editor_property("hidden_in_game", True)
+                name = L.part(top, "Name", unreal.TextRenderComponent)
+                name.set_text(t.text)
+                name.set_text_material(t.text_material)
+                name.set_font(t.font)
+                name.set_text_render_color(t.text_render_color)
+                name.set_horizontal_alignment(t.horizontal_alignment)
+                name.set_vertical_alignment(
+                    unreal.VerticalTextAligment.EVRTA_TEXT_CENTER)
+                name.set_world_size(38)
+                name.set_world_location_and_rotation(
                     unreal.Vector(o.x + e.x + 3, o.y, 228),
                     unreal.Rotator(), False, False)
-                t.set_editor_property(
-                    "vertical_alignment",
-                    unreal.VerticalTextAligment.EVRTA_TEXT_CENTER)
+                name.set_world_scale3d(unreal.Vector(1, 1, 1))
             continue
         L.place(G + "SM_StallFrame", (o.x, o.y, 0), yaw, (sx, sy, 1.0),
                 "ArtStall_Frame_" + n, folder, True)

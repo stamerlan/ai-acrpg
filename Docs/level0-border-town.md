@@ -212,7 +212,8 @@ Zones:
    full of its own goods, and a black board with its name on the
    canopy's north edge, toward the camera. The walkway in the middle
    is open to the sky, with string light cables across it. When a stall's
-   tarp hides her from the camera, the tarp and its sign hide.
+   canopy covers her from the camera, the whole canopy and its name
+   board hide; the frame, tables and goods stay.
 5. **Gnome field.** An open yard where the gnome seller keeps his stock:
    hundreds of garden gnomes in rows, making low cover and a loose maze.
    The first fight happens here. A hole in the lot fence is at the far
@@ -388,7 +389,9 @@ customs!" Starts the side quest
 
 #### Mr. Krasnal
 
-The garden gnome seller ("krasnal" is Polish for "gnome"). "Gnomes!
+The garden gnome seller ("krasnal" is Polish for "gnome"). He stands
+beside his stall, by the way to the gnome field, not under its canopy
+(the camera could not see him there). "Gnomes!
 Germans love them! Two for one!" Starts the side quest
 [The Gnomonaut](#the-gnomonaut).
 
@@ -401,11 +404,11 @@ Sets the tone: every seller sizes her up.
 #### Joke shops (dialog only)
 
 Nobody is modelled inside a building. She talks through the kantor's
-barred window, at the cigarette shop's door and at the window of
-Kotlet's booth: the talk point is half a meter in front of the wall,
-the NPC is a voice and a portrait in the dialog. The markers
-`MK_NPC_KantorClerk`, `MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet`
-are hidden.
+barred window and at the window of Kotlet's booth: the talk point is
+half a meter in front of the wall, the NPC is a voice and a portrait in
+the dialog. The cigarette seller stands outside, by his shop's door
+(`SM_Seller`, a static figure). The markers `MK_NPC_KantorClerk`,
+`MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet` are hidden.
 
 * **Cigarette seller:** "Cheap! Ten euro a carton!" She: "Smoking
   kills." He: "So does the kebab stand. Pick your death."

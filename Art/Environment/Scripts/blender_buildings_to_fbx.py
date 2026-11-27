@@ -6,18 +6,21 @@ blender --background --python blender_buildings_to_fbx.py
 Reads Art/Environment/Buildings/Meshy/<name>.glb (Meshy image to 3D,
 meshy-7.1 remeshed to 20-30k triangles) and writes
 Art/Environment/Buildings/SM_<Name>.fbx with T_<Name>_D.png: meters, Z
-up, standing on z = 0, centered. Meshy leaves a model turned the way its
-concept image was drawn, so each one is first squared to the axes (the
-turn with the smallest bounding box) and then turned by a quarter-turn
-count picked by eye so that its front faces -Y, like the vehicles of
-blender_meshy_to_fbx.py. With a preview_dir, renders each result from
-the front (-Y) and from above to check that; with names after it,
-converts only those models.
+up, standing on z = 0, centered. A stall is cut in two at the lower edge
+of its canopy: SM_<Name>_Top.fbx is the tarp, which the game hides whole
+when it covers her, SM_<Name>.fbx the frame, tables and goods under it.
+Meshy leaves a model turned the way its concept image was drawn, so each
+one is first squared to the axes (the turn with the smallest bounding
+box) and then turned by a quarter-turn count picked by eye so that its
+front faces -Y, like the vehicles of blender_meshy_to_fbx.py. With a
+preview_dir, renders each result from the front (-Y) and from above to
+check that; with names after it, converts only those models.
 """
 import math
 import os
 import sys
 
+import bmesh
 import bpy
 from mathutils import Matrix, Vector
 
@@ -29,6 +32,7 @@ OUT = os.path.join(ART, "Buildings")
 # "z" is the height, "xy" the longer side of the footprint
 MODELS = {
     "officer": ("Officer", 1.78, "z", 0),
+    "seller": ("Seller", 1.75, "z", 0),
     "booth": ("Booth", 2.6, "z", 0),
     "vetoffice": ("VetOffice", 4.0, "xy", 0),
     "zigaretten": ("Zigaretten", 6.0, "xy", 0),
@@ -56,6 +60,10 @@ MODELS = {
     "stall_socks": ("Stall_Socks", 4.0, "xy", 0),
     "stall_kebab": ("Stall_Kebab", 7.0, "xy", 0),
 }
+# Where a stall is cut, as a part of its height: just under the canopy
+CUT = {"stall_cds": 0.68, "stall_kebab": 0.68, "stall_gnomes": 0.64,
+       "stall_cornlady": 0.62, "stall_fruit": 0.62, "stall_honey": 0.62,
+       "stall_household": 0.62}
 
 
 def footprint(points, angle):
@@ -76,7 +84,7 @@ def load(name, size, along, turns):
     obj.matrix_world = Matrix()
     points = [v.co for v in obj.data.vertices][::7]
     square = 0.0
-    if name != "officer":
+    if name not in ("officer", "seller"):
         square = min((math.radians(d * 0.5) for d in range(-90, 90)),
                      key=lambda a: footprint(points, a))
     obj.data.transform(Matrix.Rotation(
@@ -102,6 +110,30 @@ def load(name, size, along, turns):
                  for node in obj.material_slots[0].material.node_tree.nodes
                  if node.type == "TEX_IMAGE" and node.image)
     return obj, image
+
+
+def split_top(obj, z):
+    """Cuts the mesh at a height; returns what is above as a new object."""
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    bmesh.ops.bisect_plane(
+        bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:],
+        plane_co=(0, 0, z), plane_no=(0, 0, 1))
+    bm.to_mesh(obj.data)
+    bm.free()
+    top = obj.copy()
+    top.data = obj.data.copy()
+    bpy.context.scene.collection.objects.link(top)
+    for part, above in ((obj, True), (top, False)):
+        bm = bmesh.new()
+        bm.from_mesh(part.data)
+        bmesh.ops.delete(
+            bm, geom=[f for f in bm.faces
+                      if (f.calc_center_median().z > z) == above],
+            context="FACES")
+        bm.to_mesh(part.data)
+        bm.free()
+    return top
 
 
 def export(obj, name):
@@ -143,6 +175,10 @@ if __name__ == "__main__":
             continue
         obj, image = load(name, size, along, turns)
         obj.material_slots[0].material.name = "M_" + title
+        if name.startswith("stall_"):
+            height = max(v.co.z for v in obj.data.vertices)
+            top = split_top(obj, CUT.get(name, 0.59) * height)
+            export(top, "SM_" + title + "_Top")
         export(obj, "SM_" + title)
         image.filepath_raw = os.path.join(OUT, "T_" + title + "_D.png")
         image.file_format = "PNG"

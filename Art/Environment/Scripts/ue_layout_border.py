@@ -12,7 +12,9 @@ run again. What it does:
   runs along its south side.
 * The edge triggers get their new lines.
 * The kantor clerk and the cigarette seller move to the shop buildings;
-  their old stalls sell honey and socks.
+  their old stalls sell honey and socks. The gnome seller steps out
+  from under his canopy, where the camera could not see him.
+* The lamp posts of the lot are never cut open by the camera.
 * Night shift fixes: the graybox chairs of the grill shack and the office
   stool blocked the cooks placed on them; they are hidden, no collision.
 """
@@ -226,8 +228,11 @@ def shops(A):
     # The kantor and the cigarettes are shop buildings now
     # (ue_dress_border.py): their stalls on the main street sell
     # something else, and the clerk and the seller are talked to through
-    # the kantor's window and the shop's door. Kotlet sits in his booth.
-    # Nobody is modelled inside, so the markers are hidden.
+    # the kantor's window. Kotlet sits in his booth. Nobody is modelled
+    # inside, so their markers are hidden. The cigarette seller stands
+    # at his door (his model: ue_dress_border.py). The gnome seller
+    # stands beside his stall, by the way to the gnome field: under the
+    # canopy the camera did not see him.
     for old, new, text in (("Stall_Kantor", "Stall_Honey", "MIOD"),
                            ("Stall_Cigarettes", "Stall_Socks", "SKARPETY")):
         a = A.get(old) or A[new]
@@ -242,15 +247,18 @@ def shops(A):
             glass.set_collision_profile_name("NoCollision")
             glass.set_visibility(False)
             glass.set_editor_property("hidden_in_game", True)
-    for label, spot in (("MK_NPC_KantorClerk", (2905, 640)),
-                        ("MK_NPC_CigaretteSeller", (1512, 2400)),
-                        ("MK_NPC_Kotlet", None)):
+    for label, spot, hide in (("MK_NPC_KantorClerk", (2905, 640), True),
+                              ("MK_NPC_CigaretteSeller", (1615, 2465), True),
+                              ("MK_NPC_Krasnal", (1440, -650), False),
+                              ("MK_NPC_Kotlet", None, True)):
         a = A[label]
         a.modify()
         if spot:
             a.set_actor_location_and_rotation(
                 unreal.Vector(spot[0], spot[1], a.get_actor_location().z),
                 unreal.Rotator(), False, False)
+        if not hide:
+            continue
         for c in (a.get_components_by_class(unreal.StaticMeshComponent) +
                   a.get_components_by_class(unreal.TextRenderComponent)):
             c.modify()
@@ -259,8 +267,17 @@ def shops(A):
             c.set_editor_property("hidden_in_game", True)
 
 
+def poles(A):
+    # A hole cut in a thin pole only looks broken
+    for a in A.values():
+        tags = [str(t) for t in a.tags]
+        if "LampPost" in tags and "NoOcclusionCutout" not in tags:
+            a.modify()
+            a.tags = tags + ["NoOcclusionCutout"]
+
+
 try:
-    for step in (bazaar, road, edges, night_shift, shops):
+    for step in (bazaar, road, edges, night_shift, shops, poles):
         step(actors())
         res["log"].append(step.__name__)
     res["ok"] = True

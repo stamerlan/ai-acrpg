@@ -3,7 +3,8 @@
 Run in the editor: py "<this file>". Reads Art/Environment/Buildings
 (blender_buildings_to_fbx.py). Meshes go to
 /Game/Environment/Buildings/SM_<Name>, each with one two-sided
-MI_Bld_<Name> on M_Env (BaseTex = T_<Name>_D), Nanite off.
+MI_Bld_<Name> on M_Env (BaseTex = T_<Name>_D), Nanite off. A stall's
+canopy (SM_<Name>_Top) shares the material of its stall.
 """
 import glob
 import json
@@ -51,6 +52,8 @@ try:
          for p in sorted(glob.glob(ART + "/T_*.png"))])
     for path in meshes:
         name = os.path.splitext(os.path.basename(path))[0][3:]
+        if name.endswith("_Top"):
+            continue
         mi_path = B + "/Materials/MI_Bld_" + name
         mi = eal.load_asset(mi_path) if eal.does_asset_exist(mi_path) else (
             tools.create_asset("MI_Bld_" + name, B + "/Materials",
@@ -72,10 +75,14 @@ try:
         mi.set_editor_property("base_property_overrides", overrides)
         mel.update_material_instance(mi)
         eal.save_loaded_asset(mi)
-        mesh = eal.load_asset(B + "/SM_" + name)
-        mesh.set_material(0, mi)
-        eal.save_loaded_asset(mesh)
-        box = mesh.get_bounding_box()
+        for part in ("", "_Top"):
+            if eal.does_asset_exist(B + "/SM_" + name + part):
+                mesh = eal.load_asset(B + "/SM_" + name + part)
+                # The dressing scripts fit a new box where they need one
+                unreal.EditorStaticMeshLibrary.remove_collisions(mesh)
+                mesh.set_material(0, mi)
+                eal.save_loaded_asset(mesh)
+        box = eal.load_asset(B + "/SM_" + name).get_bounding_box()
         res[name] = [round(box.max.x - box.min.x),
                      round(box.max.y - box.min.y),
                      round(box.max.z - box.min.z)]
