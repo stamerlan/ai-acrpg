@@ -20,8 +20,14 @@ res = {"n": 0}
 
 
 def put(path, x, y, yaw=0.0, s=1.0, folder="Art/Props", occ=True, z=0.0):
-    L.place(path, (x, y, z), yaw, s, "ArtProp_" + path.split("SM_")[1],
-            folder, occ)
+    a = L.place(path, (x, y, z), yaw, s, "ArtProp_" + path.split("SM_")[1],
+                folder, occ)
+    if occ:
+        # The mesh's own collision wins over camera_only (it blocks the
+        # pawns) and these props have no graybox under them: they go in
+        # the nav mesh, or the cooks walk into a parasol and stay there
+        a.static_mesh_component.set_editor_property(
+            "can_ever_affect_navigation", True)
     res["n"] += 1
 
 

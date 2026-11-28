@@ -86,7 +86,12 @@ def fit(actor, path, names=(), label=None, folder=None, flip=False,
     al = actor.get_actor_location()
     wx = al.x + cxl * ca - cyl * sa
     wy = al.y + cxl * sa + cyl * ca
-    a = L.place(path, (wx, wy, lo[2]), yaw, tuple(sc),
+    # A real-size vehicle's origin is under its wheels: it goes on the
+    # ground at the graybox actor (1 cm up, over the art ground strips),
+    # not under the graybox body, which floats on its wheels (15 cm,
+    # trucks 40)
+    wz = al.z + 1.0 if natural else lo[2]
+    a = L.place(path, (wx, wy, wz), yaw, tuple(sc),
                 label or "Art_" + actor.get_actor_label(),
                 folder or "Art/" + str(actor.get_folder_path()), True, mi)
     # BP_StoryDirector hides the Civic art with its graybox by these tags

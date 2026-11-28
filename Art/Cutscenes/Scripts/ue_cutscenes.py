@@ -386,11 +386,11 @@ def build_intro():
     stop = actor("Civic_Start").get_actor_location()
     # From the west end of the bridge (the far bank is forest)
     pts = [(stop.x, stop.y - 2700.0), (stop.x, stop.y)]
-    # Wheels on the road: ue_dress_lot.py puts the car's bottom on its
-    # graybox body, 15 cm up. The traces find the graybox ground and the
-    # bridge deck (0 along the drive), the art road strips lie 1 cm over
-    # them. The level car is moved down too: the game and the other
-    # cutscenes (they read its z) then have it on the road as well
+    # Wheels on the road: ue_dress_lot.py puts the car 1 cm over its
+    # graybox actor. The traces find the graybox ground and the bridge
+    # deck (0 along the drive), the art road strips lie 1 cm over them.
+    # The level car is moved to that height if it is not there: the game
+    # and the other cutscenes (they read its z) then have it on the road
     world = unreal.EditorLevelLibrary.get_editor_world()
     ground = []
     for i in range(28):

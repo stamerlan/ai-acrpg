@@ -58,6 +58,21 @@ Light, the awareness meter and noise are in
 * **Alerted**: chases (`SimpleMoveToActor` on the nav mesh) and attacks
   until it dies. It never searches or returns to patrol. Being hurt (and
   surviving) alerts it too.
+* **Getting unstuck** (`UpdateStuck`, every tick while alerted, after
+  `UpdateAlerted`, not during an attack, a montage or a climb, and only
+  out of reach). Before it an alerted cook could stand still in his idle
+  pose for good, which read as "idle after being shot": she shoots from
+  a gap between parked cars or next to a prop, where the nav mesh has no
+  room, so the path to her fails; or he walks into something that blocks
+  pawns but is not in the nav mesh. Now:
+  * no move running (`GetMoveStatus` is not `Moving`): he walks to her
+    location projected on the nav mesh (300 cm query extent), and if
+    that does not start a move either, he steers straight at her
+    (`AddMovementInput`);
+  * slower than 20 cm/s for 0.5 s (`StuckTime`): for 0.8 s
+    (`UnstickUntil`) the path following is stopped and he steers at her
+    and sideways (about 63 degrees, the side flips each time,
+    `UnstickSide`).
 * While unaware, suspicious or alerted, `Tick` first calls
   `EnsureController`: an enemy without an AI controller spawns its
   default one. Re-instancing in PIE (a Blueprint compile, Live Coding)
@@ -193,7 +208,9 @@ default is 0, which keeps the Shawarman's knife chop):
 * `ClimbFrom`, `ClimbTop`, `ClimbMontage`: when `ClimbTop` is set, the
   alerted enemy first walks to `ClimbFrom`, plays the climb montage and
   after 1.2 s is set onto `ClimbTop` (`FinishClimb`); once on top he never
-  moves again, he only attacks.
+  moves again, he only attacks. Without a `ClimbMontage` `FinishClimb`
+  does not move him: `ClimbFrom` is then a ground perch he holds (the
+  Skewerman, see below).
 
 `BPC_Health` has two damage modifiers (category Armor, 0 = off):
 `DamageBonus` (damage x (1 + bonus), the stunned boss uses 1) and
@@ -242,7 +259,16 @@ The Shawarman's cap flies off (the `Cap` bone is hidden and the
 ## First fight (0A)
 
 `BP_FirstFight` is on `DL_Day` with the three Shawarmen
-(`Shawarman_1` to `Shawarman_3`, `bDormant` on, at the old wave markers).
+(`Shawarman_1` to `Shawarman_3`, `bDormant` on). They wait close to the
+impound office but off screen (`ue_layout_border.py` step
+`first_fight`): `Shawarman_1` at (1450, 1950), in the gap between the
+tools stall and the Zigaretten shop, about 13 m of path from her at
+Halina's window; `Shawarman_2` and `_3` at (1600, 560) and (1600, 700) on
+the main street behind the toys stall, about 20 m away. From her spot
+when `halina_call` fires (about (120, 1860)) and from the `CP_LeaveOffice`
+checkpoint, all three are below the bottom edge of the gameplay camera
+(arm 1600, pitch -50, FOV 55), also at the 2400 maximum zoom out and on a
+4:3 screen. They used to come from the kebab stand, 30 m away.
 
 1. The story event `halina_call` sets the flag `f_first_fight` to
    `started` and wakes the `Wave1` enemy: it appears and shouts its
@@ -252,7 +278,12 @@ The Shawarman's cap flies off (the `Cap` bone is hidden and the
 
 After a reload with the flag at `started` the fight resumes: defeated
 enemies are gone, the others wake up again. Test it with
-`Story.Event halina_call`.
+`Story.Event halina_call`. The 0B rule that only alerted enemies count
+(below) changes nothing here: `Activate` alerts every enemy it wakes.
+
+Checked in PIE (2026-11-28): she at the window, `Shawarman_1` came round
+the stall into view about 5 m from her and reached her 6.5 s after the
+event; when he died the other two came into view from the bottom right.
 
 ## Body and animation
 
@@ -288,6 +319,15 @@ size of 95 to 105%.
 
 Enemy body parts must not affect navigation: with the dynamic nav mesh a
 colliding part carves a hole around the enemy and it can't find a path.
+The other way round, a level prop that blocks pawns must affect
+navigation, or the path leads through it and the cook walks into it: the
+art props of `ue_dress_props.py` (parasols, chairs, boxes, the dumpster)
+do since 2026-11-28. Their meshes' own collision blocks pawns although
+`camera_only` (`ue_dress_lib.py`) meant them for the camera only; the
+same holds for the other art (cars, stalls, buildings), which mostly
+sits on graybox that is in the nav mesh, but the art cars are wider than
+their graybox, so the gaps between parked cars are narrower than the nav
+mesh thinks.
 
 ## Skewerman and Grill Sergeant
 
@@ -303,10 +343,14 @@ templates have `Health` -1, so `BeginPlay` starts them at `MaxHealth`.
   `BP_SkewerProjectile`: a 1.3x `SM_Skewer` flying straight at `Speed`
   720 cm/s; a Visibility hit (wall, car, ground) sticks it for 1.5 s, coming
   within 55 cm of her does `Damage` 10 (`Skewerman`) and removes it. It
-  never turns, so stepping aside dodges it. Wave 2 Skewermen climb arena
-  containers (`MK_Enemy_ClimbPoint_1` and `_3`, top 3.5 m). A climb
-  point and its `ClimbTop` belong over the middle part of a container,
-  not at the seam between two (he stood on the gap).
+  never turns, so stepping aside dodges it. The wave 2 Skewermen hold
+  ground perches by the middle container of each side wall of the arena,
+  between two cars (`ClimbFrom` (-3420, -650) and (-3420, 650), set by
+  `ue_layout_border.py` step `night_shift`; `BP_Skewerman` has no
+  `ClimbMontage`). They used to climb onto the containers (3.5 m), where
+  she could not shoot them: the pellets fly level at her height into the
+  container wall, and the mouse aim, projected on the ground, misses a
+  target that high by meters. `AM_Skewerman_Climb` is unused now.
 * **Grill Sergeant**: the lid stops 75 % of the damage from the front 60
   degrees (`FrontReduction` 0.75, `FrontArmorCos` 0.5); from behind he
   takes it all. The slam (`AttackRate` 1.8, lands at `WindupTime` 1.0 s)
@@ -319,7 +363,8 @@ templates have `Health` -1, so `BeginPlay` starts them at `MaxHealth`.
 Checked in PIE: the Skewerman backed from 3.7 to 4.6 m and his skewers hit
 a standing target every 3 s for 10; the slam took 25 and the coals 10 a
 second; 10 damage to the Grill Sergeant from in front took 2.5, from
-behind 10.
+behind 10. On their perches (2026-11-28) one shot from about 4.1 m took
+the west Skewerman from 20 to 2.6 and the east one from 20 to 1.6.
 
 | | Skewerman | Grill Sergeant |
 |---|---|---|
@@ -385,15 +430,23 @@ drops and the Civic's trunk, which refills at any time.
 `NightShiftFight` (`BP_NightShiftFight`, `DL_Night`, `Night/Story`) checks
 every 0.5 s:
 
-1. When `q_car_trouble` is `car` (the trunk was opened): every living
-   `Wave1` enemy (the six night shift) becomes alerted; if fewer than
-   `MinWave1` (3) are alive, the rest come from `GrillSpawn` (the grill
-   shack wave marker).
-2. When they are all dead: the arena crates refill (`RefillMarkers`), and
-   3 s later `Wave2` wakes up (`WakeUp`): `Shawarman_Wave2_1`/`_2` and
-   `Skewerman_Wave2_1`/`_2` at the inner gate (the Skewermen climb the
-   containers by `MK_Enemy_ClimbPoint_1`/`_3`), `GrillSergeant_Wave2`.
-   They are dormant (hidden, no collision) until then.
+1. When `q_car_trouble` is `car` (the trunk was opened): wave 1 is the
+   night shift that is alerted (`CountAlerted` counts the living `Wave1`
+   enemies in the state `Alerted`). Nobody else is alerted by the trunk:
+   the sleeper, the eaters and a far patrol she sneaked past stay as they
+   are until they notice her (or a shot, 15 m). If fewer than `MinWave1`
+   (3) are alerted, the rest come from `GrillSpawn` (the grill shack wave
+   marker), woken with `Activate`: they do not shout, so they do not wake
+   the eaters next to the marker, and their `BPC_Health` has
+   `bRemembersDefeat` off (a spawned cook gets the name of one killed
+   before a reload, `BP_Shawarman0`, and a remembered name destroyed the
+   new one on spawn).
+2. When every alerted wave 1 enemy (and every extra) is dead, the
+   unaware ones are ignored: the arena crates refill (`RefillMarkers`),
+   and 3 s later `Wave2` wakes up (`WakeUp`): `Shawarman_Wave2_1`/`_2`
+   and `Skewerman_Wave2_1`/`_2` at the inner gate (the Skewermen go to
+   their perches), `GrillSergeant_Wave2`. They are dormant (hidden, no
+   collision) until then.
 3. When wave 2 is dead: a `BeforeBoss` checkpoint (phase `Night`), and 2 s
    later `MrKebabski` (dormant at the grill shack) wakes up.
 
@@ -403,8 +456,13 @@ from the middle after a reload; a reload restarts it from wave 1 with the
 defeated enemies staying defeated.
 
 Checked in PIE: the trunk state started wave 1, killing it refilled two
-crates and woke wave 2 (a Skewerman stood on his container), killing that
-woke the boss.
+crates and woke wave 2, killing that woke the boss. Again on 2026-11-28
+with only `PatrolA` alerted at the trunk: two extras came, killing the
+three started wave 2 while the eaters, `PatrolB` and the sleeper stayed
+unaware; the `BeforeBoss` checkpoint saved and the boss woke. His shout
+(7.2 m) then alerts the eaters beside him at the grill shack, who join
+the boss fight. `Checkpoint.Reload` restarted at wave 1 with three
+extras and the survivors unaware.
 
 ## Placing an enemy
 

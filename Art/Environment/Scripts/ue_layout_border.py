@@ -22,6 +22,9 @@ example `sellers`). What it does:
   Art/NPCs/Scripts/ue_dress_npcs.py, which puts the sellers in front).
 * Night shift fixes: the graybox chairs of the grill shack and the office
   stool blocked the cooks placed on them; they are hidden, no collision.
+  The wave 2 Skewermen hold ground perches instead of climbing.
+* The 0A first fight cooks wait off screen near the impound office
+  (step `first_fight`, 2026-11-28).
 """
 import json
 import os
@@ -216,18 +219,51 @@ def night_shift(A):
                 l = thing.get_world_location()
                 thing.set_world_location(unreal.Vector(x, l.y, l.z),
                                          False, False)
-    for label in ("Skewerman_Wave2_1", "Skewerman_Wave2_2"):
+    # Up on a container a Skewerman could not be shot: the pellets fly
+    # level at her height into the container wall, and the cursor aim
+    # (projected on the ground) missed him by meters at that height. He
+    # holds a ground perch instead, by the middle container of a side
+    # wall between two cars: BP_Skewerman has no ClimbMontage, so
+    # FinishClimb (BP_EnemyBase) does not move him, he only throws
+    for label, y in (("Skewerman_Wave2_1", -650), ("Skewerman_Wave2_2", 650)):
         a = A[label]
         a.modify()
-        for prop in ("ClimbFrom", "ClimbTop"):
-            v = a.get_editor_property(prop)
-            a.set_editor_property(prop, unreal.Vector(-3020, v.y, v.z))
+        a.set_editor_property("ClimbFrom", unreal.Vector(-3420, y, 0))
+        a.set_editor_property("ClimbTop", unreal.Vector(-3420, y, 80))
     # The sleeper stood 6 cm inside the CCTV desk
     for label in ("Shawarman_Night_Sleeping", "MK_Enemy_Shawarman_Sleeping"):
         a = A[label]
         a.modify()
         l = a.get_actor_location()
         a.set_actor_location(unreal.Vector(-222, l.y, l.z), False, False)
+
+
+def first_fight(A):
+    # The 0A cooks wait close to the impound office (halina_call fires
+    # at her window, about (120, 1860)), off screen for the gameplay
+    # camera there and at the CP_LeaveOffice checkpoint (365, 1800):
+    # the first one in the gap between the tools stall and the
+    # Zigaretten shop, the other two on the main street behind the
+    # toys stall, out of view while she fights in front of the office.
+    # They are dormant (hidden) until the fight wakes them
+    world = unreal.EditorLevelLibrary.get_editor_world()
+    for label, x, y in (("Shawarman_1", 1450, 1950),
+                        ("Shawarman_2", 1600, 560),
+                        ("Shawarman_3", 1600, 700)):
+        a = A[label]
+        hit = unreal.SystemLibrary.line_trace_single(
+            world, unreal.Vector(x, y, 500), unreal.Vector(x, y, -500),
+            unreal.TraceTypeQuery.TRACE_TYPE_QUERY1, False, [a],
+            unreal.DrawDebugTrace.NONE, True)
+        t = hit.to_tuple() if hit else None
+        ground = t[4].z if t and t[0] else 0.0
+        half = a.get_component_by_class(
+            unreal.CapsuleComponent).get_scaled_capsule_half_height()
+        a.modify()
+        a.set_actor_location_and_rotation(
+            unreal.Vector(x, y, ground + half + 2),
+            unreal.Rotator(roll=0, pitch=0, yaw=180), False, False)
+        res["log"].append([label, ground])
 
 
 def shops(A):
@@ -301,7 +337,8 @@ def poles(A):
 
 
 try:
-    for step in (bazaar, road, edges, night_shift, shops, poles, sellers):
+    for step in (bazaar, road, edges, night_shift, first_fight, shops,
+                 poles, sellers):
         if sys.argv[1:] and step.__name__ not in sys.argv[1:]:
             continue
         step(actors())

@@ -333,14 +333,16 @@ eating a kebab.
   is at my window." She: "A special? For me? How nice!" Journal: "Get
   the Civic back before nine. Tonight." Checkpoint.
 
-**6. First fight (gnome field).** The kebab stand Shawarman runs out:
-"Tonight's special is walking away!" He comes alone first, so the
-player learns the peck and the flutter on one enemy. When he is down,
-two more come out of the stand. Gnomes all around are throwables
-(tutorial prompt on the first fight). The gnome seller shouts "Hey!
-That's twenty zloty!" at every broken gnome. After the fight the kebab
-stand is empty, the grill still turning, a sign on the counter: "BACK
-AT MIDNIGHT".
+**6. First fight (office yard and gnome field).** Halina's call brings
+the kebab stand Shawarman at a run, round the stalls next to the
+office: "Tonight's special is walking away!" He comes alone first, so
+the player learns the peck and the flutter on one enemy. When he is
+down, two more come from the main street. All three wait off screen,
+close to the office (see [enemies.md](enemies.md#first-fight-0a)).
+Gnomes all around are throwables (tutorial prompt on the first fight).
+The gnome seller shouts "Hey! That's twenty zloty!" at every broken
+gnome. After the fight the kebab stand is empty, the grill still
+turning, a sign on the counter: "BACK AT MIDNIGHT".
 
 **7. Preparing for the night.** She finds the hole in the fence at the
 far end of the gnome field. Interacting with it in daylight: "Too
@@ -548,10 +550,10 @@ Zones:
    key board, the evidence shelf, the inner gate button.
 6. **Inner lot.** A fenced area for "special" confiscations behind a
    locked gate. The Civic is here. This is also the combat arena:
-   about 18 x 15 m, containers along the walls (Skewermen climb them),
-   4-5 cars as cover, two shell crates. The Civic stands at the south
-   end of the arena: its trunk refills shells at any time (see the
-   GDD), but it is far from the inner gate where enemies come in, so
+   about 18 x 15 m, containers along the walls (Skewermen hold perches
+   by them), 4-5 cars as cover, two shell crates. The Civic stands at
+   the south end of the arena: its trunk refills shells at any time (see
+   the GDD), but it is far from the inner gate where enemies come in, so
    running to it mid-fight is a choice. The shell crates are the closer,
    limited option.
 
@@ -641,14 +643,16 @@ found the shotgun in the hay). Shotgun prompts: aim, fire, press reload
 while standing still.
 Checkpoint.
 
-**5. The night shift (waves).** Every Shawarman in the lot is alerted;
-they come through the inner gate.
+**5. The night shift (waves).** The Shawarmen who have noticed her come
+for her; nobody is woken just because the trunk opened. Only the
+alerted ones have to go down before the next wave: the sleeper, the
+eaters or a patrol she slipped past can be left alone.
 
-* Wave 1: the night shift Shawarmen still standing from the sneak part
-  (up to 6). If fewer than 2 are left, new ones come from the grill
-  shack to make 2, so the shotgun always has targets to practice on.
-* Wave 2: 2 Shawarmen, 2 Skewermen who climb the containers, 1 Grill
-  Sergeant.
+* Wave 1: the alerted night shift Shawarmen from the sneak part
+  (up to 6). If fewer than 3 are alerted, new ones come from the grill
+  shack to make 3, so the shotgun always has targets to practice on.
+* Wave 2: 2 Shawarmen, 2 Skewermen on ground perches by the containers,
+  1 Grill Sergeant.
 * Shell crates in the arena refill once between the waves.
 
 **6. Boss: Mr. Kebabski, the night manager.** He comes out of the grill
@@ -714,7 +718,8 @@ Ranged Shawarman, 0B only.
 * HP 20. Keeps 3.6-6 m away and backs off when she gets close.
 * Attack: throws a skewer, 1.0 s windup, slow visible projectile
   (7.2 m/s) that can be dodged or out-walked, 10 damage.
-* Climbs onto low containers in the arena (fixed climb points).
+* Holds a fixed ground perch by the arena containers, between two cars
+  (up on a container the shotgun could not reach him).
 
 ### Grill Sergeant
 
