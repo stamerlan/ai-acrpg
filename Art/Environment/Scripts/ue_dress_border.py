@@ -1,5 +1,6 @@
 """Meshy buildings: the shops of the bazaar, the border post, the
-officer at the head of the truck queue and Kotlet by the stopped car.
+Kotlet's talk point by the stopped car (the two border officers are
+BP_NPCs of Art/NPCs/Scripts/ue_dress_npcs.py).
 
 Run in the editor: py "<this file>" (after ue_layout_border.py and
 ue_buildings_import.py). The shops have no graybox of their own: this
@@ -229,16 +230,11 @@ def kotlet(actors):
 
     He stands out of his booth on the verge south of where the intro's car
     stops, facing north (the car, the camera), in the day only. His talk
-    point (MK_NPC_Kotlet) moves to him.
+    point (MK_NPC_Kotlet) moves there; his model is a BP_NPC placed by
+    Art/NPCs/Scripts/ue_dress_npcs.py.
     """
     m = actors["MK_NPC_Kotlet"]
-    layers = m.get_editor_property("data_layer_assets")
     x, y = KOTLET
-    a = L.place(B + "Officer", (x, y, 0), 0 - 90, 0.95, "ArtBld_Kotlet",
-                "Art/Shared/BorderPost", False)
-    b = block("Yard_KotletBlock", "Shared/BorderPost", x, y, 22, 22, 170)
-    for k in (a, b):
-        k.set_editor_property("data_layer_assets", layers)
     m.modify()
     m.set_actor_location(unreal.Vector(x, y, m.get_actor_location().z),
                          False, False)
@@ -276,12 +272,6 @@ try:
          "STRAZ GRANICZNA", 22)
     over(actors, "CustomsShed", "VetOffice", 0, 0.97, ("P1",),
          "ODPRAWA WETERYNARYJNA", 24)
-    # The officer checks papers at the head of the queue, on the verge
-    # north-west of the first truck, facing it
-    ox, oy = 3540, -2050
-    L.place(B + "Officer", (ox, oy, 0), 90 - 90, 0.95, "ArtBld_Officer",
-            "Art/Shared/TruckQueue", False)
-    block("Yard_OfficerBlock", "Shared/TruckQueue", ox, oy, 22, 22, 170)
     kotlet(actors)
     # The cigarette seller stands by his shop's door, east of it (the
     # parasol is on the west side); MK_NPC_CigaretteSeller is on the

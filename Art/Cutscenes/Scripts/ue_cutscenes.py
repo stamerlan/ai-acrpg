@@ -184,7 +184,11 @@ def headlights(seq, samples, z, seconds, spawn=None):
     return out
 
 
-def camera(seq, name, seconds, samples=None, loc=None, at=None, fov=None):
+def camera(seq, name, seconds, samples=None, loc=None, at=None, fov=None,
+           keep_height=False):
+    """keep_height: a viewport wider than 16:9 shows more at the sides
+    instead of cutting the top and bottom (the dialog shot frames a whole
+    man)."""
     temp = eas.spawn_actor_from_class(unreal.CineCameraActor,
                                       unreal.Vector(0, 0, -5000))
     comp = temp.get_cine_camera_component()
@@ -193,6 +197,12 @@ def camera(seq, name, seconds, samples=None, loc=None, at=None, fov=None):
     comp.focus_settings = focus
     # No letterbox in viewports that are not 16:9
     comp.set_editor_property("constrain_aspect_ratio", False)
+    if keep_height:
+        comp.set_editor_property("override_aspect_ratio_axis_constraint",
+                                 True)
+        comp.set_editor_property(
+            "aspect_ratio_axis_constraint",
+            unreal.AspectRatioAxisConstraint.ASPECT_RATIO_MAINTAIN_YFOV)
     # The cine camera came out about a stop brighter than the game camera
     pp = comp.get_editor_property("post_process_settings")
     pp.set_editor_property("override_auto_exposure_bias", True)
@@ -429,13 +439,13 @@ def build_intro():
             cam = (p[0] + 70, p[1] - 430, 230)
             side.append((t, cam, look(cam, (p[0] - 40, p[1] + 900, 0))))
     b = camera(seq, "Cam_Window", T, samples=side, fov=30.0)
-    # The car stops at Kotlet's booth. No fade out: his dialog opens
-    # over this shot (BP_StoryDirector), so the booth and the car sit in
-    # the upper part of the frame, clear of the dialog box
-    booth = actor("MK_NPC_Kotlet").get_actor_location()
-    mid = ((stop.x + booth.x) / 2, (stop.y + booth.y) / 2)
-    c = camera(seq, "Cam_Booth", T, loc=(mid[0] + 640, mid[1] + 60, 340),
-               at=(mid[0] - 40, mid[1], -30), fov=20.0)
+    # The car stops at Kotlet. No fade out: his dialog opens over this
+    # shot (BP_StoryDirector). Framed by Fable: from the driver's side over
+    # the hood at standing eye height, Kotlet full body left of center, the
+    # front of the car a wedge in the lower right under the dialog box
+    k = actor("MK_NPC_Kotlet").get_actor_location()
+    c = camera(seq, "Cam_Booth", T, loc=(k.x + 420, k.y + 40, 235),
+               at=(k.x, k.y - 31, 84), fov=24.0, keep_height=True)
     # The booth shot starts once the car has stopped (at 12 s)
     cuts(seq, [(a, 0, 5.0), (b, 5.0, 12.2), (c, 12.2, T)])
     sound(seq, "SW_Radio_Intro", 0, 16.0)

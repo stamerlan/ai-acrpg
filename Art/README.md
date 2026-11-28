@@ -337,9 +337,14 @@ last pose.
 Uncle Kolya, Pani Halina, Pan Zbyszek, Mr. Krasnal and the corn lady
 (#18), same layout as the cooks: `<Name>/Reference`, `Meshy`, `Source`
 and `Mesh`, the clips in `Anims/`, their Meshy source in
-`Meshy/Anims_NPC.glb` and `Source/NPC_Anims.blend`. Kotlet, the kantor
-clerk and the cigarette seller are not modelled here: the first two are
-voices behind windows, the seller is the static `SM_Seller`.
+`Meshy/Anims_NPC.glb` (`Anims_Officer.glb` for the two officer clips)
+and `Source/NPC_Anims.blend`. The two border officers, Sergeant
+Kotlet and the one at the truck queue, share one body, `SK_Officer`,
+with different idles. Its T-pose reference is the static `SM_Officer`
+(Buildings) redrawn with nano-banana; image to 3D task
+`01a22216-df53-7555-b931-47184702e029`. The kantor clerk and the
+cigarette seller are not modelled here: the clerk is a voice behind a
+window, the seller is the static `SM_Seller`.
 
 How they were made (Meshy, no hand animation):
 
@@ -380,6 +385,8 @@ How they were made (Meshy, no hand animation):
 | Zbyszek | 178 cm | `01a21f3c-c1eb-77ff-8092-9e725753f509` | `A_NPC_IdleRaise` | `A_NPC_TalkPassionate` |
 | Krasnal | 150 cm with the hat | `01a21f3c-d350-7529-8490-93d58979274b` | `A_NPC_IdleLook` | `A_NPC_TalkHip` |
 | Corn lady | 155 cm | `01a21f3c-e3d1-7319-9293-a4fb950a0860` | `A_NPC_IdleOffer` | `A_NPC_TalkRightHand` |
+| Kotlet (`SK_Officer`) | 178 cm | `01a22218-68e4-758e-9b5f-458d10288ead` | `A_NPC_StandDrink` | `A_NPC_TalkHip` |
+| Queue officer (`SK_Officer`) | 178 cm | same | `A_NPC_IdleRead` | none |
 
 | Clip | Source | Length |
 |---|---|---|
@@ -395,7 +402,10 @@ How they were made (Meshy, no hand animation):
 | `A_NPC_SitLook` | `A_NPC_SitHold`, neck and head tilted back 24 degrees | 2 s, Kolya looks up at her |
 | `A_NPC_IdleRaise` | `A_NPC_IdleLook`, right arm of Talk Passionately at 3.9 s | 10 s, the hand held up beside the head (Zbyszek's stamp) |
 | `A_NPC_IdleOffer` | `A_NPC_IdleLook`, right arm of Talk with Left Hand on Hip at 2.5 s | 10 s, the hand in front of the chest (the corn lady's tongs) |
+| `A_NPC_IdleRead` | `A_NPC_IdleLook`, right arm of Talk with Right Hand Open at 0.4 s | 10 s, the hand in front of the belly (the queue officer's clipboard) |
 | `A_NPC_SitTalk` | Sitting Answering Questions | 9.7 s |
+| `A_NPC_StandDrink` | Stand and Drink (`Anims_Officer.glb`) | 8.9 s, the left hand lifts to the mouth (Kotlet's kebab) |
+| `A_NPC_HandOnHip` | Hand on Hip Gesture (`Anims_Officer.glb`) | 5 s, unused: points with the right arm |
 
 In the level, `BP_NPC` (`ABP_NPC`: a `DefaultSlot` slot only) plays
 the idle clip as a looping dynamic montage from a random time and blends
@@ -413,8 +423,9 @@ upright and faces where the NPC looks in the idle pose:
 | `SM_Stamp` | 17 cm (oversized, to read from the camera) | Zbyszek, right hand, 1.5x; Halina, right hand |
 | `SM_TongsCorn` | 33 cm, tongs with a grilled cob | Corn lady, right hand |
 | `SM_GnomeSign` | 92 cm stick, 50 x 31 cm board "GNOMES 2 FOR 1!" | Krasnal, right hand |
+| `SM_Clipboard` | 23 x 31 cm, held by its side, tilted 37 degrees | The queue officer, right hand |
 | `SM_Gnome` (`Props/Gnome`) | 40 cm | Krasnal, left hand |
-| `SM_MiniKebab` (cooks) | 1.3x | Halina, left hand (below her window sill) |
+| `SM_MiniKebab` (cooks) | 1.3x | Halina, left hand (below her window sill); Kotlet, left hand |
 | `SM_DonerKnife`, `SM_SharpeningSteel` (cooks) | | The kebab stand cook, with `BP_Shawarman`'s hand transforms |
 `Scripts/ue_dress_npcs.py` places one per marker, see
 [level0-border-town.md](../Docs/level0-border-town.md#npcs).
@@ -602,7 +613,7 @@ Each writes `out.json` next to itself. Run order for a clean pass:
 | `ue_dress_stalls.py` | A Meshy model per stall (`SM_<stall label>`) with its name board; the kit frame, tarp and counter goods for a stall without one |
 | `ue_dress_props.py` | Bazaar wall panels, lamps, office yard and apron props |
 | `ue_silhouette.py` | `M_PP_Silhouette` and the `PP_Silhouette` volume: her silhouette behind things the camera does not cut open |
-| `ue_dress_border.py` | Shops of the side yards and the road verge with their blocking boxes, booth and veterinary office over the graybox, the officer, yard props |
+| `ue_dress_border.py` | Shops of the side yards and the road verge with their blocking boxes, booth and veterinary office over the graybox, yard props; the two officers are NPCs (`ue_dress_npcs.py`) |
 
 `ue_dress_lib.py` holds the shared helpers. Each `ue_dress_*` script
 deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,

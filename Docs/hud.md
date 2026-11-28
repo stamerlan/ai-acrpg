@@ -224,6 +224,13 @@ from checkpoint unpauses and reloads the last checkpoint; Main menu
 unpauses and opens `MainMenu`; Quit quits. In the editor Esc stops Play:
 open the menu with `ke * TogglePause`.
 
+The HUD also has a menu button for the mouse: `MenuButton` in `WBP_HUD`,
+a dark rounded square with three bars, 24 px from the top-right corner
+(amber outline on hover, tooltip "Menu (Esc)"). Its OnClicked calls the
+same `TogglePause` on the owning player's HUD. It is not focusable, so
+keys and the gamepad never press it, and the click does not reach the
+game (no peck).
+
 ## Map screen
 
 After the drive off cutscene the director shows `WBP_MapScreen`: the

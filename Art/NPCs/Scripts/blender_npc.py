@@ -3,7 +3,9 @@
 Run headless, from the repo root:
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- mesh
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- clips
+      [clip ...]
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- derive
+      [clip ...]
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- check
 """
 import bpy
@@ -20,7 +22,7 @@ sys.path.insert(0, os.path.join(ROOT, "Enemies", "Scripts"))
 import blender_animtools as at  # noqa: E402
 import blender_rigcheck as rc  # noqa: E402
 
-NPCS = ["Kolya", "Halina", "Zbyszek", "Krasnal", "CornLady"]
+NPCS = ["Kolya", "Halina", "Zbyszek", "Krasnal", "CornLady", "Officer"]
 SHAWARMAN = os.path.join(ROOT, "Enemies", "Shawarman", "Source",
                          "SK_Shawarman.blend")
 
@@ -39,6 +41,10 @@ CLIPS = [
     # the drink itself lands on his forehead (bigger, lower head)
     ("A_NPC_SitHold", "Sit_and_Drink", (36, 96)),
     ("A_NPC_SitTalk", "Sitting_Answering_Questions"),
+    # Meshy/Anims_Officer.glb: Kotlet eats while he waits; Hand on Hip
+    # Gesture is unused (it points with the right arm)
+    ("A_NPC_StandDrink", "Stand_and_Drink"),
+    ("A_NPC_HandOnHip", "Hand_on_Hip_Gesture"),
 ]
 
 # Idles made from the clips above, so the props show (derive):
@@ -53,6 +59,9 @@ DERIVED = {
     "A_NPC_IdleOffer": ("A_NPC_IdleLook", {"arm": ("A_NPC_TalkHip", 76)}),
     # Kolya looks up at her, not down into his cup
     "A_NPC_SitLook": ("A_NPC_SitHold", {"head": 24}),
+    # The queue officer reads the clipboard held in front of his belly
+    "A_NPC_IdleRead": ("A_NPC_IdleLook",
+                       {"arm": ("A_NPC_TalkRightHand", 12)}),
 }
 
 # Idle and talk clip per NPC, as ue_dress_npcs.py uses them, for the check
@@ -63,6 +72,8 @@ LOOK = {
     "Zbyszek": ("A_NPC_IdleRaise", "A_NPC_TalkPassionate"),
     "Krasnal": ("A_NPC_IdleLook", "A_NPC_TalkHip"),
     "CornLady": ("A_NPC_IdleOffer", "A_NPC_TalkRightHand"),
+    # One body for two officers: Kotlet and the one at the truck queue
+    "Officer": ("A_NPC_StandDrink", "A_NPC_IdleRead", "A_NPC_TalkHip"),
 }
 # Hand props: (object in Props/NPCProps.blend, bone, location in cm and
 # XYZ euler in degrees in pose-bone space); BP_NPC HandProp in UE
@@ -180,8 +191,9 @@ def build_mesh(name):
             "Hips": bones["Hips"], "Head": bones["Head"]}
 
 
-def build_clips():
-    """Library clips on the Shawarman rig, loops in place, to FBX."""
+def build_clips(only=()):
+    """Library clips on the Shawarman rig, loops in place, to FBX. With
+    names, only those clips are written as FBX (all go to the blend)."""
     bpy.ops.wm.open_mainfile(filepath=SHAWARMAN)
     sc = bpy.context.scene
     arm = bpy.data.objects["Armature"]
@@ -191,7 +203,9 @@ def build_clips():
     for a in list(bpy.data.actions):
         bpy.data.actions.remove(a)
     before = set(bpy.data.actions)
-    objs = import_glb(os.path.join(ART, "Meshy", "Anims_NPC.glb"))
+    objs = []
+    for glb in ("Anims_NPC.glb", "Anims_Officer.glb"):
+        objs += import_glb(os.path.join(ART, "Meshy", glb))
     fps = sc.render.fps
     for o in objs:
         bpy.data.objects.remove(o, do_unlink=True)
@@ -218,7 +232,7 @@ def build_clips():
     src = os.path.join(ART, "Source", "NPC_Anims.blend")
     os.makedirs(os.path.dirname(src), exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=src)
-    export_clips(arm, [c[0] for c in CLIPS] + list(DERIVED))
+    export_clips(arm, only or [c[0] for c in CLIPS] + list(DERIVED))
     return report
 
 
@@ -312,14 +326,15 @@ def derive_clips(arm):
     return hands
 
 
-def derive():
-    """Only the DERIVED idles, from the saved NPC_Anims.blend."""
+def derive(only=()):
+    """Only the DERIVED idles, from the saved NPC_Anims.blend. With names,
+    only those clips are written as FBX."""
     src = os.path.join(ART, "Source", "NPC_Anims.blend")
     bpy.ops.wm.open_mainfile(filepath=src)
     arm = bpy.data.objects["Armature"]
     hands = derive_clips(arm)
     bpy.ops.wm.save_as_mainfile(filepath=src)
-    export_clips(arm, list(DERIVED))
+    export_clips(arm, only or list(DERIVED))
     return hands
 
 
@@ -455,9 +470,9 @@ if __name__ == "__main__":
         names = args[1:] or NPCS
         result = {n: build_mesh(n) for n in names}
     elif what == "clips":
-        result = build_clips()
+        result = build_clips(args[1:])
     elif what == "derive":
-        result = derive()
+        result = derive(args[1:])
     else:
         result = check(args[1])
     print("JSON" + json.dumps(result))

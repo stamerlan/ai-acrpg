@@ -133,8 +133,9 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   Co-co-cosmos is the other way.", Edge_QueueEast (Y = 2660) "Poland is
   too far to walk on chicken feet. You need to pick up a car first."
 * The trucks wait to leave Poland: their cabs point west, and a border
-  officer with a clipboard (`ArtBld_Officer`) checks papers on the
-  verge by the first cab. He is a prop with a blocking box.
+  officer (`ArtNPC_Officer`, a `BP_NPC`) checks papers on the verge by
+  the first cab, reading them off a clipboard. No dialog; his capsule
+  blocks her.
 * The bazaar is a rectangle as wide as the lot (Y from -2700 to 2700).
   The strips beside the stall block are yards with shops (blocking
   boxes `Yard_*` in `Shared/Bazaar/Yards`): a hairdresser (FRISEUR), a
@@ -472,11 +473,11 @@ talks to the clerk at his teller window inside: he sits behind frosted
 glass in the closed cash office, a voice and a portrait in the dialog
 (the talk point is in the lobby, 80 cm range, so it does not show
 outside). Kotlet stands outside his booth by the stopped car
-(`SM_Officer`, a static figure, `ArtBld_Kotlet`, day only), his talk
-point on him. The cigarette seller stands outside,
-by his shop's door (`SM_Seller`, a static figure). The markers
-`MK_NPC_KantorClerk`, `MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet` are
-hidden.
+(`ArtNPC_Kotlet`, a `BP_NPC` on the officer model, day only), eating a
+kebab while he waits; his talk point is on him. The cigarette seller
+stands outside, by his shop's door (`SM_Seller`, a static figure). The
+markers `MK_NPC_KantorClerk`, `MK_NPC_CigaretteSeller` and
+`MK_NPC_Kotlet` are hidden.
 
 * **Cigarette seller:** "Cheap! Ten euro a carton!" She: "Smoking
   kills." He: "So does the kebab stand. Pick your death."

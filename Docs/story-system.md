@@ -277,7 +277,7 @@ it again instead of editing the sequences by hand.
 
 | Cutscene | When | Then |
 |---|---|---|
-| Intro (`LS_Intro`, 18 s, the radio ad) | BeginPlay with `q_car_trouble` and `f_border_check` not set | Kotlet's dialog opens over its last frame (the car at the booth); the game takes over when that dialog closes |
+| Intro (`LS_Intro`, 18 s, the radio ad) | BeginPlay with `q_car_trouble` and `f_border_check` not set | Kotlet's dialog opens over its last frame (Kotlet full body over the hood of the stopped car; the camera keeps its vertical FOV, so wide screens do not cut his cap); the game takes over when that dialog closes |
 | Tow (`LS_Tow`, 12 s) | `border_done`, once the dialog is closed | the day Civic (tag `CivicDay`) is gone, the journal opens |
 | Exit (`LS_Exit`, 19.5 s, the gate ram) | `drive_out` | Van with Zbyszek's box, else Drive off |
 | Van (`LS_Van`, 4 s) | after Exit with `item_zbyszek_box` | Zbyszek's dialog over the last frame, then Drive off |

@@ -11,6 +11,8 @@ ue_dress_npcs.py can stand it upright in a hand (BP_NPC HandProp):
                 it reads from the game camera)
   SM_TongsCorn  the corn lady's tongs holding a grilled cob, 30 cm
   SM_GnomeSign  Krasnal's cardboard sign on a stick: GNOMES 2 FOR 1!
+  SM_Clipboard  the queue officer's clipboard with papers, 31 cm, held by
+                its side and tilted so the paper faces him
 """
 import bmesh
 import bpy
@@ -31,6 +33,8 @@ COLORS = {
     "M_NPCProp_Char": ((0.3, 0.17, 0.05), 0.7),
     "M_NPCProp_Cardboard": ((0.66, 0.5, 0.3), 0.85),
     "M_NPCProp_Ink": ((0.1, 0.05, 0.03), 0.8),
+    "M_NPCProp_Paper": ((0.85, 0.85, 0.8), 0.9),
+    "M_NPCProp_Masonite": ((0.36, 0.22, 0.1), 0.6),
 }
 
 
@@ -165,6 +169,22 @@ def gnome_sign():
     return p.build()
 
 
+def clipboard():
+    p = Prop("SM_Clipboard")
+    # Held by the middle of its right edge (the origin), the board to the
+    # holder's left (+Y here). Its top leans 37 degrees to the front, so the
+    # paper (-X before the tilt) faces up to his eyes and to the camera
+    tilt = Matrix.Rotation(math.radians(37), 4, 'Y')
+    parts = [((0.8, 23.0, 31.0), (0, 12.0, 0), "M_NPCProp_Masonite"),
+             ((0.3, 21.0, 27.0), (-0.5, 12.0, -1.0), "M_NPCProp_Paper"),
+             ((1.6, 9.0, 3.0), (-0.7, 12.0, 14.0), "M_NPCProp_Steel")]
+    for z in (8.0, 4.0, 0.0, -4.0, -8.0):
+        parts.append(((0.1, 15.0, 0.8), (-0.7, 12.0, z), "M_NPCProp_Ink"))
+    for size, at, mat in parts:
+        p.box(size, tilt @ Vector(at), mat, tilt)
+    return p.build()
+
+
 def export(o, path):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     for x in bpy.data.objects:
@@ -210,7 +230,7 @@ if __name__ == "__main__":
     sc = bpy.context.scene
     sc.unit_settings.system = 'METRIC'
     sc.unit_settings.scale_length = 0.01
-    props = [thermos(), stamp(), tongs_corn(), gnome_sign()]
+    props = [thermos(), stamp(), tongs_corn(), gnome_sign(), clipboard()]
     for o in props:
         export(o, os.path.join(OUT, o.name + ".fbx"))
     if "--" in sys.argv and len(sys.argv) > sys.argv.index("--") + 1:

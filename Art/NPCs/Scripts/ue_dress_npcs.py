@@ -1,6 +1,7 @@
 """Put the stop 0 NPC models into L0_BorderBazaar (editor Python).
 
-Deletes and re-places the ArtNPC_ actors (BP_NPC). The camera looks
+Deletes and re-places the ArtNPC_ actors (BP_NPC); NPC names as arguments
+(py "<this file>" Kotlet Officer) re-place only those. The camera looks
 south, so every NPC stands in the open, facing north, where she comes
 from: a seller under a canopy or with his back to the camera is not seen.
 Each MK_NPC_ marker moves to its NPC (it keeps the BPC_Interactable, so
@@ -13,6 +14,7 @@ result, then save the level.
 """
 import json
 import os
+import sys
 import traceback
 import unreal
 
@@ -28,7 +30,8 @@ ml = unreal.MathLibrary
 
 # mesh, mat: the body. idle, talk: the clips. at: (x, y, yaw).
 # marker: False leaves the marker where it is (Halina's talk range is
-# fitted to the yard in front of her window). block: the capsule's
+# fitted to the yard in front of her window), None: the NPC has no marker
+# (folder: its outliner folder, no data layer). block: the capsule's
 # (radius, half height), None for no collision. show: story conditions
 # (Type, Id, Value), the NPC is hidden while one fails.
 NPCS = {
@@ -59,6 +62,16 @@ NPCS = {
                            at=(1505, -1160, 0),
                            show=[("QUEST_IS_NOT", "q_car_trouble",
                                   "office")]),
+    # Sergeant Kotlet by the stopped car (KOTLET of ue_dress_border.py),
+    # eating a kebab while he waits, in the day only (his marker's layer)
+    "Kotlet": dict(mesh=N + "Meshes/SK_Officer", idle=A + "StandDrink",
+                   talk=A + "TalkHip", at=(3000, -2640, 0)),
+    # The officer checking papers at the head of the truck queue, on the
+    # verge north-west of the first cab and facing it, reading his
+    # clipboard. No marker and no dialog: he is in both shifts
+    "Officer": dict(mesh=N + "Meshes/SK_Officer", idle=A + "IdleRead",
+                    talk=A + "IdleRead", at=(3540, -2050, 90),
+                    marker=None, folder="Art/Shared/TruckQueue"),
 }
 # Kolya's seat: (mesh, offset in his space, scale)
 SEATS = {"Kolya": ("/Game/Environment/Kenney/survival_kit/SM_box",
@@ -83,6 +96,8 @@ PROPS = {
                 ("/Game/Props/Gnome/SM_Gnome", "LeftHand", "ZX",
                  (8, 0, -24), 1.0)],
     "CornLady": [(P + "TongsCorn", "RightHand", "ZX", (0, 0, 0), 1.0)],
+    "Kotlet": [(C + "Props/SM_MiniKebab", "LeftHand", "XZ", (2, 0, 0), 1.3)],
+    "Officer": [(P + "Clipboard", "RightHand", "ZX", (0, 0, 0), 1.0)],
     # Honing his knife, as the enemy Shawarman does in his idle
     "KebabShawarman": [
         (C + "Props/SM_DonerKnife", "RightHand", "RAW",
@@ -104,9 +119,15 @@ HANDS = {
         "RightHand": ((0.77, -0.5, 0.4), (-0.6, -0.78, 0.18))},
     "A_NPC_IdleOffer": {
         "RightHand": ((0.97, -0.22, 0.14), (-0.19, -0.96, -0.2))},
+    "A_NPC_IdleRead": {
+        "RightHand": ((0.82, 0.53, 0.22), (0.54, -0.84, 0.02))},
     # The hand with the cup moves: the pose it holds longest
     "A_NPC_SitLook": {
         "RightHand": ((0.18, 0.55, -0.82), (1, 0, 0))},
+    # The left hand holds the kebab at the chest, lifts it to bite (frames
+    # 80-160): the held pose
+    "A_NPC_StandDrink": {
+        "LeftHand": ((-0.62, 0.03, 0.78), (-0.64, -0.59, -0.49))},
 }
 res = {}
 
@@ -146,26 +167,35 @@ def hold(a, idle, slot, mesh, bone, axes, offset, scale):
 
 
 try:
+    # NPC names after the file name re-place only those
+    only = sys.argv[1:] or list(NPCS)
     for a in list(eas.get_all_level_actors()):
-        if a.get_actor_label().startswith(("ArtNPC_", "ArtNPCSeat_",
-                                           "ArtNPCLight_")):
+        kind, _, name = a.get_actor_label().partition("_")
+        if kind in ("ArtNPC", "ArtNPCSeat", "ArtNPCLight") and name in only:
             eas.destroy_actor(a)
     labels = {a.get_actor_label(): a for a in eas.get_all_level_actors()}
     cls = unreal.EditorAssetLibrary.load_blueprint_class(N + "BP_NPC")
     for name, d in NPCS.items():
-        m = labels["MK_NPC_" + name]
+        if name not in only:
+            continue
         x, y, yaw = d["at"]
-        loc = unreal.Vector(x, y, m.get_actor_location().z)
         rot = unreal.Rotator(roll=0, pitch=0, yaw=yaw)
-        m.modify()
-        if d.get("marker", True):
-            m.set_actor_location_and_rotation(loc, rot, False, False)
-        hide_marker(m)
+        if d.get("marker", True) is None:
+            loc = unreal.Vector(x, y, 0)
+            folder = d["folder"]
+            layers = []
+        else:
+            m = labels["MK_NPC_" + name]
+            loc = unreal.Vector(x, y, m.get_actor_location().z)
+            m.modify()
+            if d.get("marker", True):
+                m.set_actor_location_and_rotation(loc, rot, False, False)
+            hide_marker(m)
+            folder = str(m.get_folder_path()).replace("Markers/NPC", "NPCs")
+            layers = m.get_editor_property("data_layer_assets")
         a = eas.spawn_actor_from_class(cls, loc, rot)
         a.set_actor_label("ArtNPC_" + name)
-        a.set_folder_path(str(m.get_folder_path()).replace("Markers/NPC",
-                                                           "NPCs"))
-        layers = m.get_editor_property("data_layer_assets")
+        a.set_folder_path(folder)
         a.set_editor_property("data_layer_assets", layers)
         # The actor's own properties first: setting one reruns the
         # construction and drops what was set on its components

@@ -5,6 +5,9 @@
   py ".../Art/NPCs/Scripts/ue_npcs_import.py" props      the hand props only
   py ".../Art/NPCs/Scripts/ue_npcs_import.py" anims      the clips only
 
+Names after that (an NPC, a clip or a prop, e.g. Officer A_NPC_StandDrink
+SM_Clipboard) import only those; the others are left as they are.
+
 The meshes use the cooks' SK_Shawarman_Skeleton, so the cook and NPC clips
 play on every one of them. Writes out.json next to this file.
 """
@@ -19,7 +22,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ART = os.path.dirname(HERE)
 DST = "/Game/Characters/NPCs"
 SKEL = "/Game/Characters/Cooks/Meshes/SK_Shawarman_Skeleton"
-NPCS = ["Kolya", "Halina", "Zbyszek", "Krasnal", "CornLady"]
+NPCS = ["Kolya", "Halina", "Zbyszek", "Krasnal", "CornLady", "Officer"]
+MODES = ("materials", "props", "anims")
+ONLY = [a for a in sys.argv[1:] if a not in MODES]
 OUT = os.path.join(HERE, "out.json")
 eal = unreal.EditorAssetLibrary
 mel = unreal.MaterialEditingLibrary
@@ -79,7 +84,7 @@ def prop_options():
 
 def import_all():
     skel = eal.load_asset(SKEL)
-    for n in NPCS:
+    for n in [n for n in NPCS if not ONLY or n in ONLY]:
         step("T_" + n, run(f"{ART}/{n}/Mesh/T_{n}_BaseColor.png",
                            DST + "/Textures", f"T_{n}_BaseColor"))
         step("SK_" + n, run(f"{ART}/{n}/Mesh/SK_{n}.fbx", DST + "/Meshes",
@@ -92,18 +97,22 @@ def anims():
     skel = eal.load_asset(SKEL)
     for p in sorted(glob.glob(f"{ART}/Anims/A_NPC_*.fbx")):
         nm = os.path.splitext(os.path.basename(p))[0]
+        if ONLY and nm not in ONLY:
+            continue
         step(nm, run(p, DST + "/Anims", nm, fbx_options(skel, False)))
 
 
 def props():
     for p in sorted(glob.glob(f"{ART}/Props/SM_*.fbx")):
         nm = os.path.splitext(os.path.basename(p))[0]
+        if ONLY and nm not in ONLY:
+            continue
         step(nm, run(p, DST + "/Props", nm, prop_options()))
 
 
 def materials():
     parent = eal.load_asset("/Game/Characters/Cooks/Materials/M_Cook")
-    for n in NPCS:
+    for n in [n for n in NPCS if not ONLY or n in ONLY]:
         path = f"{DST}/Materials/MI_{n}"
         mi = (eal.load_asset(path) if eal.does_asset_exist(path) else
               tools.create_asset(f"MI_{n}", DST + "/Materials",
