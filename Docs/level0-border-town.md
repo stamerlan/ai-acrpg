@@ -100,8 +100,9 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   middle of the lot read as a strange pole with a light. Both actors
   (`AllSeeingDoner` on `DL_Night`, the `AllSeeingDoner_Tower` graybox)
   are gone; `BP_AllSeeingDoner` is kept in `/Game/Enemies`, unused. The
-  design text below still describes it. The night shift and the
-  sneaking rules are in [enemies.md](enemies.md#all-seeing-doner).
+  design dropped it, the lamps and the guards' flashlights carry the
+  sneaking. Its old rules are in
+  [enemies.md](enemies.md#all-seeing-doner).
 * These markers carry a `BPC_Interactable` and work in Play: the NPCs
   Kotlet, Kolya, Halina, Zbyszek, Krasnal, CornLady, CigaretteSeller
   and KantorClerk (Talk), `MK_Interact_CargoScale` (Kotlet's dialog
@@ -523,11 +524,6 @@ straight to the inventory).
 * Stall signs in Polish: KUKURYDZA, PIECZATKI, KRASNALE, MIOD,
   SKARPETY. Shop signs for the German customers: ZIGARETTEN, KANTOR,
   FRISEUR.
-* The All-Seeing Doner: the kebab stand's giant sign on a tall black
-  tower over the lot fence. By day it is unlit, just a cartoon eye on a
-  doner with the slogan "WE SEE YOU HUNGRY". She: "A big friendly eye.
-  Somebody is watching over me!" At night it becomes the main hazard
-  of 0B. (Removed from the map after a playtest, see Graybox above.)
 
 ### Checkpoints
 
@@ -548,7 +544,6 @@ part is the shotgun fight and the boss.
  +-[HOLE]-----------------------------[5. OFFICE]-[MAIN GATE]-+
  | 1. Fence corner     2. Outer lot: rows of impounded cars   |
  |    (gnome crates)      (patrol routes, dark gaps)          |
- |                   (*) the All-Seeing Doner on its tower    |
  |    3. Grill shack            4. Container stacks           |
  |       (guards eat)              (shell crate)              |
  +-------------------------[INNER GATE]-----------------------+
@@ -599,7 +594,6 @@ Starting sizes for the graybox, to be tuned.
 | Container stacks | 12 x 9 m |
 | Guard office | 4.8 x 3.6 m |
 | Inner lot (arena) | 18 x 15 m |
-| All-Seeing Doner | Center of the outer lot; beam 15 m long, 20 deg wide |
 
 ### Lighting and sneaking
 
@@ -608,25 +602,6 @@ busy enemies, noise). In this level:
 
 * **Lit zones:** lamp posts by the office, the grill shack, and the
   flashlight cones of patrolling guards.
-* **The All-Seeing Doner** (removed from the map after a playtest on
-  2026-11-28: a tower the camera never shows whole looked like a stray
-  pole with a light; the lit zones and the guards' flashlights carry
-  the sneaking now). At night the sign is a parody of the Eye of
-  Sauron: a giant doner on top of a tall black tower, wrapped in a
-  ring of fiery orange neon, with a burning vertical slit pupil in the
-  middle. It hums low and ominously, and the slogan "WE SEE YOU
-  HUNGRY" flickers under it. Its gaze is a searchlight: a cone of
-  orange light that sweeps the outer lot (a full turn in 8 s, with
-  short pauses where the pupil "looks around").
-  * In the beam she counts as lit for every guard.
-  * The Eye itself is a lookout with its own awareness: if she stays in
-    the beam, the pupil narrows and the glow grows brighter over 1 s.
-    When it is full, the Eye stops on her, plays the kebab stand
-    jingle at full volume and alerts every Shawarman within 12 m of
-    her. This is a deliberate exception to the 7.2 m enemy shout of the
-    GDD. Leaving the beam in time drains it, like any enemy awareness.
-  * It is a timing puzzle: move between the car rows while the gaze
-    looks away.
 * **Dark gaps** between car rows are safe hiding spots.
 * **Awareness.** Guards don't spot her instantly: their "?" meter fills
   while she is in sight (see the GDD). A mistake can be fixed by
@@ -646,9 +621,7 @@ surprise-peck him (one peck kills an unaware Shawarman). If he turns
 around, his "?" meter starts filling: prompt "Back off before the !".
 Checkpoint at level start.
 
-**2. Outer lot.** Cross the rows, avoiding the second patrol and the
-gaze of the All-Seeing Doner. She: "The friendly eye! It's looking for
-me. How sweet." Optional detour to the Trabant (gnomes) and the
+**2. Outer lot.** Cross the rows, avoiding the second patrol. Optional detour to the Trabant (gnomes) and the
 container with the shells.
 
 **3. The guard office.** The night guard sleeps in front of the CCTV.
@@ -883,7 +856,6 @@ depending on the last used device.
 | 0A, first gnome in reach | Pick up and throw |
 | 0B, the hole | Stay in the dark; surprise peck |
 | 0B, first "?" meter | Back off before the "!" |
-| 0B, the All-Seeing Doner | Its gaze is a lookout |
 | 0B, the trunk | Fire; press reload, only while standing still |
 | 0B, first empty tube | Reload with the button |
 | 0B, out of shells | Peck still works; the trunk has more |
@@ -902,8 +874,7 @@ art style document.
   tractor, limousine), Zbyszek's van.
 * **Key props:** guard booth, barrier, cargo scale, stalls, the
   "WELCOME" arch, the town sign, the menu board, garden gnomes (intact
-  and broken), the Gnomonaut, the All-Seeing Doner (day and night
-  look, sweeping light cone), the grill shack, containers, shell and
+  and broken), the Gnomonaut, the grill shack, containers, shell and
   corn crates, key board, CCTV monitor, evidence shelf, inner gate
   button, fences and gates.
 * **Cutscenes:** intro drive, exit drive with the gate ram and the
