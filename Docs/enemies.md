@@ -84,7 +84,8 @@ The GDD's detection rules (#8). The shared parts are in C++
     tag) that are visible and on: within the attenuation radius and the
     outer cone angle, with nothing on the Visibility channel in between,
     so cars cast dark shadows. Tagged: the Shawarman's flashlight
-    (`Beam`, 9 m, 24 degrees, shown on `Patrol`) and the Doner's beam.
+    (`Beam`, 9 m, 24 degrees, shown on `Patrol`) and the (removed)
+    Doner's beam.
   * Console: `Sneak.Info` lists the zones, cones and darkness.
 * **Sight range** (`SightRangeNow`): busy (unaware and `Busy`)
   `BusySightRange` (1.8 m), else `SightRange` (6 m) when she is lit and
@@ -109,7 +110,12 @@ The GDD's detection rules (#8). The shared parts are in C++
 
 ### All-Seeing Doner
 
-`BP_AllSeeingDoner` (`/Game/Enemies`) is the lookout on the tower in the
+Not in the game: the tower and its lookout were removed from L0 after a
+playtest (2026-11-28), since the gameplay camera never shows the tower
+whole and the middle of the lot read as a stray pole with a light. The
+Blueprint is kept, unused, and works as described below if placed again.
+
+`BP_AllSeeingDoner` (`/Game/Enemies`) was the lookout on the tower in the
 middle of the outer lot (L0, `AllSeeingDoner` on `DL_Night`, over the
 `AllSeeingDoner_Tower` graybox). Its `Head` (at 19.7 m) turns with an
 eye (`Iris` and a vertical `Slit` pupil) and the `Beam` spot light
@@ -153,8 +159,8 @@ to the office at full speed alerts nobody; standing 1.2 m behind the
 eaters is unseen and pecking one alerts the other two; in the dark a
 guard notices her at 2.5 m but not at 3.5 m, his meter fills in 1.33 s
 there, 0.83 s at 1 m, and stepping back to 6 m at 60 % drains it in
-0.9 s; holding her in the Doner beam locks it after 1 s and alerts the
-guards within 12 m.
+0.9 s; holding her in the Doner beam (before it was removed) locks it
+after 1 s and alerts the guards within 12 m.
 
 ## Attack
 

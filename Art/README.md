@@ -609,6 +609,6 @@ deletes what it placed before (by label prefix: `Art_`, `Art_Nature_`,
 `ArtStall_`, `ArtProp_`, `ArtWall_`, `ArtBld_` with `Yard_`) and places it again with a fixed
 random seed, so a run is repeatable.
 
-Still graybox: the booth, customs shed, office, grill shack, gate arch,
-Doner tower and the gnome rows and crates of the gnome field (issue #24;
+Still graybox: the booth, customs shed, office, grill shack, gate arch
+and the gnome rows and crates of the gnome field (issue #24;
 the throwable gnomes use `SM_Gnome`), and the people (#25 and #18).

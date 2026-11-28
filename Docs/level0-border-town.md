@@ -41,8 +41,8 @@ exit drive through the night bazaar needs no extra set.
   at the border, the "BACK AT MIDNIGHT" sign (shown after the first
   fight).
 * **Data layer `DL_Night`** (starts unloaded): night lighting (moon,
-  fixed night exposure, lamps, grill shack, office, the All-Seeing
-  Doner searchlight) and the content of 0B: guards, patrols, waves,
+  fixed night exposure, lamps, grill shack, office) and the content of
+  0B: guards, patrols, waves,
   the boss, pickups, lit zones. With `DL_Day` unloaded the bazaar is
   empty and closed.
 * **Transition to night:** fade out, unload `DL_Day`, activate
@@ -94,10 +94,13 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   `DL_Night` to Activated (initial runtime state in the Data Layers
   outliner) and start at `MK_Checkpoint_NightStart`; set them back
   before saving.
-* The searchlight is `AllSeeingDoner` (`BP_AllSeeingDoner`,
-  `Night/Lighting`): the sweep with pauses, its own awareness and the
-  jingle. It, the night shift and the sneaking rules are in
-  [enemies.md](enemies.md#all-seeing-doner).
+* The All-Seeing Doner was removed from the map after a playtest
+  (2026-11-28): the gameplay camera never shows the tower whole, so the
+  middle of the lot read as a strange pole with a light. Both actors
+  (`AllSeeingDoner` on `DL_Night`, the `AllSeeingDoner_Tower` graybox)
+  are gone; `BP_AllSeeingDoner` is kept in `/Game/Enemies`, unused. The
+  design text below still describes it. The night shift and the
+  sneaking rules are in [enemies.md](enemies.md#all-seeing-doner).
 * These markers carry a `BPC_Interactable` and work in Play: the NPCs
   Kotlet, Kolya, Halina, Zbyszek, Krasnal, CornLady, CigaretteSeller
   and KantorClerk (Talk), `MK_Interact_CargoScale` (Kotlet's dialog
@@ -492,7 +495,7 @@ straight to the inventory).
   tower over the lot fence. By day it is unlit, just a cartoon eye on a
   doner with the slogan "WE SEE YOU HUNGRY". She: "A big friendly eye.
   Somebody is watching over me!" At night it becomes the main hazard
-  of 0B.
+  of 0B. (Removed from the map after a playtest, see Graybox above.)
 
 ### Checkpoints
 
@@ -573,7 +576,10 @@ busy enemies, noise). In this level:
 
 * **Lit zones:** lamp posts by the office, the grill shack, and the
   flashlight cones of patrolling guards.
-* **The All-Seeing Doner.** At night the sign is a parody of the Eye of
+* **The All-Seeing Doner** (removed from the map after a playtest on
+  2026-11-28: a tower the camera never shows whole looked like a stray
+  pole with a light; the lit zones and the guards' flashlights carry
+  the sneaking now). At night the sign is a parody of the Eye of
   Sauron: a giant doner on top of a tall black tower, wrapped in a
   ring of fiery orange neon, with a burning vertical slit pupil in the
   middle. It hums low and ominously, and the slogan "WE SEE YOU
