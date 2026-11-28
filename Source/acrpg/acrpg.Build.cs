@@ -33,6 +33,7 @@ public class acrpg : ModuleRules
 			"acrpg",
 			"acrpg/Combat",
 			"acrpg/Player",
+			"acrpg/Save",
 			"acrpg/Story",
 			"acrpg/Variant_Strategy",
 			"acrpg/Variant_Strategy/UI",

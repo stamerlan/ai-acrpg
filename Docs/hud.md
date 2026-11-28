@@ -20,7 +20,8 @@ backpack and the developer debug panel. The design is in the GDD
 | Corn pickup | `/Game/Items/BP_CornPickup` | A cob on the ground, picked up by walking over it; `BP_ShellPickup` is its shell crate child |
 | Journal | `/Game/UI/Journal/WBP_Journal`, `WBP_JournalEntry` | Current and finished quests |
 | Checklist | `/Game/UI/Journal/WBP_Checklist` | The checklist document page (backpack and map screen) |
-| Pause menu | `/Game/UI/Menu/WBP_PauseMenu` | Resume, restart from checkpoint, quit |
+| Pause menu | `/Game/UI/Menu/WBP_PauseMenu` | Resume, restart from checkpoint, main menu, quit |
+| Main menu | `/Game/UI/Menu/WBP_MainMenu`, map `/Game/Maps/MainMenu` | Continue, New game, Quit, see [combat.md](combat.md#saving) |
 | Map screen | `/Game/UI/Map/WBP_MapScreen` | End of stop 0: checklist and the road map |
 | Inputs | `IA_EatCorn` (C, gamepad Y), `IA_Backpack` (I, Tab, gamepad View), `IA_DebugHUD` (F6), `IA_Journal` (J), `IA_Pause` (Esc, gamepad Menu), `IA_MenuConfirm` (skips a cutscene) | `IMC_Gameplay` (`IA_Pause` also in `IMC_Dialog`, `IA_MenuConfirm` in `IMC_Menu`) |
 
@@ -216,8 +217,9 @@ Esc or the gamepad Menu button (`IA_Pause`, in gameplay and dialogs)
 calls `BP_AcrpgHUD.TogglePause`: the game pauses and `WBP_PauseMenu`
 shows with the cursor and focus on Resume. Input stays game and UI and
 `IA_Pause` has Trigger When Paused on, so the same key resumes. Restart
-from checkpoint unpauses and reloads the last checkpoint; Quit quits. In
-the editor Esc stops Play: open the menu with `ke * TogglePause`.
+from checkpoint unpauses and reloads the last checkpoint; Main menu
+unpauses and opens `MainMenu`; Quit quits. In the editor Esc stops Play:
+open the menu with `ke * TogglePause`.
 
 ## Map screen
 

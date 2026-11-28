@@ -1,4 +1,5 @@
 #include "CheckpointSubsystem.h"
+#include "SaveSubsystem.h"
 #include "StoryStateSubsystem.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
@@ -49,7 +50,10 @@ namespace
 				if (const UCheckpointSubsystem* Checkpoints =
 					GetCheckpoints(World, Ar))
 				{
-					Ar.Log(Checkpoints->Describe());
+					Ar.Log(Checkpoints->HasCheckpoint()
+						? UCheckpointSubsystem::Describe(
+							Checkpoints->GetLastCheckpoint())
+						: FString(TEXT("No checkpoint")));
 				}
 			}));
 }
@@ -77,7 +81,12 @@ void UCheckpointSubsystem::SaveCheckpoint(const UObject* WorldContext,
 	Last.Story = Story ? Story->GetState() : FStoryState();
 	bHasCheckpoint = true;
 
-	UE_LOG(Logacrpg, Log, TEXT("Checkpoint saved: %s"), *Describe());
+	UE_LOG(Logacrpg, Log, TEXT("Checkpoint saved: %s"), *Describe(Last));
+	if (USaveSubsystem* Saves =
+		GetGameInstance()->GetSubsystem<USaveSubsystem>())
+	{
+		Saves->WriteSave(Last, CheckpointId == LevelStartId);
+	}
 }
 
 void UCheckpointSubsystem::ReloadLastCheckpoint(const UObject* WorldContext)
@@ -105,7 +114,7 @@ void UCheckpointSubsystem::ReloadLastCheckpoint(const UObject* WorldContext)
 	DefeatedMap = Last.Map;
 	bPendingRestore = true;
 
-	UE_LOG(Logacrpg, Log, TEXT("Reloading checkpoint: %s"), *Describe());
+	UE_LOG(Logacrpg, Log, TEXT("Reloading checkpoint: %s"), *Describe(Last));
 	UGameplayStatics::OpenLevel(World, FName(*Last.Map));
 }
 
@@ -162,17 +171,25 @@ void UCheckpointSubsystem::SetLastCheckpoint(
 	bHasCheckpoint = true;
 }
 
-FString UCheckpointSubsystem::Describe() const
+void UCheckpointSubsystem::ResetCheckpoints()
 {
-	if (!bHasCheckpoint)
-	{
-		return TEXT("No checkpoint");
-	}
-	return FString::Printf(
-		TEXT("%s in %s, phase %s, at %s, health %.0f, %d defeated"),
-		*Last.CheckpointId.ToString(), *Last.Map, *Last.Phase.ToString(),
-		*Last.PlayerTransform.GetLocation().ToCompactString(), Last.Health,
-		Last.Defeated.Num());
+	Last = FCheckpointSnapshot();
+	bHasCheckpoint = false;
+	bPendingRestore = false;
+	Defeated.Reset();
+	DefeatedMap.Reset();
+}
+
+FString UCheckpointSubsystem::Describe(const FCheckpointSnapshot& Snapshot)
+{
+	return FString::Printf(TEXT("%s in %s, phase %s, at %s, health %.0f, "
+		"%d defeated, %d quests, %d flags, %d stamps, %d items"),
+		*Snapshot.CheckpointId.ToString(), *Snapshot.Map,
+		*Snapshot.Phase.ToString(),
+		*Snapshot.PlayerTransform.GetLocation().ToCompactString(),
+		Snapshot.Health, Snapshot.Defeated.Num(), Snapshot.Story.Quests.Num(),
+		Snapshot.Story.Flags.Num(), Snapshot.Story.Stamps.Num(),
+		Snapshot.Story.Items.Num());
 }
 
 FString UCheckpointSubsystem::GetMapName(const UWorld* World)

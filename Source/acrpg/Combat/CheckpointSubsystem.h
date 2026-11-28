@@ -6,8 +6,8 @@
 #include "CheckpointSubsystem.generated.h"
 
 /**
- *  Checkpoints: the last one is a snapshot of the game state in memory
- *  (disk saves store GetLastCheckpoint()). A reload restores the story
+ *  Checkpoints: the last one is a snapshot of the game state in memory,
+ *  and USaveSubsystem writes each one to disk. A reload restores the story
  *  state and the defeated actors, reopens the map and puts her back at the
  *  checkpoint with the health she had there.
  *
@@ -76,8 +76,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
 	void SetLastCheckpoint(const FCheckpointSnapshot& Snapshot);
 
-	/** One line about the last checkpoint, for the console */
-	FString Describe() const;
+	/** Forgets the last checkpoint and the defeated actors, for New game */
+	UFUNCTION(BlueprintCallable, Category = "Checkpoint")
+	void ResetCheckpoints();
+
+	/** One line about a snapshot, for the console */
+	static FString Describe(const FCheckpointSnapshot& Snapshot);
 
 private:
 

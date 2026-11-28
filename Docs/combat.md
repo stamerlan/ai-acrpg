@@ -18,6 +18,7 @@ how to set them up. Design and numbers are in the
 | Death screen | `WBP_DeathScreen`, `DT_DeathScreens` | Food plate, dish, pun line, "Try again" |
 | Checkpoint | `BP_Checkpoint` (BP) | Saves on overlap or on a story event |
 | Checkpoint state | `UCheckpointSubsystem` (C++) | The last snapshot in memory, reload, defeated actors |
+| Saves | `USaveSubsystem`, `UAcrpgSaveGame` (C++) | The last checkpoint on disk, Continue, New game |
 | Data types | `Source/acrpg/Combat/CombatTypes.h` | `FDeathScreenRow`, `FCheckpointSnapshot` |
 | Test content | `/Game/Combat/Test` | `BP_TestDummy`, `BP_DamageZone` |
 
@@ -367,8 +368,8 @@ screens redrawn) and `Art/DeathScreens/Ideas`.
 
 `BP_Checkpoint` saves a snapshot of the game state in memory: map,
 checkpoint id, phase, her spawn point and health, the story state and
-the defeated actors. Disk saves (#11) will store
-`GetLastCheckpoint()` and restore it with `SetLastCheckpoint()`.
+the defeated actors. Each snapshot is also written to disk, see
+[Saving](#saving).
 
 Instance settings:
 
@@ -400,6 +401,73 @@ their markers are in `Night/Markers/Checkpoint`. The trunk checkpoint can
 save on the story event `trunk_opened`, which `BP_CivicTrunk` fires when
 it gives her the shotgun.
 
+## Saving
+
+Checkpoint saves only ([GDD](gdd.md#saving)). `USaveSubsystem`
+(`Source/acrpg/Save`) writes every checkpoint snapshot of a gameplay map
+to the slot `Checkpoint` (`Saved/SaveGames/Checkpoint.sav`; in a packaged
+build under `%LOCALAPPDATA%/acrpg/Saved/SaveGames`). The save it replaces
+is kept in `Checkpoint_Prev`. There is one game, no save anywhere.
+
+**What a save holds:** a `UAcrpgSaveGame` with `SaveVersion`, `SavedAt`
+and the `FCheckpointSnapshot` as is, the same struct a death reload uses:
+
+| Field | Holds |
+|---|---|
+| `CheckpointId`, `Map`, `Phase` | Where: the checkpoint, the map, day or night |
+| `PlayerTransform`, `Health` | Her spawn point and HP |
+| `Story` | Quests, flags, stamps and items: the backpack, corn, the shotgun and the shells (loaded and reserve) |
+| `Defeated` | Level actors of the map that stay gone: defeated enemies (`bRemembersDefeat`) and picked pickups (`Remember`) |
+
+Unlocked map locations will be story flags, so they are saved with the
+story. Nothing Blueprint-only needs saving: everything a checkpoint
+restores is in the snapshot.
+
+**Writing:** `UCheckpointSubsystem.SaveCheckpoint` writes the save right
+after it takes the snapshot (synchronous, a few KB). Only gameplay maps
+are saved: maps whose path starts with one of `SavedMapPrefixes`
+(Project Settings > Game > Story, `/Game/Maps/Stop`), so the menu map and
+`Lvl_Dev_Movement` (which also spawn the chicken) keep checkpoints in
+memory only. Play started straight in a map (in the editor, not through
+Continue or New game) does not write its `LevelStart` snapshot over a
+usable save, so the last session's save survives starting Play until she
+reaches a checkpoint.
+
+**Loading:** the subsystem reads the slot when the game starts. A save
+that can't be read, has another `SaveVersion` or points to a map that
+doesn't exist is ignored with a warning in the log (`Logacrpg`) and
+`Checkpoint_Prev` is tried the same way. With neither usable `HasSave`
+is false, Continue is off and the next checkpoint overwrites the files.
+`Continue` hands the snapshot to `SetLastCheckpoint` and calls
+`ReloadLastCheckpoint`, the death reload, so Continue and "Try again"
+end in the same state.
+
+**Version:** `UAcrpgSaveGame::CurrentVersion` (1). Bump it when a change
+to `FCheckpointSnapshot` or a struct in it would load an old save wrong:
+a renamed or retyped field, a story id that changes meaning. Added
+fields don't need a bump (they load with their defaults).
+
+**Main menu:** the map `/Game/Maps/MainMenu` (`GameDefaultMap`, so a
+packaged game starts there; `EditorStartupMap` stays the dev map) is an
+empty level with the GameMode override `BP_MainMenuGameMode` (`/Game/Core`,
+no default pawn, the plain HUD and player controller). Its BeginPlay
+shows the mouse cursor and adds `WBP_MainMenu` (`/Game/UI/Menu`, the
+style of the pause menu on an opaque dark background). On Construct the
+widget enables Continue while `HasSave` and sets input mode UI only with
+the focus on the first enabled button, so Up/Down and Enter (gamepad
+d-pad and A) work as well as the mouse. Continue and New game set input
+mode game only before they open the level.
+
+| Button | Calls |
+|---|---|
+| Continue | `Continue`, enabled while `HasSave` |
+| New game | `NewGame`: deletes both save files, clears the story state and the checkpoint, opens `NewGameMap` (Project Settings > Game > Story, `L0_BorderBazaar`) |
+| Quit | `Quit Game` |
+
+The pause menu has Main menu between Restart from checkpoint and Quit:
+it unpauses and opens `MainMenu`. Progress since the last checkpoint is
+lost, as on a quit.
+
 ## Testing
 
 `Lvl_Dev_Movement` has a `CombatTest` folder: two dummies (30 HP, one
@@ -412,4 +480,25 @@ pickups. `BP_DamageZone` can also serve as hot coals.
 |---|---|
 | `Checkpoint.Info` | shows the last checkpoint |
 | `Checkpoint.Reload` | reloads it |
+| `Save.Info` | shows the save Continue loads and both save files (version, time, checkpoint, counts, or why a file is ignored) |
+| `Save.Continue` | loads the save, as Continue does |
+| `Save.Delete` | deletes both save files; the game in memory goes on |
 | `ke * DebugDamage <amount> <killer>` | hurts the chicken, e.g. `ke * DebugDamage 500 Skewerman` |
+
+To test a save, open `MainMenu` in the editor and Play: New game (or
+Continue) opens `L0_BorderBazaar` (dev maps are not saved). Play to a
+checkpoint (pick up corn or shells, defeat an enemy first; `Story.Event
+border_done` saves `CP_AfterBorderCheck`), note `Save.Info`, stop Play,
+Play `MainMenu` again and press Continue: she is at the checkpoint with
+the saved HP, `Save.Info` and `Checkpoint.Info` match, `Story.List` shows
+the saved values and the defeated enemy and the picked pickup stay gone.
+Then die and "Try again" (or `Checkpoint.Reload`): the same state again.
+New game from the menu deletes the save and starts L0 fresh. Play
+started straight in L0 works as before, `Save.Continue` loads the save
+there. A save of another `SaveVersion` (both files) leaves Continue off
+and `Save.Info` names the version.
+
+Set story ids that match the checkpoint when you fake one: the level
+reads the story at BeginPlay, so with `border_done` but no
+`f_border_check` Continue replays the intro, and `q_car_trouble` `car`
+loads the night.

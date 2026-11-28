@@ -33,7 +33,7 @@ struct FDeathScreenRow : public FTableRowBase
 	TArray<FText> Lines;
 };
 
-/** The game state saved by a checkpoint, kept in memory until a reload */
+/** The game state saved by a checkpoint, in memory and on disk */
 USTRUCT(BlueprintType)
 struct FCheckpointSnapshot
 {
