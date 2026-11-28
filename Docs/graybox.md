@@ -32,9 +32,11 @@ document (stop 0: [level0-border-town.md](level0-border-town.md#graybox)).
   trunk lid, the lot's lamp posts) and art placed without camera
   collision (the shop shells, the booth and the veterinary office, the
   road lamps). Behind those she shows as a
-  yellow silhouette: her mesh renders custom depth and
-  `M_PP_Silhouette` on the unbound volume `PP_Silhouette` tints the
-  pixels where she is behind the scene
+  silhouette: her mesh renders custom depth and `M_PP_Silhouette` on
+  the unbound volume `PP_Silhouette` tints the pixels where she is
+  behind the scene a saturated orange with a dark 3 px outline (custom
+  depth sampled at 8 offsets), so she stands out on clutter, trees and
+  yellow tents
   (`Art/Environment/Scripts/ue_silhouette.py`).
 * Ground: a collision slab with its top at Z = 0, plus colored surface
   patches (road, paving, dirt) 1 cm above it with no collision.

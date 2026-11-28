@@ -41,6 +41,7 @@ exit drive through the night bazaar needs no extra set.
   at the border, the "BACK AT MIDNIGHT" sign (shown after the first
   fight).
 * **Data layer `DL_Night`** (starts unloaded): night lighting (moon,
+  intensity 0.55, lifted from 0.3 after a review so the car rows read;
   fixed night exposure, lamps, grill shack, office) and the content of
   0B: guards, patrols, waves,
   the boss, pickups, lit zones. With `DL_Day` unloaded the bazaar is

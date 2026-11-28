@@ -215,7 +215,10 @@ line at the bottom says so. The map screen shows the same page.
 
 Esc or the gamepad Menu button (`IA_Pause`, in gameplay and dialogs)
 calls `BP_AcrpgHUD.TogglePause`: the game pauses and `WBP_PauseMenu`
-shows with the cursor and focus on Resume. Input stays game and UI and
+shows with the cursor and focus on Resume. The focused button (keyboard or
+gamepad) gets the hover look: `UpdateFocusLook`, every tick, swaps each
+button between `BaseStyle` and `FocusStyle` (`Normal` = `Hovered`); the
+main menu does the same. Input stays game and UI and
 `IA_Pause` has Trigger When Paused on, so the same key resumes. Restart
 from checkpoint unpauses and reloads the last checkpoint; Main menu
 unpauses and opens `MainMenu`; Quit quits. In the editor Esc stops Play:

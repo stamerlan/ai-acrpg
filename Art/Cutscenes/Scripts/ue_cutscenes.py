@@ -422,12 +422,13 @@ def build_intro():
         if t <= 5.0])
     side = []
     for t, p, h, _ in samples:
-        if 5.0 <= t <= 11.7:
-            # Driver side (north), a little ahead, looking back in at the
-            # window: the frame ends over the wheel arches
-            cam = (p[0] + 380, p[1] + 140, 125)
-            side.append((t, cam, look(cam, (p[0], p[1] - 20, 95))))
-    b = camera(seq, "Cam_Window", T, samples=side, fov=55.0)
+        if 5.0 <= t <= 12.2:
+            # Behind and over the roof, a little to the driver side (north),
+            # looking ahead past the booth to the bazaar's stalls and signs:
+            # from there the rear wheels show only their treads
+            cam = (p[0] + 70, p[1] - 430, 230)
+            side.append((t, cam, look(cam, (p[0] - 40, p[1] + 900, 0))))
+    b = camera(seq, "Cam_Window", T, samples=side, fov=30.0)
     # The car stops at Kotlet's booth. No fade out: his dialog opens
     # over this shot (BP_StoryDirector), so the booth and the car sit in
     # the upper part of the frame, clear of the dialog box
@@ -435,8 +436,8 @@ def build_intro():
     mid = ((stop.x + booth.x) / 2, (stop.y + booth.y) / 2)
     c = camera(seq, "Cam_Booth", T, loc=(mid[0] + 640, mid[1] + 60, 340),
                at=(mid[0] - 40, mid[1], -30), fov=20.0)
-    # The booth shot starts once the car is almost still
-    cuts(seq, [(a, 0, 5.0), (b, 5.0, 11.6), (c, 11.6, T)])
+    # The booth shot starts once the car has stopped (at 12 s)
+    cuts(seq, [(a, 0, 5.0), (b, 5.0, 12.2), (c, 12.2, T)])
     sound(seq, "SW_Radio_Intro", 0, 16.0)
     sound(seq, "SW_Engine", 0, 12.5, 0.35, loop=True)
     fade(seq, [(0, 1.0), (0.9, 0.0)])

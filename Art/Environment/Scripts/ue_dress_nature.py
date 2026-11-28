@@ -57,6 +57,10 @@ REGIONS = {
     "FarBank": (-6800, 4600, -6800, -4900,
                 [("leafy", 70), ("pine", 70), ("poplar", 14),
                  ("bush", 60)]),
+    # Where the west road ends: a tree line so the intro's bridge shot,
+    # which looks down the road, has a horizon instead of the bare sky
+    "Horizon": (1400, 5200, -7700, -6850,
+                [("pine", 40), ("leafy", 22), ("bush", 30)]),
 }
 # The bridge and the road beyond it on both sides, with the truck queue
 NO_GO = [(2900, 3660, -6900, -3200), (2900, 3660, 2700, 4900)]
@@ -66,12 +70,13 @@ try:
     L.clear("Ground_Patch_FarBank")
     cube = L.eal.load_asset("/Engine/BasicShapes/Cube")
     g = L.eas.spawn_actor_from_class(
-        unreal.StaticMeshActor, unreal.Vector(-1100, -5800, -0.5),
+        unreal.StaticMeshActor, unreal.Vector(-1100, -6300, -0.5),
         unreal.Rotator())
     g.set_actor_label("Ground_Patch_FarBank")
     g.set_folder_path("Shared/Ground")
     g.static_mesh_component.set_static_mesh(cube)
-    g.set_actor_scale3d(unreal.Vector(114, 20, 0.01))
+    # To Y = -7800, under the Horizon tree line
+    g.set_actor_scale3d(unreal.Vector(114, 30, 0.01))
     g.static_mesh_component.set_material(0, L.eal.load_asset(
         "/Game/Environment/Materials/MI_Ground_Grass"))
     L.camera_only(g.static_mesh_component, False)
