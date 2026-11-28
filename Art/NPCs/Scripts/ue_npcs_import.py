@@ -2,6 +2,8 @@
 
   py ".../Art/NPCs/Scripts/ue_npcs_import.py"            meshes, clips, props
   py ".../Art/NPCs/Scripts/ue_npcs_import.py" materials  MIs on the meshes
+  py ".../Art/NPCs/Scripts/ue_npcs_import.py" props      the hand props only
+  py ".../Art/NPCs/Scripts/ue_npcs_import.py" anims      the clips only
 
 The meshes use the cooks' SK_Shawarman_Skeleton, so the cook and NPC clips
 play on every one of them. Writes out.json next to this file.
@@ -82,9 +84,18 @@ def import_all():
                            DST + "/Textures", f"T_{n}_BaseColor"))
         step("SK_" + n, run(f"{ART}/{n}/Mesh/SK_{n}.fbx", DST + "/Meshes",
                             "SK_" + n, fbx_options(skel, True)))
+    anims()
+    props()
+
+
+def anims():
+    skel = eal.load_asset(SKEL)
     for p in sorted(glob.glob(f"{ART}/Anims/A_NPC_*.fbx")):
         nm = os.path.splitext(os.path.basename(p))[0]
         step(nm, run(p, DST + "/Anims", nm, fbx_options(skel, False)))
+
+
+def props():
     for p in sorted(glob.glob(f"{ART}/Props/SM_*.fbx")):
         nm = os.path.splitext(os.path.basename(p))[0]
         step(nm, run(p, DST + "/Props", nm, prop_options()))
@@ -119,6 +130,10 @@ def materials():
 try:
     if "materials" in sys.argv[1:]:
         materials()
+    elif "props" in sys.argv[1:]:
+        props()
+    elif "anims" in sys.argv[1:]:
+        anims()
     else:
         import_all()
     step("done", True)

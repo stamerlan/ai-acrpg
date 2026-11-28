@@ -3,6 +3,7 @@
 Run headless, from the repo root:
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- mesh
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- clips
+  blender --background --python Art/NPCs/Scripts/blender_npc.py -- derive
   blender --background --python Art/NPCs/Scripts/blender_npc.py -- check
 """
 import bpy
@@ -40,14 +41,28 @@ CLIPS = [
     ("A_NPC_SitTalk", "Sitting_Answering_Questions"),
 ]
 
+# Idles made from the clips above, so the props show (derive):
+# clip: (base clip, {"arm": (clip, frame)} holds the right arm in the pose
+# of that frame, {"head": degrees} tilts the head back)
+RIGHT_ARM = ("RightShoulder", "RightArm", "RightForeArm", "RightHand")
+DERIVED = {
+    # The stamp held up beside the head, as on the concept sheet
+    "A_NPC_IdleRaise": ("A_NPC_IdleLook",
+                        {"arm": ("A_NPC_TalkPassionate", 116)}),
+    # The tongs with the cob held out in front of the chest
+    "A_NPC_IdleOffer": ("A_NPC_IdleLook", {"arm": ("A_NPC_TalkHip", 76)}),
+    # Kolya looks up at her, not down into his cup
+    "A_NPC_SitLook": ("A_NPC_SitHold", {"head": 24}),
+}
+
 # Idle and talk clip per NPC, as ue_dress_npcs.py uses them, for the check
 # renders. A_NPC_Idle turns the whole body 90 degrees and back: unused.
 LOOK = {
-    "Kolya": ("A_NPC_SitHold", "A_NPC_SitTalk"),
+    "Kolya": ("A_NPC_SitLook", "A_NPC_SitTalk"),
     "Halina": ("A_NPC_IdleLook", "A_NPC_TalkHip"),
-    "Zbyszek": ("A_NPC_IdleLook", "A_NPC_TalkPassionate"),
+    "Zbyszek": ("A_NPC_IdleRaise", "A_NPC_TalkPassionate"),
     "Krasnal": ("A_NPC_IdleLook", "A_NPC_TalkHip"),
-    "CornLady": ("A_NPC_IdleLook", "A_NPC_TalkRightHand"),
+    "CornLady": ("A_NPC_IdleOffer", "A_NPC_TalkRightHand"),
 }
 # Hand props: (object in Props/NPCProps.blend, bone, location in cm and
 # XYZ euler in degrees in pose-bone space); BP_NPC HandProp in UE
@@ -199,18 +214,113 @@ def build_clips():
     for a in list(lib.values()):
         bpy.data.actions.remove(a)
     sc.render.fps = fps
+    report["hands"] = derive_clips(arm)
     src = os.path.join(ART, "Source", "NPC_Anims.blend")
     os.makedirs(os.path.dirname(src), exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=src)
-    for name, *_ in CLIPS:
+    export_clips(arm, [c[0] for c in CLIPS] + list(DERIVED))
+    return report
+
+
+def export_clips(arm, names):
+    sc = bpy.context.scene
+    for name in names:
         a = bpy.data.actions[name]
-        ad = arm.animation_data or arm.animation_data_create()
-        ad.action = a
-        ad.action_slot = a.slots[0]
+        at.set_action(arm, a)
         sc.frame_start = 0
         sc.frame_end = int(a.frame_range[1])
         fbx(os.path.join(ART, "Anims", name + ".fbx"), [arm], anim=True)
-    return report
+
+
+def quat_curves(arm, action, bone):
+    cb = at.channelbag(action, arm)
+    path = 'pose.bones["%s"].rotation_quaternion' % bone
+    return [cb.fcurves.find(path, index=i) for i in range(4)]
+
+
+def set_keys(curve, values):
+    """Replace a curve's keys: {frame: value}."""
+    while curve.keyframe_points:
+        curve.keyframe_points.remove(curve.keyframe_points[0])
+    for f, v in values.items():
+        curve.keyframe_points.insert(f, v, options={'FAST'})
+    curve.update()
+
+
+def hand_axes(arm, action, bone="RightHand"):
+    """World up and the character's forward in the hand bone's space at
+    the middle of the clip, as UE sees them (Y mirrored): the HANDS table
+    of ue_dress_npcs.py. Blender characters face -Y."""
+    at.set_action(arm, action)
+    bpy.context.scene.frame_set(int(action.frame_range[1] / 2))
+    inv = (arm.matrix_world @ arm.pose.bones[bone].matrix).to_3x3().inverted()
+    out = []
+    for v in ((0, 0, 1), (0, -1, 0)):
+        u = inv @ mathutils.Vector(v)
+        out.append([round(u.x, 2), round(-u.y, 2), round(u.z, 2)])
+    return out
+
+
+def derive_clips(arm):
+    """Build the DERIVED idles; returns their right hand axes."""
+    sc = bpy.context.scene
+    hands = {}
+    for name, (base, how) in DERIVED.items():
+        old = bpy.data.actions.get(name)
+        if old:
+            bpy.data.actions.remove(old)
+        a = bpy.data.actions[base].copy()
+        a.name = name
+        a.use_fake_user = True
+        f1 = int(a.frame_range[1])
+        if "arm" in how:
+            src, frame = how["arm"]
+            for bone in RIGHT_ARM:
+                held = [c.evaluate(frame) for c in quat_curves(
+                    arm, bpy.data.actions[src], bone)]
+                for c, v in zip(quat_curves(arm, a, bone), held):
+                    set_keys(c, {0: v, f1: v})
+        if "head" in how:
+            # Half the angle on the neck, half on the head, about the
+            # axis that lifts the face (headfront is 17 cm ahead of Head)
+            for sign in (1, -1):
+                tilt = mathutils.Quaternion(
+                    (1, 0, 0), math.radians(sign * how["head"] / 2))
+                keys = {}
+                for bone in ("neck", "Head"):
+                    cs = quat_curves(arm, a, bone)
+                    keys[bone] = (cs, [{f: c.evaluate(f) for f in
+                                        range(f1 + 1)} for c in cs])
+                    new = [{}, {}, {}, {}]
+                    for f in range(f1 + 1):
+                        q = mathutils.Quaternion(
+                            [k[f] for k in keys[bone][1]]) @ tilt
+                        for i in range(4):
+                            new[i][f] = q[i]
+                    for c, v in zip(cs, new):
+                        set_keys(c, v)
+                at.set_action(arm, a)
+                sc.frame_set(0)
+                pb = arm.pose.bones
+                if pb["headfront"].head.z > pb["Head"].head.z - 1.5:
+                    break
+                for bone, (cs, old_keys) in keys.items():
+                    for c, v in zip(cs, old_keys):
+                        set_keys(c, v)
+        hands[name] = hand_axes(arm, a)
+    hands["A_NPC_IdleLook"] = hand_axes(arm, bpy.data.actions["A_NPC_IdleLook"])
+    return hands
+
+
+def derive():
+    """Only the DERIVED idles, from the saved NPC_Anims.blend."""
+    src = os.path.join(ART, "Source", "NPC_Anims.blend")
+    bpy.ops.wm.open_mainfile(filepath=src)
+    arm = bpy.data.objects["Armature"]
+    hands = derive_clips(arm)
+    bpy.ops.wm.save_as_mainfile(filepath=src)
+    export_clips(arm, list(DERIVED))
+    return hands
 
 
 def local_rest(b):
@@ -346,6 +456,8 @@ if __name__ == "__main__":
         result = {n: build_mesh(n) for n in names}
     elif what == "clips":
         result = build_clips()
+    elif what == "derive":
+        result = derive()
     else:
         result = check(args[1])
     print("JSON" + json.dumps(result))

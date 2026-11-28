@@ -1,14 +1,17 @@
-"""Put the stop 0 NPC models over their markers (editor Python).
+"""Put the stop 0 NPC models into L0_BorderBazaar (editor Python).
 
-Deletes and re-places the ArtNPC_ actors (BP_NPC) at the MK_NPC_ markers,
-copies each marker's data layers and hides the marker's own meshes and
-label; the marker keeps its BPC_Interactable, so dialogs work as before.
-BP_NPC plays the idle clip and blends to the talk clip while the dialog's
-active node belongs to its Participant. Writes out.json here.
-Saves nothing: check the result, then save the level.
+Deletes and re-places the ArtNPC_ actors (BP_NPC). The camera looks
+south, so every NPC stands in the open, facing north, where she comes
+from: a seller under a canopy or with his back to the camera is not seen.
+Each MK_NPC_ marker moves to its NPC (it keeps the BPC_Interactable, so
+the dialogs work as before) and its own meshes and label are hidden.
+BP_NPC plays the idle clip, blends to the talk clip while the dialog's
+active node belongs to its Participant, holds up to two props and blocks
+her with a capsule. Run ue_layout_border.py (sellers) and
+ue_dress_stalls.py first. Writes out.json here. Saves nothing: check the
+result, then save the level.
 """
 import json
-import math
 import os
 import traceback
 import unreal
@@ -18,44 +21,93 @@ OUT = os.path.join(HERE, "out.json")
 N = "/Game/Characters/NPCs/"
 C = "/Game/Characters/Cooks/"
 A = N + "Anims/A_NPC_"
+P = N + "Props/SM_"
 eal = unreal.EditorAssetLibrary
 eas = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
+ml = unreal.MathLibrary
 
-# marker: (mesh, material or None, idle, talk, place, offset, extra yaw)
-# place "marker" stands on the marker, "interact" on its talk point
-# (the stall sellers, behind their counters); the offset in marker space
-# is added to either.
+# mesh, mat: the body. idle, talk: the clips. at: (x, y, yaw).
+# marker: False leaves the marker where it is (Halina's talk range is
+# fitted to the yard in front of her window). block: the capsule's
+# (radius, half height), None for no collision. show: story conditions
+# (Type, Id, Value), the NPC is hidden while one fails.
 NPCS = {
-    "Kolya": (N + "Meshes/SK_Kolya", None, A + "SitHold", A + "SitTalk",
-              "marker", (0, 0, 0), 0),
-    "Halina": (N + "Meshes/SK_Halina", None, A + "IdleLook", A + "TalkHip",
-               "marker", (0, 0, 0), 0),
-    "Zbyszek": (N + "Meshes/SK_Zbyszek", None, A + "IdleLook",
-                A + "TalkPassionate", "interact", (0, 0, 0), 0),
-    "Krasnal": (N + "Meshes/SK_Krasnal", None, A + "IdleLook", A + "TalkHip",
-                "marker", (0, 0, 0), 0),
-    # Beside the folding chair of her stall, not behind it
-    "CornLady": (N + "Meshes/SK_CornLady", None, A + "IdleLook",
-                 A + "TalkRightHand", "interact", (0, 55, 0), 0),
-    "KebabShawarman": (C + "Meshes/SK_Shawarman",
-                       C + "Materials/MI_Shawarman_A",
-                       C + "Anims/A_Shawarman_Idle",
-                       C + "Anims/A_Shawarman_Idle", "marker", (0, 0, 0), 0),
+    # On a crate on the road verge, across the lane from his truck's cab
+    "Kolya": dict(mesh=N + "Meshes/SK_Kolya", idle=A + "SitLook",
+                  talk=A + "SitTalk", at=(2940, -800, 0), block=(45, 65)),
+    # At her window: 20 cm behind the wall, so the lintel does not hide
+    # her head from the camera
+    "Halina": dict(mesh=N + "Meshes/SK_Halina", idle=A + "IdleLook",
+                   talk=A + "TalkHip", at=(-32, 1860, 0), marker=False,
+                   block=None),
+    # In front of the west corner of his stall, by the alley to the
+    # office, holding a stamp up
+    "Zbyszek": dict(mesh=N + "Meshes/SK_Zbyszek", idle=A + "IdleRaise",
+                    talk=A + "TalkPassionate", at=(1490, 740, 0)),
+    # Beside his stall, by the way to the gnome field
+    "Krasnal": dict(mesh=N + "Meshes/SK_Krasnal", idle=A + "IdleLook",
+                    talk=A + "TalkHip", at=(1440, -650, 0)),
+    # In front of the west corner of her stall, holding a cob out
+    "CornLady": dict(mesh=N + "Meshes/SK_CornLady", idle=A + "IdleOffer",
+                     talk=A + "TalkRightHand", at=(1485, -1765, 0)),
+    # The kebab stand's cook, between its two tables. No dialog. He is
+    # gone when Halina calls: the first fight's cooks come out of the stand
+    "KebabShawarman": dict(mesh=C + "Meshes/SK_Shawarman",
+                           mat=C + "Materials/MI_Shawarman_A",
+                           idle=C + "Anims/A_Shawarman_Idle",
+                           talk=C + "Anims/A_Shawarman_Idle",
+                           at=(1505, -1160, 0),
+                           show=[("QUEST_IS_NOT", "q_car_trouble",
+                                  "office")]),
 }
-# Shown only while these story conditions pass (Type, Id, Value)
-SHOW_WHILE = {
-    # The cook runs out of the stand when Halina calls; the stand is
-    # empty after the fight
-    "KebabShawarman": [("QUEST_IS_NOT", "q_car_trouble", "office")],
-}
-# Kolya sits on a crate by his truck: (mesh, offset, scale)
+# Kolya's seat: (mesh, offset in his space, scale)
 SEATS = {"Kolya": ("/Game/Environment/Kenney/survival_kit/SM_box",
-                   (-20, 0, 0), (1.3, 1.3, 1.8))}
-# Held props: (mesh, socket, location, up) in UE socket space. "up" is the
-# prop's +Z: world up in the socket while Kolya holds the cup on his lap
-# in A_NPC_SitHold (measured in PIE), so the thermos stands upright
-HAND_PROPS = {"Kolya": (N + "Props/SM_Thermos", "RightHand", (0, -8, 0),
-                        (0.18, 0.55, -0.82))}
+                   (-24, 0, 0), (2.2, 2.6, 1.8))}
+# A small warm lamp: (offset in the NPC's space, intensity, radius). The
+# office is dark behind Halina's window
+LIGHTS = {"Halina": ((14, 0, 185), 600.0, 160.0)}
+# Graybox markers an NPC replaces (no component of theirs is used)
+HIDE = ["MK_Interact_OfficeWindow"]
+# Held props, at most two an NPC: (mesh, bone, axes, offset, scale).
+# The prop is turned so that, in the NPC's idle pose, its first axis is
+# world up and its second one points where the NPC looks (HANDS below),
+# with its origin in the palm; offset moves it in its own space. Axes
+# "RAW" takes offset as the (location, (roll, pitch, yaw)) in the bone's
+# space instead: the cook's are BP_Shawarman's (SetupBody, read in PIE).
+PROPS = {
+    "Kolya": [(P + "Thermos", "RightHand", "ZX", (0, 0, 0), 1.0)],
+    "Halina": [(P + "Stamp", "RightHand", "ZX", (0, 0, 0), 1.0),
+               (C + "Props/SM_MiniKebab", "LeftHand", "XZ", (2, 0, 0), 1.3)],
+    "Zbyszek": [(P + "Stamp", "RightHand", "ZX", (0, 0, 0), 1.5)],
+    "Krasnal": [(P + "GnomeSign", "RightHand", "ZX", (0, 0, 0), 1.0),
+                ("/Game/Props/Gnome/SM_Gnome", "LeftHand", "ZX",
+                 (8, 0, -24), 1.0)],
+    "CornLady": [(P + "TongsCorn", "RightHand", "ZX", (0, 0, 0), 1.0)],
+    # Honing his knife, as the enemy Shawarman does in his idle
+    "KebabShawarman": [
+        (C + "Props/SM_DonerKnife", "RightHand", "RAW",
+         ((-1.4, -6.9, 0.9), (177.5, 54.7, -1.5)), 1.0),
+        (C + "Props/SM_SharpeningSteel", "LeftHand", "RAW",
+         ((2.1, -8.0, 0.6), (-169.6, 54.1, -168.8)), 1.0)],
+}
+PALM = (0, -8, 0)  # in a hand bone's space: 8 cm from the wrist
+# World up and the NPC's forward in a hand bone's space in the idle
+# clip, measured in PIE (get_socket_transform, unrotate the two vectors;
+# the NPC must be on screen or its pose does not tick). They depend on
+# the clip only: the retargeted bone rotations are the same on every body
+HANDS = {
+    "A_NPC_IdleLook": {
+        "RightHand": ((0.23, 0.95, -0.17), (0.89, -0.14, 0.44)),
+        "LeftHand": ((-0.37, 0.91, -0.17), (-0.87, -0.27, 0.41))},
+    # blender_npc.py derive prints the right hand of its clips
+    "A_NPC_IdleRaise": {
+        "RightHand": ((0.77, -0.5, 0.4), (-0.6, -0.78, 0.18))},
+    "A_NPC_IdleOffer": {
+        "RightHand": ((0.97, -0.22, 0.14), (-0.19, -0.96, -0.2))},
+    # The hand with the cup moves: the pose it holds longest
+    "A_NPC_SitLook": {
+        "RightHand": ((0.18, 0.55, -0.82), (1, 0, 0))},
+}
 res = {}
 
 
@@ -68,14 +120,6 @@ def hide_marker(m):
         c.set_editor_property("hidden_in_game", True)
 
 
-def to_world(m, off):
-    yaw = math.radians(m.get_actor_rotation().yaw)
-    ca, sa = math.cos(yaw), math.sin(yaw)
-    lo = m.get_actor_location()
-    return unreal.Vector(lo.x + off[0] * ca - off[1] * sa,
-                         lo.y + off[0] * sa + off[1] * ca, lo.z + off[2])
-
-
 def condition(t, i, v):
     c = unreal.StoryCondition()
     c.set_editor_property("type", getattr(unreal.StoryConditionType, t))
@@ -84,69 +128,105 @@ def condition(t, i, v):
     return c
 
 
+def hold(a, idle, slot, mesh, bone, axes, offset, scale):
+    if axes == "RAW":
+        loc = unreal.Vector(*offset[0])
+        rot = unreal.Rotator(roll=offset[1][0], pitch=offset[1][1],
+                             yaw=offset[1][2])
+    else:
+        up, fwd = HANDS[idle.rsplit("/", 1)[1]][bone]
+        make = ml.make_rot_from_zx if axes == "ZX" else ml.make_rot_from_xz
+        rot = make(unreal.Vector(*up), unreal.Vector(*fwd))
+        loc = unreal.Vector(*PALM) + rot.quaternion().rotate_vector(
+            unreal.Vector(*offset) * scale)
+    hp = a.get_editor_property("HandProp" if slot == 0 else "HandProp2")
+    hp.set_static_mesh(eal.load_asset(mesh))
+    hp.set_relative_location_and_rotation(loc, rot, False, False)
+    hp.set_relative_scale3d(unreal.Vector(scale, scale, scale))
+
+
 try:
     for a in list(eas.get_all_level_actors()):
-        if a.get_actor_label().startswith(("ArtNPC_", "ArtNPCSeat_")):
+        if a.get_actor_label().startswith(("ArtNPC_", "ArtNPCSeat_",
+                                           "ArtNPCLight_")):
             eas.destroy_actor(a)
-    markers = {a.get_actor_label(): a for a in eas.get_all_level_actors()
-               if a.get_actor_label().startswith("MK_NPC_")}
+    labels = {a.get_actor_label(): a for a in eas.get_all_level_actors()}
     cls = unreal.EditorAssetLibrary.load_blueprint_class(N + "BP_NPC")
-    for name, (mesh, mat, idle, talk, place, off, dyaw) in NPCS.items():
-        m = markers["MK_NPC_" + name]
-        inter = next((c for c in m.get_components_by_class(
-            unreal.SceneComponent) if "Interactable" in c.get_name()), None)
-        loc = to_world(m, off)
-        if place == "interact" and inter:
-            p = inter.get_world_location()
-            o = m.get_actor_location()
-            loc = unreal.Vector(loc.x + p.x - o.x, loc.y + p.y - o.y, loc.z)
-        rot = unreal.Rotator(roll=0, pitch=0,
-                             yaw=m.get_actor_rotation().yaw + dyaw)
+    for name, d in NPCS.items():
+        m = labels["MK_NPC_" + name]
+        x, y, yaw = d["at"]
+        loc = unreal.Vector(x, y, m.get_actor_location().z)
+        rot = unreal.Rotator(roll=0, pitch=0, yaw=yaw)
+        m.modify()
+        if d.get("marker", True):
+            m.set_actor_location_and_rotation(loc, rot, False, False)
+        hide_marker(m)
         a = eas.spawn_actor_from_class(cls, loc, rot)
         a.set_actor_label("ArtNPC_" + name)
         a.set_folder_path(str(m.get_folder_path()).replace("Markers/NPC",
                                                            "NPCs"))
-        a.set_editor_property("data_layer_assets",
-                              m.get_editor_property("data_layer_assets"))
-        body = a.get_editor_property("Body")
-        body.set_skeletal_mesh_asset(eal.load_asset(mesh))
-        if mat:
-            body.set_material(0, eal.load_asset(mat))
+        layers = m.get_editor_property("data_layer_assets")
+        a.set_editor_property("data_layer_assets", layers)
+        # The actor's own properties first: setting one reruns the
+        # construction and drops what was set on its components
+        props = PROPS.get(name, [])
         a.set_editor_property("Participant", name)
-        a.set_editor_property("IdleAnim", eal.load_asset(idle))
-        a.set_editor_property("TalkAnim", eal.load_asset(talk))
-        if name in HAND_PROPS:
-            pm, sock, pl, pr = HAND_PROPS[name]
-            hp = a.get_editor_property("HandProp")
-            hp.set_static_mesh(eal.load_asset(pm))
-            hp.set_editor_property("relative_location", unreal.Vector(*pl))
-            hp.set_editor_property("relative_rotation",
-                                   unreal.MathLibrary.make_rot_from_z(
-                                       unreal.Vector(*pr)))
-            a.set_editor_property("PropSocket", sock)
-        if name in SHOW_WHILE:
-            a.set_editor_property("ShowWhile", [
-                condition(*c) for c in SHOW_WHILE[name]])
-        hide_marker(m)
-        info = {"loc": [round(loc.x), round(loc.y), round(loc.z)],
-                "yaw": round(rot.yaw),
-                "layers": [str(d.get_name()) for d in
-                           a.get_editor_property("data_layer_assets")]}
+        a.set_editor_property("IdleAnim", eal.load_asset(d["idle"]))
+        a.set_editor_property("TalkAnim", eal.load_asset(d["talk"]))
+        a.set_editor_property("ShowWhile", [
+            condition(*c) for c in d.get("show", [])])
+        for i, prop in enumerate(props):
+            a.set_editor_property("PropSocket2" if i else "PropSocket",
+                                  prop[1])
+        body = a.get_editor_property("Body")
+        body.set_skeletal_mesh_asset(eal.load_asset(d["mesh"]))
+        if d.get("mat"):
+            body.set_material(0, eal.load_asset(d["mat"]))
+        block = a.get_editor_property("Block")
+        size = d.get("block", (32, 85))
+        if size:
+            block.set_capsule_size(size[0], size[1])
+            block.set_relative_location(unreal.Vector(0, 0, size[1]),
+                                        False, False)
+        else:
+            block.set_collision_enabled(unreal.CollisionEnabled.NO_COLLISION)
+        for i, prop in enumerate(props):
+            hold(a, d["idle"], i, *prop)
         if name in SEATS:
-            sm, soff, sc = SEATS[name]
-            s = eas.spawn_actor_from_class(unreal.StaticMeshActor,
-                                           to_world(m, soff), rot)
+            sm, off, sc = SEATS[name]
+            s = eas.spawn_actor_from_class(
+                unreal.StaticMeshActor,
+                a.get_actor_transform().transform_location(
+                    unreal.Vector(*off)), rot)
             s.set_actor_label("ArtNPCSeat_" + name)
             s.set_folder_path(a.get_folder_path())
-            s.set_editor_property("data_layer_assets",
-                                  m.get_editor_property("data_layer_assets"))
+            s.set_editor_property("data_layer_assets", layers)
             smc = s.static_mesh_component
             smc.set_static_mesh(eal.load_asset(sm))
             s.set_actor_scale3d(unreal.Vector(*sc))
             smc.set_editor_property("can_ever_affect_navigation", False)
-            o, e = s.get_actor_bounds(False)
-            info["seat_top"] = round(o.z + e.z, 1)
-        res[name] = info
+        if name in LIGHTS:
+            off, power, radius = LIGHTS[name]
+            lamp = eas.spawn_actor_from_class(
+                unreal.PointLight,
+                a.get_actor_transform().transform_location(
+                    unreal.Vector(*off)), rot)
+            lamp.set_actor_label("ArtNPCLight_" + name)
+            lamp.set_folder_path(a.get_folder_path())
+            lamp.set_editor_property("data_layer_assets", layers)
+            lc = lamp.point_light_component
+            lc.set_editor_property("intensity_units",
+                                   unreal.LightUnits.UNITLESS)
+            lc.set_intensity(power)
+            lc.set_attenuation_radius(radius)
+            lc.set_light_color(unreal.LinearColor(1.0, 0.82, 0.6, 1.0))
+            lc.set_cast_shadows(False)
+        res[name] = {"at": [x, y, yaw],
+                     "layers": [str(l.get_name()) for l in layers]}
+    for label in HIDE:
+        labels[label].modify()
+        hide_marker(labels[label])
+    res["ok"] = True
 except Exception:
     res["error"] = traceback.format_exc()
 with open(OUT, "w") as f:

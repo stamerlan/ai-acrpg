@@ -103,10 +103,10 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   and KantorClerk (Talk), `MK_Interact_CargoScale` (Kotlet's dialog
   from `weigh`, while `f_border_check` is scale), and the pickups
   `MK_Pickup_Gnomonaut` (while `q_gnomonaut` is started),
-  `MK_Pickup_ZbyszekBox` and `MK_Pickup_CarKeys`. The stall NPCs'
-  interactables sit 80 cm behind the front of their counters with a
-  1.5 m radius: she talks to them from about 1 m in front of the
-  counter, not from the middle of the street.
+  `MK_Pickup_ZbyszekBox` and `MK_Pickup_CarKeys`. The sellers stand
+  in front of their stalls; their interactables sit 1.1 m in front of
+  them with a 1.5 m radius: she talks to them face to face, not from
+  the far side of the street.
 * `Road_Border` is the asphalt road from the bridge on east past the
   map edge (with a center line) and its spur to the bazaar gate.
   `Road_West` carries it over the far bank: west of the river is
@@ -181,9 +181,9 @@ moves south through the bazaar to the impound lot fence.
  +--------+------------+-------+----------+----------------+
                                | 3. GATE  |
          +---------------------+----------+-------------+
-         | Socks      | Corn lady | Honey  | Zbyszek     |
+         | Socks      | Flowers   | Honey  | CDs         |
          |        4. MAIN STREET (stalls on both sides) |
-         | Kebab stand (radio)    | Gnome seller        |
+         | Corn lady | Kebab stand | Gnomes | Zbyszek   |
          +------------------------+---------------------+
          | 5. GNOME FIELD         | 6. IMPOUND OFFICE   |
          |    hole in the fence   |    window, lot gate |
@@ -213,7 +213,12 @@ Zones:
    canopy's north edge, toward the camera. The walkway in the middle
    is open to the sky, with string light cables across it. When a stall's
    canopy covers her from the camera, the whole canopy and its name
-   board hide; the frame, tables and goods stay.
+   board hide; the frame, tables and goods stay. The camera looks
+   south: it sees the fronts of the south row and the backs of the
+   north row. So every stall with a story seller is in the south row
+   (corn at the west end, then the kebab stand, the gnomes, and the
+   stamps east of the alley to the office), and the seller stands in
+   front of it, in the open, facing north.
 5. **Gnome field.** An open yard where the gnome seller keeps his stock:
    hundreds of garden gnomes in rows, making low cover and a loose maze.
    The first fight happens here. A hole in the lot fence is at the far
@@ -297,8 +302,8 @@ sandwich.
   "Car Trouble" starts. The checklist already holds its first stamp:
   "CARGO: POULTRY". Checkpoint.
 
-**3. The truck queue (optional).** Uncle Kolya sits on the step of his
-truck with a thermos. See [Uncle Kolya](#uncle-kolya).
+**3. The truck queue (optional).** Uncle Kolya sits on a crate on the
+road verge, across the lane from his truck, with a thermos. See [Uncle Kolya](#uncle-kolya).
 
 **4. The bazaar.** She walks in under the "WELCOME" arch and reads it
 literally. Free exploration of the main street: stalls, joke dialogs,
@@ -353,11 +358,22 @@ are 3D models (`ArtNPC_<Name>`, `BP_NPC`, folder `Day/NPCs`) placed over
 their markers by `Art/NPCs/Scripts/ue_dress_npcs.py`; the markers keep
 their `BPC_Interactable` and their meshes are hidden. Each plays an idle
 loop and blends to a talk loop while its own dialog line is on screen.
-Kolya sits on a crate by his truck with his thermos, the stall sellers
-stand behind their counters (the corn lady beside her folding chair),
-and the kebab stand cook (`MK_NPC_KebabShawarman`, no dialog) is hidden
-from the moment `q_car_trouble` reaches `office`, when the fight starts.
-Models and clips: [Art/README.md](../Art/README.md#stop-0-npcs-npcs).
+Models, clips and props: [Art/README.md](../Art/README.md#stop-0-npcs-npcs).
+
+Placement rule: the camera looks south, so an NPC stands in the open
+and faces north, toward the camera. Under a south-row canopy or behind
+a north-row counter nobody would see a face.
+
+| NPC | Where | Holds |
+|---|---|---|
+| Kolya | On a crate on the road verge, across the lane from his truck's cab | Thermos |
+| Halina | At her window (a small lamp lights her; `MK_Interact_OfficeWindow` is hidden) | Stamp, kebab |
+| Zbyszek | In front of the west corner of his stall, by the alley to the office | A stamp, held up |
+| Krasnal | Beside his stall, by the way to the gnome field | "GNOMES 2 FOR 1!" sign, a gnome |
+| Corn lady | In front of the west corner of her stall | Tongs with a cob, held out |
+| Kebab stand cook | Between the stand's two tables, honing his knife; no dialog; gone (hidden, no collision) from the moment `q_car_trouble` reaches `office`, when the fight starts | Knife, steel |
+
+They block her like any pawn, so she can't walk through them.
 
 #### Sergeant Kotlet
 

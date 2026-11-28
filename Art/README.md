@@ -361,19 +361,25 @@ How they were made (Meshy, no hand animation):
   lengths, the hips scaled by hip height); assigning the action to the
   NPC rig in Blender instead adds the rotations onto its own rest pose
   and crosses the feet of the slim NPCs, which UE does not do.
-* `Scripts/blender_npc_props.py`: `Props/SM_Thermos.fbx` (Kolya's green
-  thermos, 27 cm, axis +Z, origin in the middle of the grip) from
-  primitives, working file `Props/NPCProps.blend`.
+* `derive` (also run by `clips`) makes three more idles from those
+  clips, so the props show: the right arm held in the pose of one frame
+  of a talk clip, or the head tilted back. It prints the right hand's
+  axes for `ue_dress_npcs.py` (`HANDS`): world up and the character's
+  forward in the bone's space, Y mirrored for UE; they match what
+  `get_socket_transform` gives in PIE.
+* `Scripts/blender_npc_props.py`: the hand props from primitives with
+  flat-color materials, +Z up, +X to the front, origin in the grip;
+  working file `Props/NPCProps.blend`.
 * UE (`Scripts/ue_npcs_import.py`, then with `materials`):
   `/Game/Characters/NPCs`, `MI_<Name>` on the cooks' `M_Cook`.
 
 | NPC | Height | Rig task | Idle | Talk |
 |---|---|---|---|---|
-| Kolya | 195 cm | `01a21f3c-a07c-7473-93b3-05ba3a3751ca` | `A_NPC_SitHold` | `A_NPC_SitTalk` |
+| Kolya | 195 cm | `01a21f3c-a07c-7473-93b3-05ba3a3751ca` | `A_NPC_SitLook` | `A_NPC_SitTalk` |
 | Halina | 165 cm | `01a21f3c-b133-73ef-b436-6f8aa92577a7` | `A_NPC_IdleLook` | `A_NPC_TalkHip` |
-| Zbyszek | 178 cm | `01a21f3c-c1eb-77ff-8092-9e725753f509` | `A_NPC_IdleLook` | `A_NPC_TalkPassionate` |
+| Zbyszek | 178 cm | `01a21f3c-c1eb-77ff-8092-9e725753f509` | `A_NPC_IdleRaise` | `A_NPC_TalkPassionate` |
 | Krasnal | 150 cm with the hat | `01a21f3c-d350-7529-8490-93d58979274b` | `A_NPC_IdleLook` | `A_NPC_TalkHip` |
-| Corn lady | 155 cm | `01a21f3c-e3d1-7319-9293-a4fb950a0860` | `A_NPC_IdleLook` | `A_NPC_TalkRightHand` |
+| Corn lady | 155 cm | `01a21f3c-e3d1-7319-9293-a4fb950a0860` | `A_NPC_IdleOffer` | `A_NPC_TalkRightHand` |
 
 | Clip | Source | Length |
 |---|---|---|
@@ -386,15 +392,30 @@ How they were made (Meshy, no hand animation):
 | `A_NPC_SitIdle` | Chair Sit Idle Female | 11.3 s |
 | `A_NPC_SitDrink` | Sit and Drink | 11.2 s, unused: on Kolya the cup lands on his forehead |
 | `A_NPC_SitHold` | Sit and Drink, 1.2-3.2 s | 2 s, the cup held on the lap |
+| `A_NPC_SitLook` | `A_NPC_SitHold`, neck and head tilted back 24 degrees | 2 s, Kolya looks up at her |
+| `A_NPC_IdleRaise` | `A_NPC_IdleLook`, right arm of Talk Passionately at 3.9 s | 10 s, the hand held up beside the head (Zbyszek's stamp) |
+| `A_NPC_IdleOffer` | `A_NPC_IdleLook`, right arm of Talk with Left Hand on Hip at 2.5 s | 10 s, the hand in front of the chest (the corn lady's tongs) |
 | `A_NPC_SitTalk` | Sitting Answering Questions | 9.7 s |
 
 In the level, `BP_NPC` (`ABP_NPC`: a `DefaultSlot` slot only) plays
 the idle clip as a looping dynamic montage from a random time and blends
 to the talk clip while the dialog's active node belongs to its
-`Participant`; `ShowWhile` hides it while the story conditions fail.
-`HandProp` (a static mesh) is attached to the `PropSocket` bone on
-BeginPlay: Kolya holds `SM_Thermos` in `RightHand`, turned so its
-axis is world up in the `A_NPC_SitHold` pose (measured in PIE).
+`Participant`; `ShowWhile` hides it and turns its collision off while
+the story conditions fail. `Block` is a capsule that blocks pawns only
+(not the camera, not the nav mesh). `HandProp` and `HandProp2` (static
+meshes) are attached to the `PropSocket` and `PropSocket2` bones on
+BeginPlay; `ue_dress_npcs.py` turns each prop so that it stands
+upright and faces where the NPC looks in the idle pose:
+
+| Prop | Size | Held by |
+|---|---|---|
+| `SM_Thermos` | 27 cm | Kolya, right hand |
+| `SM_Stamp` | 17 cm (oversized, to read from the camera) | Zbyszek, right hand, 1.5x; Halina, right hand |
+| `SM_TongsCorn` | 33 cm, tongs with a grilled cob | Corn lady, right hand |
+| `SM_GnomeSign` | 92 cm stick, 50 x 31 cm board "GNOMES 2 FOR 1!" | Krasnal, right hand |
+| `SM_Gnome` (`Props/Gnome`) | 40 cm | Krasnal, left hand |
+| `SM_MiniKebab` (cooks) | 1.3x | Halina, left hand (below her window sill) |
+| `SM_DonerKnife`, `SM_SharpeningSteel` (cooks) | | The kebab stand cook, with `BP_Shawarman`'s hand transforms |
 `Scripts/ue_dress_npcs.py` places one per marker, see
 [level0-border-town.md](../Docs/level0-border-town.md#npcs).
 

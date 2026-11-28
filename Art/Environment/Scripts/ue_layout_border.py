@@ -1,7 +1,8 @@
 """Graybox layout pass of 2026-11-26 on L0_BorderBazaar.
 
 Run in the editor: py "<this file>", then the ue_dress_* scripts. Safe to
-run again. What it does:
+run again; step names after the file name run only those steps (for
+example `sellers`). What it does:
 
 * The bazaar becomes a rectangle: the side walls of the stall block move
   out to the lot's width (Y = +-2700), which adds a yard on each side of
@@ -15,11 +16,16 @@ run again. What it does:
   their old stalls sell honey and socks. The gnome seller steps out
   from under his canopy, where the camera could not see him.
 * The lamp posts of the lot are never cut open by the camera.
+* The corn lady's and Zbyszek's stalls stand in the south row
+  (2026-11-28), whose fronts face the camera: they swapped places with
+  the flowers and the CDs (ue_dress_stalls.py, then
+  Art/NPCs/Scripts/ue_dress_npcs.py, which puts the sellers in front).
 * Night shift fixes: the graybox chairs of the grill shack and the office
   stool blocked the cooks placed on them; they are hidden, no collision.
 """
 import json
 import os
+import sys
 import traceback
 
 import unreal
@@ -267,6 +273,24 @@ def shops(A):
             c.set_editor_property("hidden_in_game", True)
 
 
+# Stall: (x, y, yaw). The south row (yaw 0) faces north, to the camera
+SELLER_SLOTS = {"Stall_Zbyszek": (1240, 900, 0),
+                "Stall_CDs": (1960, 900, 180),
+                "Stall_CornLady": (1240, -1620, 0),
+                "Stall_Flowers": (1960, -1260, 180)}
+
+
+def sellers(A):
+    # A seller in the north row turns her back on the camera, which
+    # looks south: the stalls with a story seller go to the south row
+    for label, (x, y, yaw) in SELLER_SLOTS.items():
+        a = A[label]
+        a.modify()
+        a.set_actor_location_and_rotation(
+            unreal.Vector(x, y, a.get_actor_location().z),
+            unreal.Rotator(roll=0, pitch=0, yaw=yaw), False, False)
+
+
 def poles(A):
     # A hole cut in a thin pole only looks broken
     for a in A.values():
@@ -277,7 +301,9 @@ def poles(A):
 
 
 try:
-    for step in (bazaar, road, edges, night_shift, shops, poles):
+    for step in (bazaar, road, edges, night_shift, shops, poles, sellers):
+        if sys.argv[1:] and step.__name__ not in sys.argv[1:]:
+            continue
         step(actors())
         res["log"].append(step.__name__)
     res["ok"] = True
