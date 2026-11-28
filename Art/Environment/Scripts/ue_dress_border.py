@@ -228,11 +228,22 @@ try:
     rng = random.Random(7)
     actors = {a.get_actor_label(): a for a in L.eas.get_all_level_actors()}
     for name, (model, x, y, heading, size) in YARDS.items():
-        if model in SHOPS:
+        if model in SHOPS and not SHOPS[model].get("closed"):
             walk_in(actors, name, model, x, y, heading, size)
             continue
         hx, hy, h = half_sizes(B + model, heading, size)
         block("Yard_" + name, "Shared/Bazaar/Yards", x, y, hx, hy, h)
+        if model in SHOPS:
+            # Closed (the WC by the bar): its upper part is a roof that
+            # the camera hides, so it does not cover the bar's room
+            L.place(B + model + "_Shell", (x, y, 0), heading - 90, size,
+                    "ArtBld_" + name, "Art/Shared/Bazaar/Yards", False)
+            roof = L.place(B + model + "_Roof", (x, y, 0), heading - 90,
+                           size, "ArtBld_" + name + "_Roof",
+                           "Art/Shared/Bazaar/Yards", True)
+            roof.tags = ["HideWhole"]
+            res["n"] += 1
+            continue
         L.place(B + model, (x, y, 0), heading - 90, size, "ArtBld_" + name,
                 "Art/Shared/Bazaar/Yards", False)
         res["n"] += 1

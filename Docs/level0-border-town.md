@@ -150,15 +150,23 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   roof (`ArtBld_<Shop>_Roof`, tagged `HideWhole`): while she is inside
   (or right behind the shop) the camera hides the roof and the north
   wall above a 1 m stub, and the room shows; behind the stub she is a
-  silhouette. Inside, clean and modern under a ceiling lamp: two
-  barber stations, a wash basin and a desk (Friseur); a grill line, a
-  bar with stools and two tables (Bar Grill); fridges, low shelf rows,
-  fruit crates and a self-checkout, no clerk (Sklep 24); a wall of
-  cigarette packs behind the counter, a cooler and sweets (ZIGARETTEN);
-  a lobby and the closed cash office with a frosted teller window
-  (KANTOR). The counters of the Friseur and the ZIGARETTEN shop have a
-  "ZARAZ WRACAM" (back soon) card. Walls, fittings and props on the
-  apron block her through hidden boxes on `Yard_<Shop>`. Geometry:
+  silhouette. Each door has a dark aluminium frame, an open glass leaf
+  and a doormat; the Bar Grill's door is in its east wall, so a "BAR
+  GRILL" blade sign over it and a paved way lead the eye there. Inside,
+  clean and modern under a ceiling lamp, on mid-tone floors so the
+  white chicken stands out: two barber stations with mirrors, a wash
+  basin and a desk on checker tiles (Friseur); a grill line, a bar with
+  stools and two tables (Bar Grill); fridges, low shelf rows, fruit
+  crates and a self-checkout, no clerk (Sklep 24); a wall of cigarette
+  packs behind the counter, a cooler and sweets on grey vinyl
+  (ZIGARETTEN); an oak-floored lobby with a queue rope, a big rates
+  board and the frosted teller window of the cash office, its desk and
+  safe behind the partition (KANTOR). A "ZARAZ WRACAM" (back soon) card
+  stands on the counters of the Friseur and the ZIGARETTEN shop. The WC
+  just north of the bar is closed, but its part over 1 m is a
+  `HideWhole` roof too (`ArtBld_Toilet_Roof`), so it does not cover the
+  bar's room. Walls, fittings and props on the apron block her through
+  hidden boxes on `Yard_<Shop>`. Geometry:
   `Art/Environment/Scripts/blender_shops_open.py` (writes
   `Art/Environment/Buildings/Shops.json`), placement:
   `ue_dress_border.py`.

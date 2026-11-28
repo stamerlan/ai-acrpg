@@ -48,11 +48,12 @@ sys.path.insert(0, HERE)
 sys.dont_write_bytecode = True  # no __pycache__ in the repo
 import blender_buildings_to_fbx as B  # noqa: E402
 
-# BP_Chicken's capsule (AChickenCharacter), cm in the level. A door is
-# opened to at least the capsule plus DOOR_SPARE; the trace up starts at
-# the capsule's middle, so the roof box starts BOX_GAP over it.
-RADIUS = 42.0
-HALF_HEIGHT = 96.0
+# BP_Chicken's capsule (its CDO, read in the editor), cm in the level. A
+# door is opened to at least the capsule plus DOOR_SPARE; the trace up
+# starts at the capsule's middle, so the roof box starts BOX_GAP over it
+# (and never under the cut).
+RADIUS = 25.0
+HALF_HEIGHT = 33.0
 DOOR_SPARE = 20.0
 BOX_GAP = 15.0
 CUT = 100.0  # height of the north wall's stub over the floor, cm
@@ -61,20 +62,36 @@ REACH = 0.4  # how far before the north wall its signs and awnings reach
 # The shops, in model meters (front -Y, as blender_buildings_to_fbx.py
 # leaves them): size in the level (YARDS of ue_dress_border.py), the
 # outer wall planes (x0, x1, y0, y1), the top of the side walls (eaves),
-# the door in the front wall (x0, x1, top) and the side that faces north,
-# to the camera: "front" (heading 0) or "right" (+X, heading 90)
+# the door in the front wall (x0, x1, top), the side that faces north,
+# to the camera: "front" (heading 0) or "right" (+X, heading 90), the
+# open door leaf (hinge side, opening angle out of the wall in degrees,
+# width) and the floor's atlas cell ("checker": dark and light tiles).
+# A "closed" shop (the WC) has no door and no inside: everything over the
+# cut is its roof, so it gets out of the way of the camera too.
 SHOPS = {
     "friseur": dict(size=0.9, walls=(-2.16, 2.18, -1.6, 1.96),
-                    eaves=2.35, door=(-0.4, 0.4, 1.74), north="front"),
+                    eaves=2.35, door=(-0.4, 0.4, 1.74), north="front",
+                    leaf=("x0", 120, 0.8), floor="checker"),
     "zigaretten": dict(size=0.9, walls=(-2.94, 2.92, -0.62, 2.46),
                        eaves=2.6, door=(-0.46, 0.46, 1.85),
-                       north="front"),
+                       north="front", leaf=("x0", 120, 0.9),
+                       floor="vinyl",
+                       # The parasol on the apron (x, y, how far north)
+                       parasol=(1.76, -1.6, 1.0)),
     "sklep": dict(size=0.9, walls=(-2.94, 2.94, -1.92, 2.54), eaves=2.55,
-                  door=(0.22, 1.52, 1.78), north="front"),
+                  door=(0.22, 1.52, 1.78), north="front", floor="floor"),
     "bar": dict(size=0.9, walls=(-2.28, 2.28, -1.24, 1.72), eaves=2.7,
-                door=(1.0, 2.16, 2.15), north="right"),
+                door=(0.9, 2.0, 2.15), north="right",
+                leaf=("x1", 100, 0.95), floor="floorwarm",
+                # Meshy faces to drop (x0, x1, y0, y1, z0, z1): its awning
+                # hung nearly straight down; fit_bar makes a new one
+                drop=[(-2.15, 0.45, -2.0, -1.27, 1.92, 2.5)]),
     "kantor": dict(size=0.85, walls=(-1.8, 1.82, -1.8, 1.8), eaves=2.55,
-                   door=(-1.2, -0.3, 1.86), north="front"),
+                   door=(-1.2, -0.3, 1.86), north="front",
+                   leaf=("x0", 120, 0.9), floor="oak"),
+    # Just north of the bar: over the cut it would hide the bar's room
+    "toilet": dict(size=0.9, walls=(-1.32, 1.32, -0.8, 1.53), eaves=2.0,
+                   closed=True),
 }
 # The atlas cells, sRGB. Clean and modern: white walls, pale floors
 COLORS = {
@@ -91,7 +108,13 @@ COLORS = {
     "glassdark": (0.24, 0.36, 0.4), "leather": (0.09, 0.09, 0.1),
     "screen": (0.3, 0.56, 0.86), "white": (0.98, 0.98, 0.98),
     "brown": (0.42, 0.27, 0.16), "kebab": (0.6, 0.36, 0.18),
+    # Mid-tone floors, so the white chicken stands out
+    "vinyl": (0.47, 0.49, 0.5), "oak": (0.55, 0.4, 0.27),
+    "checkdark": (0.24, 0.25, 0.27), "checklight": (0.7, 0.71, 0.72),
+    "rope": (0.62, 0.08, 0.1),
 }
+# The mirror cell is painted with a gradient and highlights instead of a
+# flat colour (atlas()); its faces get the whole cell
 CELL = {name: i for i, name in enumerate(COLORS)}
 GOODS = {
     "bottles": ["pink", "white", "blue", "black", "cyan", "purple"],
@@ -139,22 +162,37 @@ class Shop:
         face[self.part] = 1 if roof else 0
         u = (CELL[color] % 8 + 0.5) / 8
         v = (CELL[color] // 8 + 0.5) / 8
+        k = 0.055 if color == "mirror" else 0.02
         for loop, (du, dv) in zip(face.loops, ((-1, -1), (1, -1), (1, 1),
                                                (-1, 1))):
-            loop[self.uv].uv = (u + du * 0.02, v + dv * 0.02)
+            loop[self.uv].uv = (u + du * k, v + dv * k)
 
-    def box(self, lo, hi, color, solid=False, bottom=False):
+    def box(self, lo, hi, color, solid=False, bottom=False, roof=False):
         """An axis box from corner lo to corner hi, outward faces."""
         (a, b, c), (d, e, f) = lo, hi
-        self.quad([(a, b, f), (d, b, f), (d, e, f), (a, e, f)], color)
-        self.quad([(a, b, c), (d, b, c), (d, b, f), (a, b, f)], color)
-        self.quad([(d, e, c), (a, e, c), (a, e, f), (d, e, f)], color)
-        self.quad([(a, e, c), (a, b, c), (a, b, f), (a, e, f)], color)
-        self.quad([(d, b, c), (d, e, c), (d, e, f), (d, b, f)], color)
+        for pts in ([(a, b, f), (d, b, f), (d, e, f), (a, e, f)],
+                    [(a, b, c), (d, b, c), (d, b, f), (a, b, f)],
+                    [(d, e, c), (a, e, c), (a, e, f), (d, e, f)],
+                    [(a, e, c), (a, b, c), (a, b, f), (a, e, f)],
+                    [(d, b, c), (d, e, c), (d, e, f), (d, b, f)]):
+            self.quad(pts, color, roof)
         if bottom:
-            self.quad([(a, e, c), (d, e, c), (d, b, c), (a, b, c)], color)
+            self.quad([(a, e, c), (d, e, c), (d, b, c), (a, b, c)], color,
+                      roof)
         if solid:
             self.blocks.append((lo, hi))
+
+    def slab(self, p, d, length, thick, z0, z1, color):
+        """A box turned in plan: from p along the unit vector d."""
+        n = (-d[1] * thick / 2, d[0] * thick / 2)
+        q = (p[0] + d[0] * length, p[1] + d[1] * length)
+        ring = [(p[0] - n[0], p[1] - n[1]), (q[0] - n[0], q[1] - n[1]),
+                (q[0] + n[0], q[1] + n[1]), (p[0] + n[0], p[1] + n[1])]
+        for k in range(4):
+            (a, b), (e, f) = ring[k], ring[(k + 1) % 4]
+            self.quad([(a, b, z0), (e, f, z0), (e, f, z1), (a, b, z1)],
+                      color)
+        self.quad([(a, b, z1) for a, b in ring], color)
 
     def local(self, c, face, d, u0, u1, v0, v1, z0, z1, color):
         """A box given across (u) and from the back (v) of a fitting."""
@@ -296,7 +334,9 @@ def fit_friseur(s, zs):
     s.box((1.1, -0.86, zs + 0.05), (1.8, -0.85, 0.8), "pink")
     s.box((1.08, -0.87, 0.88), (1.82, -0.43, 0.92), "wood")
     s.props.append(("furniture_kit/SM_radio", (1.6, -0.6, 0.92), -90, 0.9))
-    s.signs.append(("ZARAZ WRACAM", (1.3, -0.62, 0.93), 13, "black", True))
+    # A card standing on the desk, to the camera
+    s.box((1.15, -0.84, 0.92), (1.75, -0.82, 1.14), "white")
+    s.signs.append(("ZARAZ WRACAM", (1.45, -0.845, 1.03), 7, "black", False))
     for y in (-0.5, 0.0):
         s.props.append(("furniture_kit/SM_chair", (xi0 + 0.25, y, zs), 0,
                         1.8))
@@ -321,7 +361,8 @@ def fit_zigaretten(s, zs):
     for k in range(6):
         s.box((-1.2 + k * 0.08, 1.35, 1.0), (-1.14 + k * 0.08, 1.45, 1.1),
               s.rng.choice(GOODS["sweets"]))
-    s.signs.append(("ZARAZ WRACAM", (-0.3, 1.55, 1.01), 13, "black", True))
+    s.box((-0.65, 1.31, 1.0), (0.05, 1.33, 1.22), "white")
+    s.signs.append(("ZARAZ WRACAM", (-0.3, 1.305, 1.11), 8, "black", False))
     # Low by the side walls: the camera sees them from above
     s.chest((xi0, -0.2, zs), (xi0 + 0.6, 1.0, 0.85), "drinks")
     s.chest((xi1 - 0.6, -0.1, zs), (xi1, 1.0, 0.75), "sweets", glass=False)
@@ -378,7 +419,7 @@ def fit_bar(s, zs):
     s.box((-1.25, yi0, zs), (-0.85, 1.1, 1.0), "graphite", solid=True)
     s.box((-1.28, yi0, 1.0), (-0.8, 1.12, 1.05), "wood")
     s.props.append(("furniture_kit/SM_radio", (-1.05, 0.85, 1.05), 0, 0.9))
-    for y in (-0.55, 0.05, 0.65):
+    for y in (-0.8, 0.1, 1.0):
         s.props.append(("furniture_kit/SM_stoolBar", (-0.6, y, zs), 0, 1.6))
     # Two small tables with a way between them to the bar for her
     for y in (-0.5, 1.0):
@@ -393,6 +434,23 @@ def fit_bar(s, zs):
     s.fridge((0.1, yi1 - 0.28), 0.8, 0.55, 1.8, "-y", 1)
     s.props.append(("furniture_kit/SM_trashcan", (1.9, -0.95, zs), 0, 1.4))
     s.lamps.append([(0.0, 0.25, 2.4), 1.0])
+    # The door is in the east wall, which the camera sees edge on: a
+    # blade sign over it reads from the north, and a paved way leads in
+    y0 = SHOPS["bar"]["walls"][2]
+    s.box((2.2, y0 - 1.0, 2.2), (2.24, y0 - 0.05, 2.62), "graphite")
+    s.box((2.24, y0 - 0.96, 2.24), (2.25, y0 - 0.09, 2.58), "white")
+    s.box((2.205, y0 - 0.06, 2.3), (2.235, y0, 2.36), "steel")
+    s.signs.append(("BAR GRILL", (2.26, y0 - 0.525, 2.41), 15, "black",
+                    False))
+    s.box((0.8, y0 - 2.4, 0), (2.1, y0 - 0.6, 0.012), "walltop")
+    # A new striped awning over the hatch, at a gentle slope
+    for k in range(12):
+        a, b = -2.0 + k * 0.2, -1.8 + k * 0.2
+        color = "red" if k % 2 == 0 else "white"
+        s.quad([(a, y0 - 0.02, 2.42), (b, y0 - 0.02, 2.42),
+                (b, y0 - 0.75, 2.2), (a, y0 - 0.75, 2.2)], color)
+        s.quad([(a, y0 - 0.75, 2.2), (b, y0 - 0.75, 2.2),
+                (b, y0 - 0.75, 2.08), (a, y0 - 0.75, 2.08)], color)
 
 
 def fit_kantor(s, zs):
@@ -400,22 +458,46 @@ def fit_kantor(s, zs):
     glass, so nobody is modelled. The talk point is at his window."""
     xi0, xi1, yi0, yi1 = s.inner
     top = SHOPS["kantor"]["eaves"]
+    # The office ceiling hides with the roof; from the lobby the clerk is
+    # behind frosted glass
     s.box((xi0, 0.35, zs), (xi1, 0.45, top), "wall")
-    s.box((xi0, 0.45, top - 0.05), (xi1, yi1, top), "walltop")
+    s.box((xi0, 0.45, top - 0.05), (xi1, yi1, top), "walltop", roof=True)
     s.blocks.append(((xi0, 0.35, 0), (xi1, yi1, top)))
-    s.box((0.12, 0.33, 0.92), (0.98, 0.35, 1.78), "steel")
-    s.box((0.15, 0.32, 0.95), (0.95, 0.33, 1.75), "frosted")
+    # The teller window: a glazed pane in a steel frame, a tray under it
+    s.box((0.12, 0.33, 0.9), (0.98, 0.35, 0.95), "steel")
+    s.box((0.12, 0.33, 1.75), (0.98, 0.35, 1.8), "steel")
+    for x in (0.12, 0.93):
+        s.box((x, 0.33, 0.9), (x + 0.05, 0.35, 1.8), "steel")
+    s.box((0.17, 0.335, 0.95), (0.93, 0.345, 1.75), "frosted")
     s.box((0.4, 0.31, 0.95), (0.7, 0.35, 1.0), "black")
     s.box((0.05, 0.08, 0.88), (1.05, 0.35, 0.95), "wood")
     s.box((0.05, 0.3, zs), (1.05, 0.35, 0.88), "wood")
     s.blocks.append(((0.05, 0.08, 0), (1.05, 0.35, 0.95)))
-    # Rates board
-    s.box((-1.25, 0.33, 1.15), (-0.25, 0.35, 1.8), "black")
-    for i, flag in enumerate(("blue", "red", "green", "yellow")):
-        z = 1.62 - i * 0.13
-        s.box((-1.18, 0.32, z), (-1.08, 0.33, z + 0.07), flag)
-        s.box((-0.98, 0.32, z), (-0.35, 0.33, z + 0.07), "yellow")
-    s.signs.append(("KURSY WALUT", (-0.75, 0.31, 1.88), 8, "black", False))
+    # Rates board, big enough to read
+    s.box((-1.6, 0.33, 1.0), (-0.15, 0.35, 1.95), "black")
+    for i, flag in enumerate(("blue", "red", "green", "yellow", "cyan")):
+        z = 1.72 - i * 0.15
+        s.box((-1.5, 0.32, z), (-1.36, 0.33, z + 0.1), flag)
+        s.box((-1.26, 0.32, z), (-0.25, 0.33, z + 0.1), "yellow")
+    s.signs.append(("KURSY WALUT", (-0.875, 0.31, 2.05), 10, "black",
+                    False))
+    # The clerk's side: desk, money counter, monitor, chair and a safe
+    s.box((0.05, 0.75, zs), (1.05, 1.2, 0.78), "wood", solid=True)
+    s.box((0.35, 0.85, 0.78), (0.6, 1.05, 0.9), "graphite")
+    s.box((0.7, 1.05, 0.78), (0.98, 1.1, 1.05), "black")
+    s.box((0.72, 1.045, 0.82), (0.96, 1.05, 1.03), "screen")
+    s.props.append(("furniture_kit/SM_chair", (0.55, 1.45, zs), -90, 1.7))
+    s.box((xi1 - 0.6, yi1 - 0.55, zs), (xi1 - 0.05, yi1 - 0.05, 1.0),
+          "graphite", solid=True)
+    s.prism((xi1 - 0.33, yi1 - 0.56), 0.1, 0.45, 0.47, "steel")
+    s.box((xi0 + 0.05, yi1 - 0.4, zs), (xi0 + 0.85, yi1 - 0.05, 1.6),
+          "wood", solid=True)
+    # A queue rope keeps the way to the window
+    for x in (-0.1, 0.55, 1.2):
+        s.prism((x, -0.75), 0.12, zs, zs + 0.03, "steel")
+        s.prism((x, -0.75), 0.025, zs + 0.03, 0.85, "steel")
+    s.box((-0.1, -0.765, 0.74), (1.2, -0.735, 0.78), "rope")
+    s.blocks.append(((-0.13, -0.78, 0), (1.23, -0.72, 0.85)))
     s.box((1.35, 0.0, zs), (1.65, 0.3, 0.4), "white", solid=True)
     s.props.append(("nature_kit/SM_plant_bushDetailed", (1.5, 0.15, 0.4), 0,
                     0.6))
@@ -429,7 +511,6 @@ FIT = {"friseur": fit_friseur, "zigaretten": fit_zigaretten,
        "sklep": fit_sklep, "bar": fit_bar, "kantor": fit_kantor}
 ACCENT = {"friseur": "pink", "zigaretten": "red", "sklep": "green",
           "bar": "graphite", "kantor": "yellow"}
-FLOOR = {"bar": "floorwarm"}
 
 
 def atlas():
@@ -439,6 +520,16 @@ def atlas():
         c = CELL[name]
         row, col = c // 8, c % 8
         px[row * 64:(row + 1) * 64, col * 64:(col + 1) * 64, :3] = rgb
+    # The mirror: pale blue at the top to a deeper blue, two highlights
+    c = CELL["mirror"]
+    row, col = c // 8, c % 8
+    for j in range(64):
+        for i in range(64):
+            t = j / 63
+            rgb = [0.38 + 0.42 * t, 0.5 + 0.36 * t, 0.62 + 0.3 * t]
+            if (i - j) % 64 in range(12, 20) or (i - j) % 64 in range(26, 29):
+                rgb = [min(1.0, v + 0.14) for v in rgb]
+            px[row * 64 + j, col * 64 + i, :3] = rgb
     img.pixels.foreach_set(px.ravel())
     img.filepath_raw = os.path.join(B.OUT, "T_ShopInterior_D.png")
     img.file_format = "PNG"
@@ -507,6 +598,72 @@ def apron(tree, spec, start, lo, hi):
             for i0, i1, j0, j1 in merged]
 
 
+def export_parts(obj, bm, title, spec, zb):
+    """Splits the mesh by the part layer into the shell and the roof and
+    writes both FBX files. The roof's collision is a box over the walls
+    only, from zb up: the camera hides the roof while she is under it, not
+    under the eaves. Returns the roof object and its top."""
+    x0, x1, y0, y1 = spec["walls"]
+    bm.to_mesh(obj.data)
+    bm.free()
+    roof = obj.copy()
+    roof.data = obj.data.copy()
+    bpy.context.scene.collection.objects.link(roof)
+    for o_, keep in ((obj, 0), (roof, 1)):
+        bm = bmesh.new()
+        bm.from_mesh(o_.data)
+        layer = bm.faces.layers.int.get("part")
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if f[layer] != keep],
+                         context="FACES")
+        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces],
+                         context="VERTS")
+        bm.to_mesh(o_.data)
+        bm.free()
+    top = max(v.co.z for v in roof.data.vertices)
+    ucx = bpy.data.meshes.new("UCX")
+    ucx.from_pydata([(x, y, z) for x in (x0, x1) for y in (y0, y1)
+                     for z in (zb, top)], [],
+                    [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6),
+                     (0, 2, 6, 4), (1, 5, 7, 3)])
+    hull = bpy.data.objects.new("UCX_SM_" + title + "_Roof", ucx)
+    bpy.context.scene.collection.objects.link(hull)
+    roof.name = roof.data.name = "SM_" + title + "_Roof"
+    for other in bpy.context.scene.objects:
+        other.select_set(other in (roof, hull))
+    bpy.ops.export_scene.fbx(
+        filepath=os.path.join(B.OUT, roof.name + ".fbx"), use_selection=True,
+        object_types={"MESH"}, global_scale=1.0, apply_unit_scale=True,
+        apply_scale_options="FBX_SCALE_NONE", mesh_smooth_type="FACE",
+        path_mode="STRIP", bake_anim=False)
+    hull.hide_render = True
+    B.export(obj, "SM_" + title + "_Shell")
+    return roof, top
+
+
+def close_shop(name, spec, obj, bm, title):
+    """A closed building (the WC): everything over the cut is its roof,
+    with a lid on the cut walls. Its blocking box stays the old one."""
+    size = spec["size"]
+    x0, x1, y0, y1 = spec["walls"]
+    zc = CUT / 100 / size
+    bmesh.ops.bisect_plane(bm, geom=bm.verts[:] + bm.edges[:] + bm.faces[:],
+                           plane_co=(0, 0, zc), plane_no=(0, 0, 1))
+    part = bm.faces.layers.int.new("part")
+    for f in bm.faces:
+        f[part] = 1 if f.calc_center_median().z > zc else 0
+    s = Shop(name, spec, bm, random.Random(name))
+    s.quad([(x0 - 0.02, y0 - 0.02, zc), (x1 + 0.02, y0 - 0.02, zc),
+            (x1 + 0.02, y1 + 0.02, zc), (x0 - 0.02, y1 + 0.02, zc)],
+           "walltop")
+    roof, top = export_parts(obj, bm, title, spec, zc)
+    data = {"closed": True, "cut": round(zc * 100, 1),
+            "box": [round((x0 + x1) * 50, 1), round(-(y0 + y1) * 50, 1),
+                    round((zc + top) * 50, 1), round((x1 - x0) * 100, 1),
+                    round((y1 - y0) * 100, 1), round((top - zc) * 100, 1)]}
+    print("SHOP", title, "closed, cut", round(zc * size, 2))
+    return obj, roof, data
+
+
 def open_shop(name, spec):
     title, size_m, along, turns = B.MODELS[name]
     obj, image = B.load(name, size_m, along, turns)
@@ -515,13 +672,39 @@ def open_shop(name, spec):
     size = spec["size"]
     x0, x1, y0, y1 = spec["walls"]
     ze = spec["eaves"]
-    north = spec["north"]
+    north = spec.get("north", "front")
     bm = bmesh.new()
     bm.from_mesh(obj.data)
+    if "parasol" in spec:
+        # Its canopy cut into the front wall: it goes (canopy, pole and
+        # foot; not the facade or the rack beside it), and a new one
+        # stands further north (open_shop adds it)
+        px, py, dy = spec["parasol"]
+        doomed = []
+        for f in bm.faces:
+            c = f.calc_center_median()
+            r = math.hypot(c.x - px, c.y - py)
+            rack = (0.7 < c.x < 1.55 and -1.42 < c.y < -1.08 and
+                    c.z < 1.55)
+            wall = (abs(f.normal.y) > 0.8 and
+                    all(abs(v.co.y - y0) < 0.1 for v in f.verts))
+            if not rack and not wall and (
+                    r < 1.05 and 1.3 < c.z < 2.1 or r < 0.09 or
+                    r < 0.3 and 0.035 < c.z < 0.12):
+                doomed.append(f)
+        bmesh.ops.delete(bm, geom=doomed, context="FACES")
+    for a, b, c, d, e, f in spec.get("drop", []):
+        bmesh.ops.delete(bm, geom=[
+            g for g in bm.faces
+            if a < g.calc_center_median().x < b and
+            c < g.calc_center_median().y < d and
+            e < g.calc_center_median().z < f], context="FACES")
     tree = BVHTree.FromBMesh(bm)
     pts = [v.co for v in bm.verts]
     lo = Vector((min(p.x for p in pts), min(p.y for p in pts), 0))
     hi = Vector((max(p.x for p in pts), max(p.y for p in pts), 0))
+    if spec.get("closed"):
+        return close_shop(name, spec, obj, bm, title)
     # The floor: the top of the step at the door
     dx0, dx1, dz = spec["door"]
     hit = tree.ray_cast(Vector(((dx0 + dx1) / 2, y0 - 0.05, 1.0)),
@@ -529,14 +712,15 @@ def open_shop(name, spec):
     zs = (hit[0].z if hit[0] is not None and hit[0].z < 0.25 else 0.0)
     zs = max(zs, 0.0) + 0.005
     zc = (zs * 100 * size + CUT) / 100 / size
-    zb = (zs * 100 * size + HALF_HEIGHT + BOX_GAP) / 100 / size
+    zb = max(zc, (zs * 100 * size + HALF_HEIGHT + BOX_GAP) / 100 / size)
     # Wide enough for her
     need = (RADIUS * 2 + DOOR_SPARE) / 100 / size
     if dx1 - dx0 < need:
         mid = (dx0 + dx1) / 2
         dx0, dx1 = mid - need / 2, mid + need / 2
-    front = y0 + T + 0.02
-    right = x1 - T - 0.02
+    # The north wall's strip that goes with the roof reaches this far in
+    front = y0 + T + 0.1
+    right = x1 - T - 0.1
     planes = [((dx0, 0, 0), (1, 0, 0)), ((dx1, 0, 0), (1, 0, 0)),
               ((0, 0, dz), (0, 0, 1)), ((0, 0, zc), (0, 0, 1)),
               ((0, 0, ze), (0, 0, 1)), ((0, 0, zs + 0.01), (0, 0, 1))]
@@ -554,7 +738,7 @@ def open_shop(name, spec):
                 y0 - 0.15 < c.y < y0 + T + 0.08)
         # Meshy bits inside the room (a window tray reaching in)
         inside = (x0 + T + 0.02 < c.x < x1 - T - 0.02 and
-                  y0 + T + 0.05 < c.y < y1 - T - 0.02 and
+                  front < c.y < y1 - T - 0.02 and
                   zs + 0.02 < c.z < ze)
         if door or inside:
             doomed.append(f)
@@ -571,29 +755,58 @@ def open_shop(name, spec):
     bmesh.ops.delete(bm, geom=doomed, context="FACES")
     s = Shop(name, spec, bm, random.Random(name))
     xi0, xi1, yi0, yi1 = s.inner
-    floor = FLOOR.get(name, "floor")
-    s.quad([(xi0, yi0, zs), (xi1, yi0, zs), (xi1, yi1, zs), (xi0, yi1, zs)],
-           floor)
+    floor = spec.get("floor", "floor")
+    tile = 0.3 if floor == "checker" else 99.0
+    for i in range(int((xi1 - xi0) / tile) + 1):
+        for j in range(int((yi1 - yi0) / tile) + 1):
+            a, b = xi0 + i * tile, min(xi1, xi0 + (i + 1) * tile)
+            c, d = yi0 + j * tile, min(yi1, yi0 + (j + 1) * tile)
+            cell = floor
+            if floor == "checker":
+                cell = "checkdark" if (i + j) % 2 else "checklight"
+            s.quad([(a, c, zs), (b, c, zs), (b, d, zs), (a, d, zs)], cell)
     s.quad([(dx0, y0 - 0.03, zs), (dx1, y0 - 0.03, zs), (dx1, yi0, zs),
-            (dx0, yi0, zs)], floor)
+            (dx0, yi0, zs)], "graphite")
     # Inner faces: the north wall up to the cut, the others to the eaves
     tops = {"front": zc if north == "front" else ze, "back": ze,
             "left": ze, "right": zc if north == "right" else ze}
     tf = tops["front"]
     s.quad([(xi0, yi0, zs), (dx0, yi0, zs), (dx0, yi0, tf), (xi0, yi0, tf)],
            "wall")
-    s.quad([(dx1, yi0, zs), (xi1, yi0, zs), (xi1, yi0, tf), (dx1, yi0, tf)],
-           "wall")
+    s.quad([(dx1, yi0, zs), (min(xi1, right), yi0, zs),
+            (min(xi1, right), yi0, tf), (dx1, yi0, tf)], "wall")
     if dz < tf:
         s.quad([(dx0, yi0, dz), (dx1, yi0, dz), (dx1, yi0, tf),
                 (dx0, yi0, tf)], "wall")
-    s.quad([(xi1, yi1, zs), (xi0, yi1, zs), (xi0, yi1, ze), (xi1, yi1, ze)],
-           "wall")
-    s.quad([(xi0, yi1, zs), (xi0, yi0, zs), (xi0, yi0, tops["left"]),
-            (xi0, yi1, tops["left"])], "wall")
-    tr = tops["right"]
-    s.quad([(xi1, yi0, zs), (xi1, yi1, zs), (xi1, yi1, tr), (xi1, yi0, tr)],
-           "wall")
+    # Next to the north wall the others go only up to the cut, like it
+    if north == "front":
+        for x in (xi0, xi1):
+            s.quad([(x, yi0, zs), (x, front, zs), (x, front, zc),
+                    (x, yi0, zc)], "wall")
+            s.quad([(x, front, zs), (x, yi1, zs), (x, yi1, ze),
+                    (x, front, ze)], "wall")
+        s.quad([(xi1, yi1, zs), (xi0, yi1, zs), (xi0, yi1, ze),
+                (xi1, yi1, ze)], "wall")
+    else:
+        for y in (yi0, yi1):
+            s.quad([(right, y, zs), (xi1, y, zs), (xi1, y, zc),
+                    (right, y, zc)], "wall")
+        s.quad([(right, yi1, zs), (xi0, yi1, zs), (xi0, yi1, ze),
+                (right, yi1, ze)], "wall")
+        s.quad([(xi0, yi1, zs), (xi0, yi0, zs), (xi0, yi0, ze),
+                (xi0, yi1, ze)], "wall")
+        s.quad([(xi1, yi0, zs), (xi1, yi1, zs), (xi1, yi1, zc),
+                (xi1, yi0, zc)], "wall")
+    # The north wall's inside over the cut goes with the roof: seen
+    # through the door while the roof is on
+    if north == "front":
+        for a, b, c in ((xi0, dx0, zc), (dx1, xi1, zc), (dx0, dx1, dz)):
+            if c < ze:
+                s.quad([(a, yi0, c), (b, yi0, c), (b, yi0, ze),
+                        (a, yi0, ze)], "wall", True)
+    else:
+        s.quad([(xi1, yi0, zc), (xi1, yi1, zc), (xi1, yi1, ze),
+                (xi1, yi0, ze)], "wall", True)
     accent = ACCENT[name]
     for a, b in (((xi0, yi0 + 0.003), (dx0, yi0 + 0.003)),
                  ((dx1, yi0 + 0.003), (xi1, yi0 + 0.003)),
@@ -609,9 +822,44 @@ def open_shop(name, spec):
                 continue
             p = [(x, y0 - 0.03, z0), (x, yi0, z0), (x, yi0, z1),
                  (x, y0 - 0.03, z1)]
-            s.quad(p if sign < 0 else p[::-1], "white", roof)
+            s.quad(p if sign < 0 else p[::-1], "graphite", roof)
     s.quad([(dx0, yi0, dz), (dx1, yi0, dz), (dx1, y0 - 0.03, dz),
-            (dx0, y0 - 0.03, dz)], "white", dz > tf)
+            (dx0, y0 - 0.03, dz)], "graphite", dz > tf)
+    # A dark aluminium frame round the door, an open glass leaf and a mat
+    fy0, fy1 = y0 - 0.07, y0 + 0.02
+    for xa, xb in ((dx0 - 0.06, dx0), (dx1, dx1 + 0.06)):
+        s.box((xa, fy0, zs), (xb, fy1, min(dz, tf)), "graphite")
+        if dz > tf:
+            s.box((xa, fy0, tf), (xb, fy1, dz), "graphite", roof=True)
+    s.box((dx0 - 0.06, fy0, dz), (dx1 + 0.06, fy1, dz + 0.06), "graphite",
+          roof=dz > tf)
+    if "leaf" in spec:
+        side, angle, w = spec["leaf"]
+        a = math.radians(angle)
+        d = ((1 if side == "x0" else -1) * math.cos(a), -math.sin(a))
+        h = (dx0 if side == "x0" else dx1, y0 - 0.08)
+        top = min(dz, 2.1) - 0.02
+        s.slab(h, d, w, 0.045, zs + 0.01, top, "graphite")
+        s.slab((h[0] + d[0] * 0.07, h[1] + d[1] * 0.07), d, w - 0.14, 0.055,
+               zs + 0.15, top - 0.1, "glassdark")
+        s.slab((h[0] + d[0] * (w - 0.12), h[1] + d[1] * (w - 0.12)), d,
+               0.03, 0.09, 0.95, 1.15, "steel")
+        e = (h[0] + d[0] * w, h[1] + d[1] * w)
+        s.blocks.append(((min(h[0], e[0]), min(h[1], e[1]), 0),
+                         (max(h[0], e[0]), max(h[1], e[1]), top)))
+    if "parasol" in spec:
+        px, py, dy = spec["parasol"]
+        py -= dy
+        s.prism((px, py), 0.25, 0, 0.05, "steel")
+        s.prism((px, py), 0.025, 0.05, 2.05, "steel")
+        rim = [(px + 0.95 * math.cos(math.pi * k / 4),
+                py + 0.95 * math.sin(math.pi * k / 4)) for k in range(8)]
+        for k in range(8):
+            (a, b), (e, f) = rim[k], rim[(k + 1) % 8]
+            s.quad([(a, b, 1.68), (e, f, 1.68), (px, py, 2.05)], "red")
+            s.quad([(e, f, 1.68), (a, b, 1.68), (px, py, 2.0)], "red")
+    deep = 0.25 if zs > 0.04 else 0.55
+    s.box((dx0, y0 - deep, 0), (dx1, y0 - 0.08, zs + 0.012), "graphite")
     # Wall tops over the hollow between the shell and the inner faces
     # The stub top stays just inside the facade, or it shows as a line
     # with the roof on; the others are under the eaves
@@ -651,41 +899,7 @@ def open_shop(name, spec):
         walls += [((xi0, yi0, 0), (xi1, yi1, zs)),
                   ((dx0, y0 - 0.25, 0), (dx1, yi0, zs))]
     blocks = walls + s.blocks + apron(tree, spec, min(ze, 2.2) - 0.02, lo, hi)
-    bm.to_mesh(obj.data)
-    bm.free()
-    roof = obj.copy()
-    roof.data = obj.data.copy()
-    bpy.context.scene.collection.objects.link(roof)
-    for o_, keep in ((obj, 0), (roof, 1)):
-        bm = bmesh.new()
-        bm.from_mesh(o_.data)
-        layer = bm.faces.layers.int.get("part")
-        bmesh.ops.delete(bm, geom=[f for f in bm.faces if f[layer] != keep],
-                         context="FACES")
-        bmesh.ops.delete(bm, geom=[v for v in bm.verts if not v.link_faces],
-                         context="VERTS")
-        bm.to_mesh(o_.data)
-        bm.free()
-    # The roof's collision is a box over the walls only, from the cut up:
-    # the camera hides the roof while she is under it, not under the eaves
-    top = max(v.co.z for v in roof.data.vertices)
-    ucx = bpy.data.meshes.new("UCX")
-    ucx.from_pydata([(x, y, z) for x in (x0, x1) for y in (y0, y1)
-                     for z in (zb, top)], [],
-                    [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6),
-                     (0, 2, 6, 4), (1, 5, 7, 3)])
-    hull = bpy.data.objects.new("UCX_SM_" + title + "_Roof", ucx)
-    bpy.context.scene.collection.objects.link(hull)
-    roof.name = roof.data.name = "SM_" + title + "_Roof"
-    for other in bpy.context.scene.objects:
-        other.select_set(other in (roof, hull))
-    bpy.ops.export_scene.fbx(
-        filepath=os.path.join(B.OUT, roof.name + ".fbx"), use_selection=True,
-        object_types={"MESH"}, global_scale=1.0, apply_unit_scale=True,
-        apply_scale_options="FBX_SCALE_NONE", mesh_smooth_type="FACE",
-        path_mode="STRIP", bake_anim=False)
-    hull.hide_render = True
-    B.export(obj, "SM_" + title + "_Shell")
+    roof, top = export_parts(obj, bm, title, spec, zb)
 
     def ue(p):
         return [round(p[0] * 100, 1), round(-p[1] * 100, 1),
@@ -735,7 +949,7 @@ def preview(obj, roof, spec, folder, name):
     scene.camera = cam
     p = math.radians(50)
     mid = obj.dimensions.z / 3
-    if spec["north"] == "front":
+    if spec.get("north", "front") == "front":
         cam.location = (0, -30 * math.cos(p), mid + 30 * math.sin(p))
         cam.rotation_euler = (math.pi / 2 - p, 0, 0)
     else:
