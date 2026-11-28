@@ -269,10 +269,11 @@ def first_fight(A):
 def shops(A):
     # The kantor and the cigarettes are shop buildings now
     # (ue_dress_border.py): their stalls on the main street sell
-    # something else, and the clerk and the seller are talked to through
-    # the kantor's window. Kotlet sits in his booth. Nobody is modelled
-    # inside, so their markers are hidden. The cigarette seller stands
-    # at his door (his model: ue_dress_border.py). The gnome seller
+    # something else. She walks into the kantor and talks to the clerk at
+    # his window inside, behind frosted glass (ue_dress_border.py puts
+    # the clerk's marker there). Kotlet sits in his booth. Nobody is
+    # modelled inside, so their markers are hidden. The cigarette seller
+    # stands at his door (his model: ue_dress_border.py). The gnome seller
     # stands beside his stall, by the way to the gnome field: under the
     # canopy the camera did not see him.
     for old, new, text in (("Stall_Kantor", "Stall_Honey", "MIOD"),
@@ -289,7 +290,7 @@ def shops(A):
             glass.set_collision_profile_name("NoCollision")
             glass.set_visibility(False)
             glass.set_editor_property("hidden_in_game", True)
-    for label, spot, hide in (("MK_NPC_KantorClerk", (2905, 640), True),
+    for label, spot, hide in (("MK_NPC_KantorClerk", None, True),
                               ("MK_NPC_CigaretteSeller", (1615, 2465), True),
                               ("MK_NPC_Krasnal", (1440, -650), False),
                               ("MK_NPC_Kotlet", None, True)):

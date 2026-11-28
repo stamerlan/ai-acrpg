@@ -10,7 +10,9 @@ class UPrimitiveComponent;
  *  Hides the roofs between the owner's camera and the owner, and the ones
  *  right above her, so the room or stall she is in shows. Walls and other
  *  things that hide her stay whole: M_PP_Silhouette draws her through
- *  them (her custom depth, see AChickenCharacter).
+ *  them (her custom depth, see AChickenCharacter). An actor tagged
+ *  HideWhole (a walk-in shop's roof with the wall over its door) hides
+ *  all its parts when any of them is hit.
  */
 UCLASS(ClassGroup = (Camera), meta = (BlueprintSpawnableComponent))
 class UCameraOcclusionComponent : public UActorComponent

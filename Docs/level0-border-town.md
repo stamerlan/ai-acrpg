@@ -144,6 +144,24 @@ The graybox follows [graybox.md](graybox.md). Stop 0 specifics:
   (Slubice, Osinow Dolny, Leknica): new, clean, plaster or panel walls,
   red metal tile roofs, huge signs. Nothing here is old or abandoned.
   Shops that are to be read face north, toward the camera.
+* She can walk into the Friseur, the Bar Grill, the Sklep 24, the
+  ZIGARETTEN shop and the KANTOR (the WC and the market units stay
+  closed). Each is a shell with an open door (`ArtBld_<Shop>`) and a
+  roof (`ArtBld_<Shop>_Roof`, tagged `HideWhole`): while she is inside
+  (or right behind the shop) the camera hides the roof and the north
+  wall above a 1 m stub, and the room shows; behind the stub she is a
+  silhouette. Inside, clean and modern under a ceiling lamp: two
+  barber stations, a wash basin and a desk (Friseur); a grill line, a
+  bar with stools and two tables (Bar Grill); fridges, low shelf rows,
+  fruit crates and a self-checkout, no clerk (Sklep 24); a wall of
+  cigarette packs behind the counter, a cooler and sweets (ZIGARETTEN);
+  a lobby and the closed cash office with a frosted teller window
+  (KANTOR). The counters of the Friseur and the ZIGARETTEN shop have a
+  "ZARAZ WRACAM" (back soon) card. Walls, fittings and props on the
+  apron block her through hidden boxes on `Yard_<Shop>`. Geometry:
+  `Art/Environment/Scripts/blender_shops_open.py` (writes
+  `Art/Environment/Buildings/Shops.json`), placement:
+  `ue_dress_border.py`.
 * Art: Kenney models and Poly Haven ground over the hidden graybox (see
   [graybox.md](graybox.md#art-over-the-graybox)). The sun is in the
   north-west so the faces the camera sees are lit. Tall trees stay at
@@ -435,12 +453,15 @@ Sets the tone: every seller sizes her up.
 
 #### Joke shops (dialog only)
 
-Nobody is modelled inside a building. She talks through the kantor's
-barred window and at the window of Kotlet's booth: the talk point is
-half a meter in front of the wall, the NPC is a voice and a portrait in
-the dialog. The cigarette seller stands outside, by his shop's door
-(`SM_Seller`, a static figure). The markers `MK_NPC_KantorClerk`,
-`MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet` are hidden.
+Nobody is modelled inside a building. She walks into the kantor and
+talks to the clerk at his teller window inside: he sits behind frosted
+glass in the closed cash office, a voice and a portrait in the dialog
+(the talk point is in the lobby, 80 cm range, so it does not show
+outside). At Kotlet's booth she talks at its window, the talk point
+half a meter in front of the wall. The cigarette seller stands outside,
+by his shop's door (`SM_Seller`, a static figure). The markers
+`MK_NPC_KantorClerk`, `MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet` are
+hidden.
 
 * **Cigarette seller:** "Cheap! Ten euro a carton!" She: "Smoking
   kills." He: "So does the kebab stand. Pick your death."

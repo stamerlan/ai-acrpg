@@ -8,6 +8,9 @@
 // Buildings, her car, poles: never hidden, she shows as a silhouette
 static const FName NoOcclusionCutoutTag(TEXT("NoOcclusionCutout"));
 
+// A walk-in shop roof with the wall over its door: hidden all at once
+static const FName HideWholeTag(TEXT("HideWhole"));
+
 UCameraOcclusionComponent::UCameraOcclusionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -86,14 +89,15 @@ void UCameraOcclusionComponent::UpdateRoofs(
 		}
 		const FBox HitBox = Hit->Bounds.GetBox();
 		const FBox2D HitArea(FVector2D(HitBox.Min), FVector2D(HitBox.Max));
+		const bool bWhole = Hit->GetOwner()->ActorHasTag(HideWholeTag);
 		TInlineComponentArray<UPrimitiveComponent*> Parts(Hit->GetOwner());
 		for (UPrimitiveComponent* Part : Parts)
 		{
 			const FBox Box = Part->Bounds.GetBox();
 			const bool bShown = HiddenRoofs.Contains(Part) ||
 				(Part->IsVisible() && !Part->bHiddenInGame);
-			if (bShown && Box.Min.Z >= MinZ && HitArea.Intersect(
-				FBox2D(FVector2D(Box.Min), FVector2D(Box.Max))))
+			if (bShown && (bWhole || (Box.Min.Z >= MinZ && HitArea.Intersect(
+				FBox2D(FVector2D(Box.Min), FVector2D(Box.Max))))))
 			{
 				Roofs.Add(Part);
 			}

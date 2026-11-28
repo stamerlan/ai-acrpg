@@ -23,11 +23,15 @@ document (stop 0: [level0-border-town.md](level0-border-town.md#graybox)).
   cutout. Hidden parts keep their shadow. So give a roof its own
   component (or actor), apart from the walls, as the guard office and
   the open container have; a market stall's canopy is its own mesh and
-  actor for this (`SM_Stall_<Trade>_Top`).
+  actor for this (`SM_Stall_<Trade>_Top`). An actor tagged `HideWhole`
+  is hidden whole, every visible part, as soon as any of its primitives
+  is hit: the roofs of the shops she walks into (`ArtBld_<Shop>_Roof`,
+  with a camera-only box over the room, see
+  [level0-border-town.md](level0-border-town.md#layout)).
 * Never cut: actors tagged `NoOcclusionCutout` (her Civic and its
   trunk lid, the lot's lamp posts) and art placed without camera
-  collision (the shop buildings, the booth and the veterinary office,
-  which are empty shells; the road lamps). Behind those she shows as a
+  collision (the shop shells, the booth and the veterinary office, the
+  road lamps). Behind those she shows as a
   yellow silhouette: her mesh renders custom depth and
   `M_PP_Silhouette` on the unbound volume `PP_Silhouette` tints the
   pixels where she is behind the scene
