@@ -10,8 +10,8 @@ Civic, a queue truck as the tow truck, a van) and of the chicken. The
 level's own Civic and the main gate are hidden by BP_StoryDirector. The
 intro is the exception: it drives the level's own day Civic
 (Art_Civic_Start) in, so there is one car and it ends where the game
-picks it up; run this again after ue_dress_lot.py has placed that car
-anew. She is never shown inside the car: her model does not fit it.
+picks it up; it also sets that car's wheels on the road (and saves it).
+Run this again after ue_dress_lot.py has placed that car anew. She is never shown inside the car: her model does not fit it.
 The sequences are rebuilt from scratch on every run.
 
 World axes: +X north (river side), +Y east; the lot is south of X = 0.
@@ -384,21 +384,50 @@ def build_intro():
     s = car.get_actor_scale3d()
     SCALES["Civic"] = (s.x, s.y, s.z)
     stop = actor("Civic_Start").get_actor_location()
-    z = car.get_actor_location().z
     # From the west end of the bridge (the far bank is forest)
     pts = [(stop.x, stop.y - 2700.0), (stop.x, stop.y)]
+    # Wheels on the road: ue_dress_lot.py puts the car's bottom on its
+    # graybox body, 15 cm up. The traces find the graybox ground and the
+    # bridge deck (0 along the drive), the art road strips lie 1 cm over
+    # them. The level car is moved down too: the game and the other
+    # cutscenes (they read its z) then have it on the road as well
+    world = unreal.EditorLevelLibrary.get_editor_world()
+    ground = []
+    for i in range(28):
+        x, y = stop.x, stop.y - 2700.0 + i * 100.0
+        hit = unreal.SystemLibrary.line_trace_single(
+            world, unreal.Vector(x, y, 1000), unreal.Vector(x, y, -1000),
+            unreal.TraceTypeQuery.TRACE_TYPE_QUERY1, False,
+            [car, actor("Civic_Start")], unreal.DrawDebugTrace.NONE, True)
+        t = hit.to_tuple() if hit else None
+        if t and t[9] and t[9].get_actor_label().startswith(("Ground",
+                                                             "Bridge")):
+            ground.append(t[4].z)
+    o, e = car.get_actor_bounds(False)
+    loc = car.get_actor_location()
+    z = max(ground) + 1.0 + loc.z - (o.z - e.z)
+    if abs(loc.z - z) > 0.1:
+        car.modify()
+        car.set_actor_location(unreal.Vector(loc.x, loc.y, z), False, False)
+        unreal.EditorLoadingAndSavingUtils.save_packages(
+            [car.get_package()], True)
     samples, _ = drive(pts, 0.0, 12.0, accel=0.01, decel=4.0)
     key_transforms(civic, car_keys(samples, z, hold_after=T), T)
-    # Low on the bridge, aimed low so the car sits above the subtitles
-    a = camera(seq, "Cam_Bridge", T, loc=(stop.x + 220, stop.y - 1500, 120),
-               at=(stop.x, stop.y - 2600, 0), fov=50.0)
+    # The wheels do not turn (one Meshy mesh), so no shot shows them
+    # rolling. High over the lane, head on: the camera pans down with the
+    # car coming in toward it, which keeps it above the subtitles
+    cam = (stop.x, stop.y - 550, 300)
+    a = camera(seq, "Cam_Bridge", T, fov=65.0, samples=[
+        (t, cam, look(cam, (p[0], p[1], 50))) for t, p, h, _ in samples
+        if t <= 5.0])
     side = []
     for t, p, h, _ in samples:
-        if 5.5 <= t <= 10.1:
-            # Driver side (north), a little ahead, looking back in
-            cam = (p[0] + 380, p[1] + 260, 150)
+        if 5.0 <= t <= 11.7:
+            # Driver side (north), a little ahead, looking back in at the
+            # window: the frame ends over the wheel arches
+            cam = (p[0] + 380, p[1] + 140, 125)
             side.append((t, cam, look(cam, (p[0], p[1] - 20, 95))))
-    b = camera(seq, "Cam_Window", T, samples=side, fov=45.0)
+    b = camera(seq, "Cam_Window", T, samples=side, fov=55.0)
     # The car stops at Kotlet's booth. No fade out: his dialog opens
     # over this shot (BP_StoryDirector), so the booth and the car sit in
     # the upper part of the frame, clear of the dialog box
@@ -406,7 +435,8 @@ def build_intro():
     mid = ((stop.x + booth.x) / 2, (stop.y + booth.y) / 2)
     c = camera(seq, "Cam_Booth", T, loc=(mid[0] + 640, mid[1] + 60, 340),
                at=(mid[0] - 40, mid[1], -30), fov=20.0)
-    cuts(seq, [(a, 0, 5.5), (b, 5.5, 10), (c, 10, T)])
+    # The booth shot starts once the car is almost still
+    cuts(seq, [(a, 0, 5.0), (b, 5.0, 11.6), (c, 11.6, T)])
     sound(seq, "SW_Radio_Intro", 0, 16.0)
     sound(seq, "SW_Engine", 0, 12.5, 0.35, loop=True)
     fade(seq, [(0, 1.0), (0.9, 0.0)])
