@@ -7,15 +7,10 @@
 class UPrimitiveComponent;
 
 /**
- *  Finds primitives between the owner's camera and the owner and drives
- *  their custom primitive data, so materials using MF_OcclusionCutout cut
- *  a hole around the owner, in pixels closer to the camera than the owner:
- *   - FadeDataIndex: cutout amount, 0 (none) to 1 (full)
- *   - FadeDataIndex + 1, + 2: owner position in viewport UV
- *   - FadeDataIndex + 3: owner view depth
- *  Actors tagged NoOcclusionCutout are never cut.
- *  Roofs that hide the owner or are right above her are hidden whole
- *  instead (see RoofCheckHeight and RoofMinHeight).
+ *  Hides the roofs between the owner's camera and the owner, and the ones
+ *  right above her, so the room or stall she is in shows. Walls and other
+ *  things that hide her stay whole: M_PP_Silhouette draws her through
+ *  them (her custom depth, see AChickenCharacter).
  */
 UCLASS(ClassGroup = (Camera), meta = (BlueprintSpawnableComponent))
 class UCameraOcclusionComponent : public UActorComponent
@@ -38,7 +33,7 @@ protected:
 	TArray<FVector> ProbeOffsets = {FVector(0.f, 0.f, 0.f),
 		FVector(0.f, 0.f, 70.f)};
 
-	/** Occluders found per probe, stacked walls beyond are not cut */
+	/** Occluders found per probe, stacked walls beyond are not checked */
 	UPROPERTY(EditAnywhere, Category = "Occlusion", meta = (ClampMin = 1))
 	int32 MaxOccludersPerProbe = 8;
 
@@ -57,18 +52,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Occlusion",
 		meta = (ClampMin = 0, Units = "cm"))
 	float RoofMinHeight = 100.f;
-
-	/** Time for the cutout to fully open or close */
-	UPROPERTY(EditAnywhere, Category = "Occlusion",
-		meta = (ClampMin = 0.01, Units = "s"))
-	float FadeTime = 0.2f;
-
-	/** First of the four custom primitive data floats it writes */
-	UPROPERTY(EditAnywhere, Category = "Occlusion", meta = (ClampMin = 0))
-	int32 FadeDataIndex = 0;
-
-	/** Occluders with their current cutout amount */
-	TMap<TWeakObjectPtr<UPrimitiveComponent>, float> Occluders;
 
 	/** Roof parts hidden now, with their own cast hidden shadow flag */
 	TMap<TWeakObjectPtr<UPrimitiveComponent>, bool> HiddenRoofs;
@@ -93,11 +76,9 @@ protected:
 
 	/**
 	 *  Hides the roof parts of the hit actors and shows the ones that no
-	 *  longer cover the owner. Hits that are not roofs (walls, tree tops)
-	 *  are added to OutOccluders to get the cutout.
+	 *  longer cover the owner
 	 */
-	void UpdateRoofs(const TSet<UPrimitiveComponent*>& Hits,
-		TSet<UPrimitiveComponent*>& OutOccluders);
+	void UpdateRoofs(const TSet<UPrimitiveComponent*>& Hits);
 
 	/** Adds every primitive the shape touches from Start to Target */
 	void SweepOccluders(const FVector& Start, const FVector& Target,

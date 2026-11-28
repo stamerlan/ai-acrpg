@@ -5,6 +5,7 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 
+// Buildings, her car, poles: never hidden, she shows as a silhouette
 static const FName NoOcclusionCutoutTag(TEXT("NoOcclusionCutout"));
 
 UCameraOcclusionComponent::UCameraOcclusionComponent()
@@ -26,70 +27,14 @@ void UCameraOcclusionComponent::TickComponent(float DeltaTime,
 		return;
 	}
 
-	const FVector CameraLocation =
-		PC->PlayerCameraManager->GetCameraLocation();
 	TSet<UPrimitiveComponent*> Hits;
-	FindOccluders(CameraLocation, Hits);
-	TSet<UPrimitiveComponent*> Current;
-	UpdateRoofs(Hits, Current);
-	for (UPrimitiveComponent* Component : Current)
-	{
-		Occluders.FindOrAdd(Component, 0.f);
-	}
-
-	FVector2D Screen(0.5f, 0.5f);
-	int32 ViewX = 0;
-	int32 ViewY = 0;
-	PC->GetViewportSize(ViewX, ViewY);
-	if (PC->ProjectWorldLocationToScreen(Pawn->GetActorLocation(), Screen,
-		true) && ViewX > 0 && ViewY > 0)
-	{
-		Screen /= FVector2D(ViewX, ViewY);
-	}
-
-	// View depth of the owner, the material cuts only pixels closer than it
-	const float Depth = FVector::DotProduct(
-		Pawn->GetActorLocation() - CameraLocation,
-		PC->PlayerCameraManager->GetCameraRotation().Vector());
-
-	const float Rate = 1.f / FadeTime;
-	for (auto It = Occluders.CreateIterator(); It; ++It)
-	{
-		UPrimitiveComponent* Component = It.Key().Get();
-		if (!Component)
-		{
-			It.RemoveCurrent();
-			continue;
-		}
-
-		const bool bOccluding = Current.Contains(Component);
-		It.Value() = FMath::FInterpConstantTo(It.Value(),
-			bOccluding ? 1.f : 0.f, DeltaTime, Rate);
-		Component->SetCustomPrimitiveDataFloat(FadeDataIndex, It.Value());
-		Component->SetCustomPrimitiveDataFloat(FadeDataIndex + 1,
-			Screen.X);
-		Component->SetCustomPrimitiveDataFloat(FadeDataIndex + 2,
-			Screen.Y);
-		Component->SetCustomPrimitiveDataFloat(FadeDataIndex + 3, Depth);
-		if (!bOccluding && It.Value() <= 0.f)
-		{
-			It.RemoveCurrent();
-		}
-	}
+	FindOccluders(PC->PlayerCameraManager->GetCameraLocation(), Hits);
+	UpdateRoofs(Hits);
 }
 
 void UCameraOcclusionComponent::EndPlay(
 	const EEndPlayReason::Type EndPlayReason)
 {
-	for (const auto& Pair : Occluders)
-	{
-		if (UPrimitiveComponent* Component = Pair.Key.Get())
-		{
-			Component->SetCustomPrimitiveDataFloat(FadeDataIndex, 0.f);
-		}
-	}
-	Occluders.Empty();
-
 	for (const auto& Pair : HiddenRoofs)
 	{
 		if (UPrimitiveComponent* Component = Pair.Key.Get())
@@ -126,8 +71,7 @@ void UCameraOcclusionComponent::FindOccluders(
 }
 
 void UCameraOcclusionComponent::UpdateRoofs(
-	const TSet<UPrimitiveComponent*>& Hits,
-	TSet<UPrimitiveComponent*>& OutOccluders)
+	const TSet<UPrimitiveComponent*>& Hits)
 {
 	// A roof is every part of a hit actor over the hit primitive that
 	// stays above her: an art tarp, a graybox roof, the signs on a stall's
@@ -138,7 +82,6 @@ void UCameraOcclusionComponent::UpdateRoofs(
 	{
 		if (!Hit->GetOwner())
 		{
-			OutOccluders.Add(Hit);
 			continue;
 		}
 		const FBox HitBox = Hit->Bounds.GetBox();
@@ -154,10 +97,6 @@ void UCameraOcclusionComponent::UpdateRoofs(
 			{
 				Roofs.Add(Part);
 			}
-		}
-		if (!Roofs.Contains(Hit))
-		{
-			OutOccluders.Add(Hit);
 		}
 	}
 
@@ -214,7 +153,7 @@ void UCameraOcclusionComponent::SweepOccluders(const FVector& Start,
 		Params.AddIgnoredComponent(Component);
 
 		// The sphere also touches a wall the owner stands against with the
-		// camera in front of her, so cut only surfaces in front of the
+		// camera in front of her, so take only surfaces in front of the
 		// probe point along the ray
 		const bool bInFront = FVector::DotProduct(
 			Hit.ImpactPoint - Start, Direction) < TargetDistance;

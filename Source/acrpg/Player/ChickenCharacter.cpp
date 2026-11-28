@@ -14,8 +14,6 @@ AChickenCharacter::AChickenCharacter()
 
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
-	// M_PP_Silhouette draws her where something uncut hides her
-	GetMesh()->SetRenderCustomDepth(true);
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -55,6 +53,24 @@ AChickenCharacter::AChickenCharacter()
 void AChickenCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	// Everything she holds renders custom depth too (props come and go at
+	// runtime): the silhouette then shows her behind walls, but not her
+	// body parts behind her own shotgun
+	TArray<AActor*> Parts;
+	GetAttachedActors(Parts, true, true);
+	Parts.Add(this);
+	for (const AActor* Part : Parts)
+	{
+		TInlineComponentArray<UPrimitiveComponent*> Primitives(Part);
+		for (UPrimitiveComponent* Primitive : Primitives)
+		{
+			if (!Primitive->bRenderCustomDepth)
+			{
+				Primitive->SetRenderCustomDepth(true);
+			}
+		}
+	}
 
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->bOrientRotationToMovement = !bHasAimPoint && !bFacingLocked;
