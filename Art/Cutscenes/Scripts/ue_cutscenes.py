@@ -538,7 +538,9 @@ def build_exit():
     return ram
 
 
-VAN = (2950.0, -700.0)
+# On the verge, 20 cm south of the road lamp at (2985, -700): the van is
+# 108 cm wide and the pole stood inside it
+VAN = (2900.0, -700.0)
 
 
 def build_van():
@@ -567,7 +569,7 @@ def build_van():
     who.get_object_template().set_editor_property("data_layer_assets", [])
     # Turned to the road, between the camera and the Civic: the camera
     # sees his face, not his back
-    static_transform(who, (VAN[0] - 40, VAN[1] + 260, 0), (0.0, 0.0, 5.0), T)
+    static_transform(who, (VAN[0] + 10, VAN[1] + 260, 0), (0.0, 0.0, 5.0), T)
     headlights(seq, [(0.0, end, 0.0, 0.0)], z, T)
     cam = camera(seq, "Cam_Van", T, loc=(3260, -1150, 240),
                  at=(2940, -500, 90))
