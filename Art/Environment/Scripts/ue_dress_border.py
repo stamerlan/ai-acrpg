@@ -1,5 +1,5 @@
 """Meshy buildings: the shops of the bazaar, the border post, the
-officer at the head of the truck queue.
+officer at the head of the truck queue and Kotlet by the stopped car.
 
 Run in the editor: py "<this file>" (after ue_layout_border.py and
 ue_buildings_import.py). The shops have no graybox of their own: this
@@ -65,6 +65,9 @@ SHOPS = json.load(open(os.path.join(os.path.dirname(D), "Buildings",
 # A shop lamp: unitless intensity and radius (cm, before the size)
 LAMP = 2500.0
 LAMP_RADIUS = 450.0
+# Kotlet by the car: on the verge between the road lamp and his booth,
+# clear of the tow truck's lane
+KOTLET = (3000, -2640)
 res = {"n": 0}
 
 
@@ -221,6 +224,26 @@ def over(actors, label, model, heading, size, names, sign, sign_size):
     res["n"] += 1
 
 
+def kotlet(actors):
+    """Kotlet waits by the car, so she sees who stops her.
+
+    He stands out of his booth on the verge south of where the intro's car
+    stops, facing north (the car, the camera), in the day only. His talk
+    point (MK_NPC_Kotlet) moves to him.
+    """
+    m = actors["MK_NPC_Kotlet"]
+    layers = m.get_editor_property("data_layer_assets")
+    x, y = KOTLET
+    a = L.place(B + "Officer", (x, y, 0), 0 - 90, 0.95, "ArtBld_Kotlet",
+                "Art/Shared/BorderPost", False)
+    b = block("Yard_KotletBlock", "Shared/BorderPost", x, y, 22, 22, 170)
+    for k in (a, b):
+        k.set_editor_property("data_layer_assets", layers)
+    m.modify()
+    m.set_actor_location(unreal.Vector(x, y, m.get_actor_location().z),
+                         False, False)
+
+
 try:
     for a in list(L.eas.get_all_level_actors()):
         if a.get_actor_label().startswith(("ArtBld_", "Yard_")):
@@ -259,6 +282,7 @@ try:
     L.place(B + "Officer", (ox, oy, 0), 90 - 90, 0.95, "ArtBld_Officer",
             "Art/Shared/TruckQueue", False)
     block("Yard_OfficerBlock", "Shared/TruckQueue", ox, oy, 22, 22, 170)
+    kotlet(actors)
     # The cigarette seller stands by his shop's door, east of it (the
     # parasol is on the west side); MK_NPC_CigaretteSeller is on the
     # same spot (ue_layout_border.py)

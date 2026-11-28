@@ -66,10 +66,14 @@ try:
         c.set_visibility(False)
         c.set_editor_property("hidden_in_game", True)
 
-    # road: lamps on the south verge, none in front of the gate. A hole
-    # cut in a thin pole only looks broken: they stay whole
+    # road: lamps on the south verge, none in front of the gate, their
+    # arms over the road (north): 4.2 m tall with a 1.4 m arm, so the head
+    # hangs over the asphalt (from 3010) and above the trucks (3.5 m) of
+    # the tow cutscene. A hole cut in a thin pole only looks broken: they
+    # stay whole
     for y in (-2900, -1800, -700, 1500, 2500):
-        put(R + "light_square", 2985, y, 180, 4.2, "Art/Road", False)
+        put(R + "light_square", 2985, y, 90, (4.2, 6.5, 7.0), "Art/Road",
+            False)
 
     # office yard: beer corner with parasols, crates and pallets
     for (x, y) in ((700, -300), (860, 260), (640, 640)):

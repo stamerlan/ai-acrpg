@@ -25,6 +25,8 @@ example `sellers`). What it does:
   The wave 2 Skewermen hold ground perches instead of climbing.
 * The 0A first fight cooks wait off screen near the impound office
   (step `first_fight`, 2026-11-28).
+* Step `office` (2026-11-28): Zbyszek's box shows only while his quest is
+  started; Halina's desk stands behind her, not round her.
 """
 import json
 import os
@@ -337,9 +339,31 @@ def poles(A):
             a.tags = tags + ["NoOcclusionCutout"]
 
 
+def office(A):
+    # Zbyszek's box is on the evidence shelf only once he has asked her for
+    # it: else she does not know to look for it, and with it a van would
+    # wait for her after the exit. BPC_Interactable hides its owner while
+    # its conditions fail
+    m = A["MK_Pickup_ZbyszekBox"]
+    it = m.get_components_by_class(unreal.InteractableComponent)[0]
+    c = unreal.StoryCondition()
+    c.set_editor_property("type", unreal.StoryConditionType.QUEST_IS)
+    c.set_editor_property("id", "q_zbyszek_box")
+    c.set_editor_property("value", "started")
+    m.modify()
+    it.modify()
+    it.set_editor_property("conditions", [c])
+    it.set_editor_property("bHideWhileUnavailable", True)
+    # Halina stands 20 cm behind her window (ue_dress_npcs.py, any further
+    # and the lintel hides her head): her desk goes behind her, she stood
+    # in it
+    set_box(comp(A["Office_HalinaDesk"], "P1"), (-86, 1860, 48),
+            (24, 60, 48))
+
+
 try:
     for step in (bazaar, road, edges, night_shift, first_fight, shops,
-                 poles, sellers):
+                 poles, sellers, office):
         if sys.argv[1:] and step.__name__ not in sys.argv[1:]:
             continue
         step(actors())

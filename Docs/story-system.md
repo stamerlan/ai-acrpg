@@ -212,6 +212,7 @@ Output Log.
 | Dialogue, Entry | Talk: the dialog and its [entry](#entries) (None: the default start) |
 | ParticipantName, DisplayName | Talk: the NPC's participant name in the dialog and the speaker name shown |
 | Conditions | the prompt shows only while all of them pass |
+| HideWhileUnavailable | the owner is also hidden, without collision, while the conditions fail (checked every 0.5 s); Zbyszek's box uses it |
 | Actions | run on every interaction, before a dialog starts |
 | Sphere Radius | range of the prompt, measured from the component |
 

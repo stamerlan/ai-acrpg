@@ -244,7 +244,10 @@ Zones:
    canopy's north edge, toward the camera. The walkway in the middle
    is open to the sky, with string light cables across it. When a stall's
    canopy covers her from the camera, the whole canopy and its name
-   board hide; the frame, tables and goods stay. The camera looks
+   board hide; the frame, tables and goods stay. She can walk in
+   under the tarps wherever a stall leaves floor space, and under its
+   tables (75-82 cm, she is 66): the stall models collide with their
+   own shape, not with a box, and stand open at the back. The camera looks
    south: it sees the fronts of the south row and the backs of the
    north row. So every stall with a story seller is in the south row
    (corn at the west end, then the kebab stand, the gnomes, and the
@@ -289,8 +292,9 @@ sunrise, sunglasses on. The radio plays the Kudakhstan ad (see
 barrier.
 
 **2. The border check (dialog + first movement).** Sergeant Kotlet of
-the veterinary border inspection leans out of the booth with a
-sandwich.
+the veterinary border inspection has stepped out of his booth and
+waits by the car with a sandwich, so it is clear who she talks to (a
+second officer checks papers at the head of the truck queue).
 
 * Kotlet looks past her into the car: "Where is the driver?" She: "I am
   the driver." Kotlet looks down: "Hm. Documents." Choices: show
@@ -400,7 +404,7 @@ a north-row counter nobody would see a face.
 | NPC | Where | Holds |
 |---|---|---|
 | Kolya | On a crate on the road verge, across the lane from his truck's cab | Thermos |
-| Halina | At her window (a small lamp lights her; `MK_Interact_OfficeWindow` is hidden) | Stamp, kebab |
+| Halina | At her window, her desk behind her (a small lamp lights her; `MK_Interact_OfficeWindow` is hidden) | Stamp, kebab |
 | Zbyszek | In front of the west corner of his stall, by the alley to the office | A stamp, held up |
 | Krasnal | Beside his stall, by the way to the gnome field | "GNOMES 2 FOR 1!" sign, a gnome |
 | Corn lady | In front of the west corner of her stall | Tongs with a cob, held out |
@@ -467,8 +471,9 @@ Nobody is modelled inside a building. She walks into the kantor and
 talks to the clerk at his teller window inside: he sits behind frosted
 glass in the closed cash office, a voice and a portrait in the dialog
 (the talk point is in the lobby, 80 cm range, so it does not show
-outside). At Kotlet's booth she talks at its window, the talk point
-half a meter in front of the wall. The cigarette seller stands outside,
+outside). Kotlet stands outside his booth by the stopped car
+(`SM_Officer`, a static figure, `ArtBld_Kotlet`, day only), his talk
+point on him. The cigarette seller stands outside,
 by his shop's door (`SM_Seller`, a static figure). The markers
 `MK_NPC_KantorClerk`, `MK_NPC_CigaretteSeller` and `MK_NPC_Kotlet` are
 hidden.
@@ -493,7 +498,9 @@ Spans both levels; unlocks the forgery ending.
    lot, same as your car. Bring it back and I make you a stamp so
    official, the office itself will believe it."
 2. 0B: the box is on the evidence shelf in the guard office ("EVIDENCE:
-   COUNTERFEIT GOODS, 1 BOX").
+   COUNTERFEIT GOODS, 1 BOX"), only if she took the quest
+   (`q_zbyszek_box` is `started`): else she does not know to look for
+   it, the shelf has no box, and no van waits after the exit.
 3. Exit cutscene of 0B: if she has the box, Zbyszek waits with his van
    on the back street. Choice: give the box (she gets the Forged stamp,
    `f_forged_stamp`) or keep it ("Joke's on you, it's all stamps from

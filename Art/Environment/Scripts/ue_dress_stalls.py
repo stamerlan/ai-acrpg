@@ -16,7 +16,12 @@ G = "/Game/Environment/Stall/"
 # and goods; SM_<stall label>_Top: the canopy, blender_buildings_to_fbx.py)
 # gets that instead of the kit frame, tarp and Kenney goods
 B = "/Game/Environment/Buildings/SM_"
-PEAK = 330.0  # height of a model stall's canopy top, cm
+# Height of a model stall's canopy top, cm. Its tables come out 75-82 cm
+# high, so she walks in under them and under the tarp (at 330 they were
+# a few cm too low for her 66)
+PEAK = 375.0
+BOARD_Z = PEAK * 0.69  # the name board on the canopy's north edge
+COMPLEX = unreal.CollisionTraceFlag.CTF_USE_COMPLEX_AS_SIMPLE
 # Name boards differ from stall to stall, like real ones
 BOARDS = ["/Game/Materials/Graybox/MI_GB_" + m for m in (
     "Black", "ContainerBlue", "Red", "ContainerGreen")]
@@ -97,22 +102,42 @@ try:
             b = L.mesh(B + n + "_Top").get_bounding_box()
             scale = (ey * 1.94 / (b.max.x - b.min.x),
                      ex * 1.94 / (b.max.y - b.min.y), PEAK / b.max.z)
-            L.place(B + n, (o.x, o.y, 0), yaw - 90, scale,
-                    "ArtStall_Model_" + n, folder, True)
+            # She walks in under the canopy: the model collides with its
+            # own triangles (tables, shelves, poles), not with a box round
+            # the whole stall, and the cooks' nav mesh follows them. The
+            # box goes (remove_collisions also rebuilds the physics body,
+            # which the trace flag alone does not)
+            sm = L.mesh(B + n)
+            bs = sm.get_editor_property("body_setup")
+            if bs.get_editor_property("collision_trace_flag") != COMPLEX or \
+                    unreal.EditorStaticMeshLibrary.get_simple_collision_count(
+                        sm):
+                bs.set_editor_property("collision_trace_flag", COMPLEX)
+                unreal.EditorStaticMeshLibrary.remove_collisions(sm)
+                L.eal.save_loaded_asset(sm)
+            # Not an occluder (that would give it a box again)
+            model = L.place(B + n, (o.x, o.y, 0), yaw - 90, scale,
+                            "ArtStall_Model_" + n, folder, False)
+            mc = model.static_mesh_component
+            mc.set_collision_profile_name("BlockAll")
+            mc.set_editor_property("can_ever_affect_navigation", True)
             top = L.place(B + n + "_Top", (o.x, o.y, 0), yaw - 90, scale,
                           "ArtStall_Top_" + n, folder, True)
-            # The graybox walls, counter and goods only collide now
+            # The graybox is hidden and no longer collides: the north row's
+            # stalls are open at the back, where the camera looks in
             for c in a.get_components_by_class(unreal.StaticMeshComponent):
                 c.modify()
                 c.set_visibility(False)
                 c.set_editor_property("hidden_in_game", True)
+                if c.static_mesh:
+                    c.set_collision_profile_name("NoCollision")
             # The name: a board on the canopy's north edge, to the camera
             board = L.part(top, "Board", unreal.StaticMeshComponent)
             board.set_static_mesh(L.mesh("/Engine/BasicShapes/Cube"))
             board.set_material(0, L.eal.load_asset(
                 BOARDS[res["stalls"] % len(BOARDS)]))
             board.set_world_location_and_rotation(
-                unreal.Vector(o.x + e.x, o.y, 228), unreal.Rotator(),
+                unreal.Vector(o.x + e.x, o.y, BOARD_Z), unreal.Rotator(),
                 False, False)
             board.set_world_scale3d(
                 unreal.Vector(0.03, e.y * 1.5 / 100, 0.46))
@@ -131,7 +156,7 @@ try:
                     unreal.VerticalTextAligment.EVRTA_TEXT_CENTER)
                 name.set_world_size(38)
                 name.set_world_location_and_rotation(
-                    unreal.Vector(o.x + e.x + 3, o.y, 228),
+                    unreal.Vector(o.x + e.x + 3, o.y, BOARD_Z),
                     unreal.Rotator(), False, False)
                 name.set_world_scale3d(unreal.Vector(1, 1, 1))
             continue
