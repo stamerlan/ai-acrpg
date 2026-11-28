@@ -519,9 +519,12 @@ script below.
 `Scripts/ue_cutscenes.py` (`py "<path>"` in the editor, with
 `L0_BorderBazaar` open) imports the sounds above and rebuilds the stop 0
 level sequences in `/Game/Story/Stop0/Cutscenes` from scratch: `LS_Intro`,
-`LS_Tow`, `LS_Exit` (gate ram), `LS_Van` and `LS_DriveOff`. The actors in
+`LS_Tow`, `LS_Exit` (gate ram), `LS_Van` and `LS_DriveOff`; names after
+the path (`intro`, `tow`, `exit`, `van`, `drive_off`) rebuild only
+those. The actors in
 them are spawnable copies of the level's art (the Civic, a queue truck as
-the tow truck, a van, Zbyszek's marker), the chicken and cine cameras;
+the tow truck, a van, Zbyszek's `ArtNPC_Zbyszek`, so run it after
+`NPCs/Scripts/ue_dress_npcs.py`), the chicken and cine cameras;
 only the intro drives the level's own day Civic (run the script again
 after `ue_dress_lot.py` has placed that car anew). She is never shown
 inside a car;

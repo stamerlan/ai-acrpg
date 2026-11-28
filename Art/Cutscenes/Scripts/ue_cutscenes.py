@@ -2,6 +2,8 @@
 
 py "C:/Users/vvovchenko/repo/acrpg/Art/Cutscenes/Scripts/ue_cutscenes.py"
 with L0_BorderBazaar open. Imports the sounds from Art/Audio first.
+Names after the file name (intro, tow, exit, van, drive_off) rebuild
+only those sequences and import no sounds.
 
 The actors of a sequence are spawnables: copies of the level's art (the
 Civic, a queue truck as the tow truck, a van) and of the chicken. The
@@ -17,6 +19,7 @@ The Meshy cars face their local +Y, so a car heading h has yaw h - 90.
 """
 import json
 import math
+import sys
 import traceback
 
 import unreal
@@ -557,8 +560,14 @@ def build_van():
             break
     van = spawnable(seq, van_src, "ZbyszekVan")
     static_transform(van, (VAN[0], VAN[1], vz), (0.0, 0.0, 0.0), T)
-    who = spawnable(seq, actor("MK_NPC_Zbyszek"), "Zbyszek")
-    static_transform(who, (VAN[0] - 40, VAN[1] + 260, 0), (0.0, 0.0, 70.0), T)
+    # His day model (BP_NPC: the idle with the stamp held up, the talk
+    # clip while his dialog runs over the last frame). The copy must not
+    # be in the day data layer: the scene plays at night
+    who = spawnable(seq, actor("ArtNPC_Zbyszek"), "Zbyszek")
+    who.get_object_template().set_editor_property("data_layer_assets", [])
+    # Turned to the road, between the camera and the Civic: the camera
+    # sees his face, not his back
+    static_transform(who, (VAN[0] - 40, VAN[1] + 260, 0), (0.0, 0.0, 5.0), T)
     headlights(seq, [(0.0, end, 0.0, 0.0)], z, T)
     cam = camera(seq, "Cam_Van", T, loc=(3260, -1150, 240),
                  at=(2940, -500, 90))
@@ -601,14 +610,18 @@ try:
     if "L0_BorderBazaar" not in world.get_path_name():
         unreal.EditorLoadingAndSavingUtils.load_map(
             "/Game/Maps/Stop0/L0_BorderBazaar")
-    import_sounds()
-    build_intro()
-    build_tow()
-    ram = build_exit()
-    build_van()
-    build_drive_off()
-    json.dump({"ram": ram}, open(REPO + "Art/Cutscenes/Scripts/"
-                                 "cutscene_times.json", "w"))
+    only = sys.argv[1:]
+    if not only:
+        import_sounds()
+    for name, build in (("intro", build_intro), ("tow", build_tow),
+                        ("exit", build_exit), ("van", build_van),
+                        ("drive_off", build_drive_off)):
+        if only and name not in only:
+            continue
+        ram = build()
+        if name == "exit":
+            json.dump({"ram": ram}, open(
+                REPO + "Art/Cutscenes/Scripts/cutscene_times.json", "w"))
 except Exception:
     log.append(traceback.format_exc())
 open(REPO + "Saved/ue_cutscenes.log", "w").write("\n".join(log))
