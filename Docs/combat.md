@@ -70,6 +70,12 @@ does nothing.
   double click, and Enhanced Input drops one whose press and release fall
   in the same frame. `AChickenPlayerController::InputKey` passes double
   clicks on as plain presses.
+* **Mouse capture:** Set Input Mode Game Only (closing the backpack,
+  unpausing) switches the viewport to `CapturePermanently`, which eats
+  the click that captures the mouse. With the cursor shown the viewport
+  lets the capture go on every release, so every click was eaten.
+  `AChickenPlayerController::PlayerTick` puts it back to
+  `CapturePermanently_IncludingInitialMouseDown` (the project default).
 
 * **Peck** is a jump at the enemy and back. It picks the nearest living,
   visible pawn with `BPC_Health` whose capsule is at most `PeckReach`

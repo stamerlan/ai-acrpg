@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/GameViewportClient.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InputAction.h"
@@ -92,6 +93,19 @@ void AChickenPlayerController::OnPossess(APawn* InPawn)
 void AChickenPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+
+	// Set Input Mode Game Only (closing the backpack, unpausing) makes the
+	// viewport eat the click that captures the mouse. With the cursor shown
+	// it lets the capture go on every release, so every click was eaten
+	// and only a quick second one (sent as a double click) got through.
+	UGameViewportClient* Viewport =
+		GetLocalPlayer() ? GetLocalPlayer()->ViewportClient : nullptr;
+	if (Viewport && Viewport->GetMouseCaptureMode() ==
+		EMouseCaptureMode::CapturePermanently)
+	{
+		Viewport->SetMouseCaptureMode(
+			EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown);
+	}
 
 	AChickenCharacter* Chicken = Cast<AChickenCharacter>(GetPawn());
 	if (!Chicken)
